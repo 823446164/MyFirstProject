@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.amarsoft.app.ems</groupId>
+    <artifactId>emsp</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>ems-project-cs</artifactId>
+  <name>ems-project-cs</name>
+  <description>ems-project client-server/员工管理系统的项目管理服务客户端与服务端关联公共部分</description>
+  
+  <dependencies>
+        <dependency>
+            <groupId>com.amarsoft.a3.amps</groupId>
+            <artifactId>acsc</artifactId>
+            <version>${base.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.amarsoft.app.ems</groupId>
+            <artifactId>apecd</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.amarsoft.a3.amps</groupId>
+            <artifactId>avta</artifactId>
+            <version>${base.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.amarsoft.a3.amps</groupId>
+            <artifactId>avts</artifactId>
+            <version>${base.version}</version>
+            <optional>true</optional>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.amarsoft.a3.amps</groupId>
+            <artifactId>arpe</artifactId>
+            <version>${base.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

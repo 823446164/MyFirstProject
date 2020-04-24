@@ -1,0 +1,30 @@
+logging:
+  level: #不同的环境配置不同的日志级别
+    com.amarsoft.amps.acsc.feign.config: WARN
+    com.amarsoft: TRACE #日志的级别
+  path: /tmp/analysis/  #不同的环境配置不同的日志存放路径
+spring:
+  cloud:
+    config:
+      name: public,analysis
+      enabled: true
+      discovery:
+        enabled: true
+        service-id: ascc-server
+      fail-fast: true
+      publicprofile: dev
+      profile: dev
+      label: dev
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url: 
+      defaultZone : http://192.168.60.13:9130/eureka
+    registry-fetch-interval-seconds: 30
+    eureka-server-connect-timeout-seconds: 5
+    eureka-server-read-timeout-seconds: 5
+    filter-only-up-instances:  true
+    eureka-connection-idle-timeout-seconds: 30
+    eureka-server-total-connections: 200
+    eureka-server-total-connections-per-host: 50

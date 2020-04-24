@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: ANALYSIS-SERVER
+  profiles:
+    active: dev
+ 
+server:
+  servlet:
+    context-path: /analysis
+
+logging:
+  config: classpath:logback-spring.xml
+  level: #不同的环境配置不同的日志级别
+    org.springframework: WARN
+    org.apache: WARN
+    com.netflix: WARN
+    org.hibernate: WARN
+

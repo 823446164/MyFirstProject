@@ -1,0 +1,43 @@
+{
+"layouts": [
+      {
+        "x": 3,
+        "y": 9,
+        "w": 3,
+        "h": 8,
+        "component": "calendar",
+        "params": null
+      },
+      {
+        "x": 0,
+        "y": 0,
+        "w": 3,
+        "h": 4,
+        "component": "welcomeUser",
+        "params": null
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "w": 3,
+        "h": 13,
+        "component": "quickMenu",
+        "params": null
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "w": 9,
+        "h": 9,
+        "component": "todo",
+        "params": null
+      },
+      {
+        "x": 6,
+        "y": 9,
+        "w": 6,
+        "h": 8,
+        "component": "todo",
+        "params": null
+      }
+    ]}

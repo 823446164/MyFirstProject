@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <artifactId>apecd</artifactId>
+    <packaging>jar</packaging>
+    
+    <name>apecd</name>
+    <description>Amarsoft Platfrom Application Enum Code Definition /安硕微服务平台层枚举代码定义</description>
+    
+    <parent>
+        <groupId>com.amarsoft.app.ems</groupId>
+		  <artifactId>emsp</artifactId>
+		  <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-context</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.amarsoft.a3.amps</groupId>
+            <artifactId>abecd</artifactId>
+            <version>${base.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.amarsoft.a3.amps</groupId>
+            <artifactId>arem</artifactId>
+            <version>${base.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.0.6.RELEASE</version>
+  </parent>
+  <groupId>com.amarsoft.app.ems</groupId>
+  <artifactId>emsp</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Employee Management System Project/员工管理系统工程</name>
+  <description>Employee Management System Project/员工管理系统工程</description>
+  
+  <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <spring-cloud.version>Finchley.SR2</spring-cloud.version>
+        <mysql.version>5.1.47</mysql.version>
+        <base.version>1.0.2.RELEASE</base.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency> 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency> 
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+              <groupId>org.springframework.cloud</groupId>
+              <artifactId>spring-cloud-dependencies</artifactId>
+              <version>${spring-cloud.version}</version>
+              <type>pom</type>
+              <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+    <modules>
+        <module>ems-system</module>
+        <module>ems-system-cs</module>
+        <module>ems-project</module>
+        <module>ems-project-cs</module>
+        <module>ems-train</module>
+        <module>ems-train-cs</module>
+        <module>ems-parameter</module>
+        <module>ems-parameter-cs</module>
+        <module>ems-employee</module>
+        <module>ems-employee-cs</module>
+        <module>ems-analysis</module>
+        <module>ems-analysis-cs</module>
+        <module>apecd</module>
+        <module>z-plugins-bssp</module>
+    </modules>
+    
+    <distributionManagement>
+        <repository>
+            <id>web</id>
+            <url>http://192.168.5.4/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>web</id>
+            <url>http://192.168.5.4/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
+    <repositories>
+        <repository>
+            <id>maven</id>
+            <url>http://192.168.5.4/repository/maven-rd</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+</project>
