@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.amarsoft.amps.arpe.annotation.EnableHistoryDataAutoTransfer;
-
+ 
 @EnableDiscoveryClient
 @SpringBootApplication
 @ComponentScan("com.amarsoft")
