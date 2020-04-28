@@ -21,7 +21,7 @@ global:
 spring:
   cloud:
     config:
-      name: public,system
+      name: public,asms
       enabled: true
       discovery:
         enabled: true
