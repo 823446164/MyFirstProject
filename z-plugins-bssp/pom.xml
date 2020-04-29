@@ -36,6 +36,12 @@
         
         <dependency>
             <groupId>com.amarsoft.app.ems</groupId>
+            <artifactId>ems-employee-cs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.amarsoft.app.ems</groupId>
             <artifactId>ems-parameter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -44,6 +50,12 @@
             <groupId>com.amarsoft.app.ems</groupId>
             <artifactId>ems-analysis</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <optional>true</optional>
         </dependency>
         
         <dependency>
