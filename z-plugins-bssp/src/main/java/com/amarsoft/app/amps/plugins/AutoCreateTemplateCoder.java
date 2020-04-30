@@ -2,7 +2,7 @@ package com.amarsoft.app.amps.plugins;
 
 import org.junit.Test;
 
-import com.amarsoft.amps.dct.excel.CreateTemplateCoder;
+import com.amarsoft.app.amps.plugins.CreateTemplateCoder;
 import com.amarsoft.amps.dct.excel.ExcelTemplate;
 import com.amarsoft.amps.dct.excel.common.config.AutoCreateConstants;
 
@@ -21,7 +21,7 @@ public class AutoCreateTemplateCoder {
         AutoCreateConstants.setBasePath(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("/target/classes/", "").substring(0, AutoCreateCoder.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("/target/classes/", "").lastIndexOf("/") + 1));
 
         ExcelTemplate[] templates = new ExcelTemplate[] {
-            //new ExcelTemplate("com.amarsoft.app.amps.","asms",false,"ASMS系统管理模板定义.xlsx", 1), 
+            new ExcelTemplate("com.amarsoft.app.ems.","employee",false,"测试模块dto模板.xlsx", 1), 
         };
 
         CreateTemplateCoder.create(templates);
