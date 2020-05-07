@@ -34,7 +34,7 @@ import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 public interface OrgController {
     @PostMapping(value = "/system/getorginfo", name="按机构编号查询机构", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<OrgInfoQueryRsp>> orgInfoQuery(@RequestBody @Valid RequestMessage<OrgInfoQueryReq> reqMsg);
-    @PostMapping(value = "/system/getorguser", name="查询机构用户", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/system/getorguser", name="查询部门下员工", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<OrgUserQueryRsp>> orgUserQuery(@RequestBody @Valid RequestMessage<OrgUserQueryReq> reqMsg);
     @PostMapping(value = "/system/getconditionalorgs", name="按条件查询机构", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<ConditionalOrgsQueryRsp>> conditionalOrgsQuery(@RequestBody @Valid RequestMessage<ConditionalOrgsQueryReq> reqMsg);
