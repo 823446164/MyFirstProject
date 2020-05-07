@@ -43,6 +43,35 @@ public class TeamInfo extends BusinessObject {
     @Column(name = "TEAMNAME",length=80)
     private String teamName;
 
+	@Description("团队A角")
+    @Column(name = "ROLEA",nullable=false,length=80)
+    private String roleA;
+    
+    @Description("团队B角")
+    @Column(name = "ROLEB",length=80)
+    private String roleB;
+    
+    @Description("团队C角")
+    @Column(name = "ROLEC",length=80)
+    private String roleC;
+
+    @Description("团队人数")
+    @Column(name = "USERNUM",length=40)
+    private String userNum;
+
+    @Description("团队绩效目标")
+    @Column(name = "TARGET",length=80)
+    private String target;
+
+    @Description("登记机构")
+    @Column(name = "INPUTORGID",length=40)
+    private String inputOrgId;
+
+    @Description("更新机构")
+    @Column(name = "UPDATEORGID",length=40)
+    private String updateOrgId;
+
+    
     @Description("所属法人机构")
     @Column(name = "BELONGROOTORG",length=40)
     private String belongRootOrg;
@@ -104,6 +133,63 @@ public class TeamInfo extends BusinessObject {
     public void setTeamName(String teamName) {
         this.teamName = teamName;
     }
+
+    
+    public String getRoleA() {
+		return roleA;
+	}
+
+	public void setRoleA(String roleA) {
+		this.roleA = roleA;
+	}
+
+	public String getRoleB() {
+		return roleB;
+	}
+
+	public void setRoleB(String roleB) {
+		this.roleB = roleB;
+	}
+
+	public String getRoleC() {
+		return roleC;
+	}
+
+	public void setRoleC(String roleC) {
+		this.roleC = roleC;
+	}
+
+	public String getUserNum() {
+		return userNum;
+	}
+
+	public void setUserNum(String userNum) {
+		this.userNum = userNum;
+	}
+
+	public String getTarget() {
+		return target;
+	}
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
+	public String getInputOrgId() {
+		return inputOrgId;
+	}
+
+	public void setInputOrgId(String inputOrgId) {
+		this.inputOrgId = inputOrgId;
+	}
+
+	public String getUpdateOrgId() {
+		return updateOrgId;
+	}
+
+	public void setUpdateOrgId(String updateOrgId) {
+		this.updateOrgId = updateOrgId;
+	}
 
     public String getBelongOrgId() {
         return belongOrgId;
@@ -186,4 +272,3 @@ public class TeamInfo extends BusinessObject {
     }
 
 }
-
