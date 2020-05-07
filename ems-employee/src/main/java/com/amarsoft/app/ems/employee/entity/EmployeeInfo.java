@@ -37,6 +37,10 @@ public class EmployeeInfo extends BusinessObject {
     @Description("员工姓名")
     @Column(name = "employeeName", nullable = false, length = 80)
     private String employeeName;
+    
+    @Description("性别")
+    @Column(name = "sex", nullable = false, length = 10)
+    private String sex;
 
     @Description("员工账号")
     @Column(name = "employeeAcct", nullable = false, length = 100)
