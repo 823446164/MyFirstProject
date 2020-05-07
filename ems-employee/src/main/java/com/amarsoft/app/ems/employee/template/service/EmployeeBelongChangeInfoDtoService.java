@@ -6,7 +6,7 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto
 import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoSaveReq;
 
 /**
- * 团队调整申请InfoService接口
+ * 团队调整申请InfoService接口 
  * @author lding
  */
 public interface EmployeeBelongChangeInfoDtoService {
