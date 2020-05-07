@@ -34,6 +34,10 @@ public class RankStandardItems extends BusinessObject {
     @Description("职级编号") 
     @Column(name = "rankNo",length=40) 
     private String rankNo;
+    
+    @Description("标签编号") 
+    @Column(name = "labelNo",length=40) 
+    private String labelNo;
       
     @Description("标签名称") 
     @Column(name = "labelName",length=40) 
