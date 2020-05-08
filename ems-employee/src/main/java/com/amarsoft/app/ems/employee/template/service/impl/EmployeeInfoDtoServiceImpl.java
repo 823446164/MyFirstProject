@@ -27,9 +27,8 @@ public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService{
     @Override
     @Transactional
     public EmployeeInfoDtoQueryRsp employeeInfoDtoQuery(@Valid EmployeeInfoDtoQueryReq employeeInfoDtoQueryReq) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        
-        EmployeeInfo employeeInfo = bomanager.loadBusinessObject(EmployeeInfo.class,"serialNo",employeeInfoDtoQueryReq.getSerialNo());
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();        
+        EmployeeInfo employeeInfo = bomanager.loadBusinessObject(EmployeeInfo.class,"employeeNo",employeeInfoDtoQueryReq.getEmployeeNo());        
         if(employeeInfo!=null){
             EmployeeInfoDtoQueryRsp employeeInfoDto = new EmployeeInfoDtoQueryRsp();
             employeeInfoDto.setEmployeeNo(employeeInfo.getEmployeeNo());
