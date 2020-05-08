@@ -40,8 +40,8 @@ public class LableDescribe extends BusinessObject {
     private String labelLevel;
       
     @Description("等级描述") 
-    @Column(name = "labelDescribe",length=2000) 
-    private String labelDescribe;
+    @Column(name = "levelDescribe",length=2000) 
+    private String levelDescribe;
       
     @Description("登记人") 
     @Column(name = "inputUserId", nullable=false,length=40) 

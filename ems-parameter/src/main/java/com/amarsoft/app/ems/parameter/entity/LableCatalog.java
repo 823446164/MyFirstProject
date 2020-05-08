@@ -44,8 +44,8 @@ public class LableCatalog extends BusinessObject {
     private String labelStatus;
       
     @Description("所属目录") 
-    @Column(name = "cataLog",length=80) 
-    private String cataLog;
+    @Column(name = "belongCataLog",length=80) 
+    private String belongCataLog;
       
     @Description("所属大类") 
     @Column(name = "rootNo",length=40) 
@@ -60,8 +60,8 @@ public class LableCatalog extends BusinessObject {
     private String abilityType;
       
     @Description("标签说明") 
-    @Column(name = "describe", nullable=false,length=2000) 
-    private String describe;
+    @Column(name = "labelDescribe", nullable=false,length=2000) 
+    private String labelDescribe;
       
     @Description("目录备注") 
     @Column(name = "catalogRemark",length=2000) 
@@ -72,8 +72,8 @@ public class LableCatalog extends BusinessObject {
     private String author;
       
     @Description("版本") 
-    @Column(name = "version",length=10) 
-    private String version;
+    @Column(name = "labelVersion",length=10) 
+    private String labelVersion;
       
     @Description("登记人") 
     @Column(name = "inputUserId", nullable=false,length=40) 
@@ -98,4 +98,8 @@ public class LableCatalog extends BusinessObject {
     @Description("更新机构  ") 
     @Column(name = "updateOrgId",length=40) 
     private String updateOrgId;
+    
+    @Description("类型  ") 
+    @Column(name = "labelType",length=10) 
+    private String labelType;
 }
