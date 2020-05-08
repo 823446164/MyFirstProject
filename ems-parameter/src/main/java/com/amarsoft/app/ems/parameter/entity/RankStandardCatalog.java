@@ -1,17 +1,18 @@
 
 package com.amarsoft.app.ems.parameter.entity;
 
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.arpe.annotation.EntityRelationShip;
-import com.amarsoft.amps.arpe.annotation.GeneratedKey;
-
-import javax.persistence.*;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.arpe.businessobject.BusinessObject;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.arpe.annotation.GeneratedKey;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -90,4 +91,14 @@ public class RankStandardCatalog extends BusinessObject {
     @Description("更新机构  ") 
     @Column(name = "updateOrgId",length=40) 
     private String updateOrgId;
+    
+    public String getInputTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        return inputTime.format(sdf);
+    }
+    
+    public String getUpdateTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        return updateTime.format(sdf);
+    }
 }
