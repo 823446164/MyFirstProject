@@ -15,4 +15,6 @@ import lombok.ToString;
 public class EmployeePersonalPerformanceInfoDtoQueryRsp extends EmployeePersonalPerformanceInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
     
+    private EmployeePersonalPerformanceInfoDto employeePersonalPerformanceInfoDto;
+    
 }
