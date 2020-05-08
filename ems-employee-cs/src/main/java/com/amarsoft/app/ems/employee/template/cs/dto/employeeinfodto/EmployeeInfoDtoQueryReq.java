@@ -23,6 +23,6 @@ public class EmployeeInfoDtoQueryReq implements Serializable {
     @Description("员工编号")
     @Length(max=40)
     @NotEmpty
-    @ActualColumn("EI.serialNo")
-    private String serialNo;
+    @ActualColumn("EI.employeeNo")
+    private String employeeNo;
 }
