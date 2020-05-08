@@ -23,7 +23,7 @@ import lombok.ToString;
 /**
  * 〈一句话功能简述〉
  * 〈功能详细描述〉
- * @author amarsoft
+ * @author xphe
  * @version 2020年5月8日
  * @see RankStandardCatalogSonQueryRsq
  * @since

@@ -1,7 +1,10 @@
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
 import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
@@ -17,10 +20,14 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjec
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogList;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListSaveReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogSonQueryReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogSonQueryRsq;
 import com.amarsoft.app.ems.parameter.entity.RankStandardCatalog;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListDeleteReq;
+
 
 /**
  * 职级标准列表Service实现类
@@ -28,7 +35,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.Ra
  */
 @Slf4j
 @Service
-public class RankStandardCatalogListServiceImpl implements RankStandardCatalogListService{
+public class RankStandardCatalogListServiceImpl implements RankStandardCatalogListService {
     /**
                    * 查询结果集
      */
@@ -36,10 +43,9 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
         @Override
         public Query apply(RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(rankStandardCatalogListQueryReq, RankStandardCatalogList.class);
-            
+
             String sql = "select RSC.serialNo as serialNo,RSC.rankStandard as rankStandard,RSC.rankName as rankName,RSC.parentRankNo as parentRankNo,RSC.ability as ability,RSC.rankDescribe as rankDescribe,RSC.responeDescribe as responeDescribe,RSC.abilityDescribe as abilityDescribe,RSC.belongTeam as belongTeam,RSC.rankType as rankType,RSC.inputUserId as inputUserId,RSC.inputTime as inputTime,RSC.inputOrgId as inputOrgId,RSC.updateUserId as updateUserId,RSC.updateTime as updateTime,RSC.updateOrgId as updateOrgId"
-                +" from RANK_STANDARD_CATALOG RSC"
-                +" where 1=1";
+                         + " from RANK_STANDARD_CATALOG RSC" + " where 1=1";
             return queryProperties.assembleSql(sql);
         }
     }
@@ -51,7 +57,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
         @Override
         public RankStandardCatalogList apply(BusinessObject bo) {
             RankStandardCatalogList temp = new RankStandardCatalogList();
-                
+
             //查询到的数据转换为响应实体
             temp.setSerialNo(bo.getString("SerialNo"));
             temp.setRankStandard(bo.getString("RankStandard"));
@@ -69,7 +75,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             temp.setUpdateUserId(bo.getString("UpdateUserId"));
             temp.setUpdateTime(bo.getString("UpdateTime"));
             temp.setUpdateOrgId(bo.getString("UpdateOrgId"));
-            
+
             return temp;
         }
     }
@@ -83,26 +89,69 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     @Transactional
     public RankStandardCatalogListQueryRsp rankStandardCatalogListQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq) {
         RankStandardCatalogListQueryRsp rankStandardCatalogListQueryRsp = new RankStandardCatalogListQueryRsp();
-        
+
         Query query = new RankStandardCatalogListReqQuery().apply(rankStandardCatalogListQueryReq);
         String fullsql = query.getSql();
-        
+
         RankStandardCatalogListRspConvert convert = new RankStandardCatalogListRspConvert();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(rankStandardCatalogListQueryReq.getBegin(), rankStandardCatalogListQueryReq.getPageSize(), fullsql, query.getParam());
+        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(rankStandardCatalogListQueryReq.getBegin(),
+            rankStandardCatalogListQueryReq.getPageSize(), fullsql, query.getParam());
         List<BusinessObject> businessObjectList = boa.getBusinessObjects();
-        
-        if(null != businessObjectList && !businessObjectList.isEmpty()) {
+
+        if (null != businessObjectList && !businessObjectList.isEmpty()) {
             List<RankStandardCatalogList> rankStandardCatalogLists = new ArrayList<RankStandardCatalogList>();
-            for(BusinessObject bo : businessObjectList) {
+            for (BusinessObject bo : businessObjectList) {
                 //查询到的数据转换为响应实体
                 rankStandardCatalogLists.add(convert.apply(bo));
             }
             rankStandardCatalogListQueryRsp.setRankStandardCatalogLists(rankStandardCatalogLists);
         }
         rankStandardCatalogListQueryRsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
-        
+
         return rankStandardCatalogListQueryRsp;
+    }
+
+    /**
+     * 子职级标准列表多记录查询
+     * @param request
+     * @return
+     **/
+    @Override
+    @Transactional
+    public RankStandardCatalogSonQueryRsq rankStandardCatalogSonQuery(@Valid RankStandardCatalogSonQueryReq rankStandardCatalogSonQueryReq) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class, "parentRankNo=:parentRankNo",
+            "parentRankNo", rankStandardCatalogSonQueryReq.getSerialNo());
+        RankStandardCatalogSonQueryRsq response = new RankStandardCatalogSonQueryRsq();
+        List<RankStandardCatalogList> ranCatalogLists = null;
+            if(!CollectionUtils.isEmpty(ranCatalogs)) {
+                ranCatalogLists=new ArrayList<RankStandardCatalogList>();
+                for(RankStandardCatalog rank:ranCatalogs) {
+                    RankStandardCatalogList rankresponse=new RankStandardCatalogList();
+                    rankresponse.setSerialNo(rank.getSerialNo());
+                    rankresponse.setRankStandard(rank.getRankStandard());
+                    rankresponse.setRankName(rank.getRankName());
+                    rankresponse.setParentRankNo(rank.getParentRankNo());
+                    rankresponse.setAbility(rank.getAbility());
+                    rankresponse.setRankDescribe(rank.getRankDescribe());
+                    rankresponse.setResponeDescribe(rank.getResponeDescribe());
+                    rankresponse.setAbilityDescribe(rank.getAbilityDescribe());
+                    rankresponse.setBelongTeam(rank.getBelongTeam());
+                    rankresponse.setRankType(rank.getRankType());
+                    rankresponse.setInputUserId(rank.getInputUserId());
+                    rankresponse.setInputTime(rank.getInputTime());
+                    rankresponse.setInputOrgId(rank.getInputOrgId());
+                    rankresponse.setUpdateUserId(rank.getUpdateUserId());
+                    rankresponse.setUpdateTime(rank.getUpdateTime());
+                    rankresponse.setUpdateOrgId(rank.getUpdateOrgId());
+                    ranCatalogLists.add(rankresponse);
+                }
+                
+            }
+            response.setRankStandardCatalogLists(ranCatalogLists);
+            return response;
+            
     }
 
     /**
@@ -114,21 +163,20 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     public void rankStandardCatalogListSave(@Valid RankStandardCatalogListSaveReq rankStandardCatalogListSaveReq) {
         rankStandardCatalogListSaveAction(rankStandardCatalogListSaveReq.getRankStandardCatalogLists());
     }
+
     /**
      * 职级标准列表多记录保存
      * @param
      * @return
      */
     @Transactional
-    public void rankStandardCatalogListSaveAction(List<RankStandardCatalogList> rankStandardCatalogLists){
+    public void rankStandardCatalogListSaveAction(List<RankStandardCatalogList> rankStandardCatalogLists) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if(rankStandardCatalogLists!=null){
-            for(RankStandardCatalogList rankStandardCatalogListTmp :rankStandardCatalogLists){
-            }
+        if (rankStandardCatalogLists != null) {
+            for (RankStandardCatalogList rankStandardCatalogListTmp : rankStandardCatalogLists) {}
         }
         bomanager.updateDB();
     }
-
 
     /**
      * 职级标准列表删除
@@ -139,7 +187,8 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     @Transactional
     public void rankStandardCatalogListDelete(@Valid RankStandardCatalogListDeleteReq rankStandardCatalogListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        RankStandardCatalog rankStandardCatalog=bomanager.keyLoadBusinessObject(RankStandardCatalog.class, rankStandardCatalogListDeleteReq.getSerialNo());
+        RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
+            rankStandardCatalogListDeleteReq.getSerialNo());
         bomanager.deleteBusinessObject(rankStandardCatalog);
         // TODO 关联表数据如需删除的话，请自行补充代码
         bomanager.updateDB();
