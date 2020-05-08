@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.employee.template.service.EmployeeInfoListDtoService;
+import com.amarsoft.app.ems.system.cs.dto.addteamuser.UserTeam;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.amps.acsc.query.QueryProperties;
@@ -37,9 +38,10 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         public Query apply(EmployeeInfoListDtoQueryReq employeeInfoListDtoQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(employeeInfoListDtoQueryReq, EmployeeInfoListDto.class);
             
-            String sql = "select EI.employeeNo as employeeNo,EI.employeeName as employeeName,EI.employeeAcct as employeeAcct,EI.phoneNum as phoneNum,EI.nowRank as nowRank,EI.goalRank as goalRank,EI.rntryTime as rntryTime,EI.changeTime as changeTime,EI.employeeStatus as employeeStatus,EI.resignationReason as resignationReason,EI.employeeeDucation as employeeeDucation,EI.graduationTime as graduationTime,EI.graduatedSchool as graduatedSchool,EI.major as major,EI.homeTown as homeTown,EI.inputUserId as inputUserId,EI.inputTime as inputTime,EI.inputOrgId as inputOrgId,EI.updateUserId as updateUserId,EI.updateTime as updateTime,EI.updateOrgId as updateOrgId,EI.employeeWorkStatus as employeeWorkStatus"
-                +" from EMPLOYEE_INFO EI"
-                +" where 1=1";
+            String sql = "select EI.employeeNo as employeeNo,EI.employeeName as employeeName,EI.employeeAcct as employeeAcct,EI.phoneNum as phoneNum,EI.nowRank as nowRank,EI.goalRank as goalRank,EI.rntryTime as rntryTime,EI.changeTime as changeTime,EI.employeeStatus as employeeStatus,EI.resignationReason as resignationReason,EI.employeeeDucation as employeeeDucation,EI.graduationTime as graduationTime,EI.graduatedSchool as graduatedSchool,EI.major as major,EI.homeTown as homeTown,EI.inputUserId as inputUserId,EI.inputTime as inputTime,EI.inputOrgId as inputOrgId,EI.updateUserId as updateUserId,EI.updateTime as updateTime,EI.updateOrgId as updateOrgId,EI.employeeWorkStatus as employeeWorkStatus,"
+                +"TI.teamName as teamName,TI.teamId as teamId"
+            	+" from EMPLOYEE_INFO EI,SYS_TEAM_USER TU,SYS_TEAM_INFO TI"
+                +" where 1=1 AND EI.employeeNo=TU.userId AND TI.teamId=TU.teamId";
             return queryProperties.assembleSql(sql);
         }
     }
@@ -75,7 +77,8 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             temp.setUpdateTime(bo.getString("UpdateTime"));
             temp.setUpdateOrgId(bo.getString("UpdateOrgId"));
             temp.setEmployeeWorkStatus(bo.getString("EmployeeWorkStatus"));
-            
+            temp.setTeamId(bo.getString("TeamId"));
+            temp.setTeamName(bo.getString("TeamName"));
             return temp;
         }
     }
