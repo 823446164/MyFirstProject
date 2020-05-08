@@ -102,4 +102,4 @@ public class LableCatalog extends BusinessObject {
     @Description("类型  ") 
     @Column(name = "labelType",length=10) 
     private String labelType;
-}
+} 

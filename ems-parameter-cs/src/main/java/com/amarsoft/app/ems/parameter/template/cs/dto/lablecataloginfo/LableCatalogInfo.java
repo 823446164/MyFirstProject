@@ -59,7 +59,7 @@ public class LableCatalogInfo implements Serializable {
     @Length(max=10)
     @ActualColumn("LC.version")
     @TemplateBody(sortNo = 5, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String version;
+    private String labelVersion;
 
     @Description("登记人")
     @Length(max=40)

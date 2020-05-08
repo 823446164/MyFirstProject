@@ -66,4 +66,4 @@ public class LableDescribe extends BusinessObject {
     @Description("更新机构") 
     @Column(name = "updateOrgId",length=40) 
     private String updateOrgId;
-}
+} 
