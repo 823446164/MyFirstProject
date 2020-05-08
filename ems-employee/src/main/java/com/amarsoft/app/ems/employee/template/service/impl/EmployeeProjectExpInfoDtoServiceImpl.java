@@ -2,6 +2,10 @@ package com.amarsoft.app.ems.employee.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
@@ -30,6 +34,7 @@ public class EmployeeProjectExpInfoDtoServiceImpl implements EmployeeProjectExpI
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         
         EmployeeProjectExperience employeeProjectExperience = bomanager.loadBusinessObject(EmployeeProjectExperience.class,"serialNo",employeeProjectExpInfoDtoQueryReq.getSerialNo());
+        
         if(employeeProjectExperience!=null){
             EmployeeProjectExpInfoDtoQueryRsp employeeProjectExpInfoDto = new EmployeeProjectExpInfoDtoQueryRsp();
             employeeProjectExpInfoDto.setSerialNo(employeeProjectExperience.getSerialNo());
@@ -58,19 +63,28 @@ public class EmployeeProjectExpInfoDtoServiceImpl implements EmployeeProjectExpI
      * @return
      */
     @Override
-    public void employeeProjectExpInfoDtoSave(@Valid EmployeeProjectExpInfoDtoSaveReq employeeProjectExpInfoDtoSaveReq) {
-        employeeProjectExpInfoDtoSaveAction(employeeProjectExpInfoDtoSaveReq);
+    public Map<String,String> employeeProjectExpInfoDtoSave(@Valid EmployeeProjectExpInfoDtoSaveReq employeeProjectExpInfoDtoSaveReq) {
+        return employeeProjectExpInfoDtoSaveAction(employeeProjectExpInfoDtoSaveReq);
     }
     /**
-     * 员工项目经历Info单记录保存
+     * 员工项目经历Info单记录保存-只更新工作描述
      * @param
      * @return
      */
     @Transactional
-    public void employeeProjectExpInfoDtoSaveAction(EmployeeProjectExpInfoDto employeeProjectExpInfoDto){
+    public Map<String,String> employeeProjectExpInfoDtoSaveAction(EmployeeProjectExpInfoDto employeeProjectExpInfoDto){
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if(employeeProjectExpInfoDto!=null){
+            //根据主键查询员工项目经历
+            EmployeeProjectExperience employeeProjectExperience = bomanager.keyLoadBusinessObject(EmployeeProjectExperience.class,employeeProjectExpInfoDto.getSerialNo());
+            //更新工作描述字段
+            employeeProjectExperience.setWorkDescribe(employeeProjectExpInfoDto.getWorkDescribe());
+            bomanager.updateBusinessObject(employeeProjectExperience);//更新操作
         }
         bomanager.updateDB();
+        //定义一个map封装返回信息 - 判断是否更新成功
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("status", "Y");
+        return map;
     }
 }
