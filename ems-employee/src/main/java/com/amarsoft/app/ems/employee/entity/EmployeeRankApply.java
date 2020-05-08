@@ -92,6 +92,11 @@ public class EmployeeRankApply extends BusinessObject {
     @Column(name = "updateOrgId",length=40) 
     private String updateOrgId;
     
+    public String getBeginTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        return beginTime.format(sdf);
+    }
+    
     public String getInputTime() {
         DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
         return inputTime.format(sdf);
