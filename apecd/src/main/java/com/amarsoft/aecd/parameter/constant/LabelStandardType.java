@@ -1,10 +1,16 @@
+/*
+ * 文件名：LabelStandardType.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：指标类型（RANK_STANDARD_ITEMS表）
+ * 修改人：yqchen1
+ * 修改时间：2020年5月8日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
+
 package com.amarsoft.aecd.parameter.constant;
 
-/**
- * 指标类型（RANK_STANDARD_ITEMS表）
- * @author yqchen1
- *
- */
 public enum LabelStandardType {
 	
 	Basic("1","公共基础型"),
