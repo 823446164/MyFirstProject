@@ -1,6 +1,8 @@
 package com.amarsoft.app.ems.parameter.template.cs.dto.labledescribelist;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -42,7 +44,7 @@ public class LableDescribeList implements Serializable {
     @Length(max=80)
     @ActualColumn("LC.cataLog")
     @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
-    private String belongCataLog;
+    private String cataLog;
 
     @Description("所属大类")
     @Length(max=40)
@@ -60,13 +62,13 @@ public class LableDescribeList implements Serializable {
     @Length(max=2000)
     @ActualColumn("LC.describe")
     @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
-    private String labelDescribe;
+    private String describe;
 
     @Description("版本")
     @Length(max=10)
     @ActualColumn("LC.version")
     @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
-    private String labelVersion;
+    private String version;
 
     @Description("流水号")
     @Length(max=40)
@@ -88,9 +90,9 @@ public class LableDescribeList implements Serializable {
 
     @Description("等级描述")
     @Length(max=2000)
-    @ActualColumn("LD.levelDescribe")
+    @ActualColumn("LD.labelDescribe")
     @TemplateBody(sortNo = 11, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
-    private String levelDescribe;
+    private String labelDescribe;
 
     @Description("登记人")
     @Length(max=40)
