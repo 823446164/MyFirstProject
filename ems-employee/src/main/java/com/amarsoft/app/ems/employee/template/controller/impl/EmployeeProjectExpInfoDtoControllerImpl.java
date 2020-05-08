@@ -2,6 +2,9 @@ package com.amarsoft.app.ems.employee.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Map;
+
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,10 +62,11 @@ public class EmployeeProjectExpInfoDtoControllerImpl implements EmployeeProjectE
         ResponseMessage<Object> rspMsg = null;
         try {
             EmployeeProjectExpInfoDtoSaveReq request = reqMsg.getMessage();
+            //接收返回信息-成功Y
+            Map<String,String> response = employeeProjectExpInfoDtoServiceImpl.employeeProjectExpInfoDtoSave(request);
             
-            employeeProjectExpInfoDtoServiceImpl.employeeProjectExpInfoDtoSave(request);
-            rspMsg = new ResponseMessage<Object>();
-
+            rspMsg = new ResponseMessage<Object>(response);
+           
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {

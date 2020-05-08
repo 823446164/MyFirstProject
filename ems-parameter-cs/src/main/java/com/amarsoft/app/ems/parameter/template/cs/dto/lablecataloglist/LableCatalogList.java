@@ -25,7 +25,7 @@ public class LableCatalogList implements Serializable {
     @ActualColumn("LC.serialNo")
     @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String serialNo;
-
+ 
     @Description("标签名称")
     @Length(max=80)
     @ActualColumn("LC.labelName")
@@ -52,9 +52,9 @@ public class LableCatalogList implements Serializable {
 
     @Description("版本")
     @Length(max=10)
-    @ActualColumn("LC.version")
+    @ActualColumn("LC.labelVersion")
     @TemplateBody(sortNo = 5, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
-    private String version;
+    private String labelVersion;
 
     @Description("登记人")
     @Length(max=40)
