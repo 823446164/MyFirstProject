@@ -2,7 +2,7 @@
  * 文件名：RankStandardCatalogSonQueryRsq.java
  * 版权：Copyright by www.amarsoft.com
  * 描述：
- * 修改人：amarsoft
+ * 修改人：xphe
  * 修改时间：2020年5月8日
  * 跟踪单号：
  * 修改单号：
@@ -21,8 +21,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * 〈一句话功能简述〉
- * 〈功能详细描述〉
+ * 〈子职级列表查询响应实体〉
+ * 
  * @author xphe
  * @version 2020年5月8日
  * @see RankStandardCatalogSonQueryRsq

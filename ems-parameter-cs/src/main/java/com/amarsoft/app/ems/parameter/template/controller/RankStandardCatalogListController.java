@@ -20,7 +20,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.Ra
  * @author ylgao
  */
 public interface RankStandardCatalogListController {
-    @PostMapping(value = "/rankstandardcataloglist/query", name="职级标准列表查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/rankstandardcataloglist/devloquery", name="开发技能职级标准列表查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>> rankStandardCatalogListQuery(@RequestBody @Valid RequestMessage<RankStandardCatalogListQueryReq> reqMsg);
 
     @PostMapping(value = "/rankstandardcataloglist/save", name="职级标准列表保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -31,5 +31,7 @@ public interface RankStandardCatalogListController {
             
     @PostMapping(value = "/rankstandardcataloglist/sonquery", name="职级标准列表子职级查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<RankStandardCatalogSonQueryRsq>> rankStandardCatalogSonQuery(@RequestBody @Valid RequestMessage<RankStandardCatalogSonQueryReq> reqMsg);
-
+      
+    @PostMapping(value = "/rankstandardcataloglist/manaquery", name="管理技能职级标准列表查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>> ranStandardCatalogManagerQuery(@RequestBody @Valid RequestMessage<RankStandardCatalogListQueryReq> reqMsg);
 }

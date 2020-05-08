@@ -1,7 +1,17 @@
+/*
+ * 文件名：RankStandardCatalogInfoControllerImpl.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：xphe
+ * 修改时间：2020年5月8日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
+
 package com.amarsoft.app.ems.parameter.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +30,32 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.Ra
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoSaveRsq;
 
 /**
- * 职级标准详情Controller实现类
- * @author ylgao
+ * 〈职级标准详情Controller实现类〉
+ * 
+ * @author xphe
+ * @version 2020年5月8日
+ * @see 
+ * @since
  */
 @Slf4j
 @RestController
 public class RankStandardCatalogInfoControllerImpl implements RankStandardCatalogInfoController {
+    /**
+     * 引入service实现层
+     */
     @Autowired
     RankStandardCatalogInfoService rankStandardCatalogInfoServiceImpl;
-    
+   
+    /**
+     * 
+     * Description: 职级标准详情查询
+     *
+     * @param reqMsg
+     * @return
+     * @see
+     */
     @Override
     @Transactional
-    //职级标准详情查询
     public ResponseEntity<ResponseMessage<RankStandardCatalogInfoQueryRsp>> rankStandardCatalogInfoQuery(@RequestBody @Valid RequestMessage<RankStandardCatalogInfoQueryReq> reqMsg){
         ResponseMessage<RankStandardCatalogInfoQueryRsp> rspMsg = null;
         try {
@@ -54,9 +78,16 @@ public class RankStandardCatalogInfoControllerImpl implements RankStandardCatalo
         }
     }
 
+    /**
+     * 
+     * Description: 职级标准详情保存
+     *
+     * @param reqMsg
+     * @return
+     * @see
+     */
     @Override
     @Transactional
-    //职级标准详情保存
     public ResponseEntity<ResponseMessage<RankStandardCatalogInfoSaveRsq>> rankStandardCatalogInfoSave(@RequestBody @Valid RequestMessage<RankStandardCatalogInfoSaveReq> reqMsg){
         ResponseMessage<RankStandardCatalogInfoSaveRsq> rspMsg = null;
         try {
@@ -77,6 +108,15 @@ public class RankStandardCatalogInfoControllerImpl implements RankStandardCatalo
             return new ResponseEntity<ResponseMessage<RankStandardCatalogInfoSaveRsq>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    /**
+     * 
+     * Description: 职级标准详情删除
+     *
+     * @param reqMsg
+     * @return
+     * @see
+     */
     @Override
     @Transactional
     public ResponseEntity<ResponseMessage<Object>> rankStandardCatalogInfoDelete(@RequestBody @Valid RequestMessage<RankStandardCatalogInfoQueryReq> reqMsg){

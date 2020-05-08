@@ -23,21 +23,35 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.Ra
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogSonQueryRsq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListDeleteReq;
 
-
 /**
- * 职级标准列表Controller实现类
- * @author ylgao
+ * 〈职级标准列表Controller实现类〉
+ * 
+ * @author xphe
+ * @version 2020年5月8日
+ * @see 
+ * @since
  */
 @Slf4j
 @RestController
 public class RankStandardCatalogListControllerImpl implements RankStandardCatalogListController {
+   
+    /**
+     * 引入service实现层
+     */
     @Autowired
     RankStandardCatalogListService rankStandardCatalogListServiceImpl;
 
+    /**
+     * 
+     * Description: 职级标准列表查询
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     @Override
     @Transactional
     @TemplateExport(name = "职级标准列表", query = RankStandardCatalogListServiceImpl.RankStandardCatalogListReqQuery.class, convert = RankStandardCatalogListServiceImpl.RankStandardCatalogListRspConvert.class)
-    //职级标准列表查询
     public ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>> rankStandardCatalogListQuery(@RequestBody @Valid RequestMessage<RankStandardCatalogListQueryReq> reqMsg) {
         ResponseMessage<RankStandardCatalogListQueryRsp> rspMsg = null;
         try {
@@ -60,9 +74,16 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
         }
     }
 
+    /**
+     * 
+     * Description: 职级标准列表保存
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     @Override
     @Transactional
-    //职级标准列表保存
     public ResponseEntity<ResponseMessage<Object>> rankStandardCatalogListSave(@RequestBody @Valid RequestMessage<RankStandardCatalogListSaveReq> reqMsg) {
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -85,9 +106,16 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
         }
     }
 
+    /**
+     * 
+     * Description: 职级标准列表删除
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     @Override
     @Transactional
-    //职级标准列表删除
     public ResponseEntity<ResponseMessage<Object>> rankStandardCatalogListDelete(@RequestBody @Valid RequestMessage<RankStandardCatalogListDeleteReq> reqMsg) {
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -110,11 +138,16 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
         }
     }
 
+    /**
+     * 
+     * Description: 查询子职级列表
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     @Override
     @Transactional
-    /**查询子职级列表
-    * xphe  20200508
-     */
     public ResponseEntity<ResponseMessage<RankStandardCatalogSonQueryRsq>> rankStandardCatalogSonQuery(@RequestBody @Valid RequestMessage<RankStandardCatalogSonQueryReq> reqMsg) {
         ResponseMessage<RankStandardCatalogSonQueryRsq> rspMsg = null;
         try {
@@ -133,6 +166,37 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
             return new ResponseEntity<ResponseMessage<RankStandardCatalogSonQueryRsq>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * 
+     * Description: 查询管理开发职级列表
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>> ranStandardCatalogManagerQuery(@RequestBody @Valid RequestMessage<RankStandardCatalogListQueryReq> reqMsg) {
+        ResponseMessage<RankStandardCatalogListQueryRsp> rspMsg = null;
+        try {
+            RankStandardCatalogListQueryReq request = reqMsg.getMessage();
+            RankStandardCatalogListQueryRsp response = rankStandardCatalogListServiceImpl.ranStandardCatalogManagerQuery(request);
+            rspMsg = new ResponseMessage<RankStandardCatalogListQueryRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>>(rspMsg, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("职级标准列表查询：" + reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            return new ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
