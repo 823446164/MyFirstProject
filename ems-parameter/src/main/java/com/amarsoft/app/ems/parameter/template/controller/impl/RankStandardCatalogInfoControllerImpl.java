@@ -17,6 +17,7 @@ import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogInfoSe
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoSaveReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoSaveRsq;
 
 /**
  * 职级标准详情Controller实现类
@@ -55,15 +56,15 @@ public class RankStandardCatalogInfoControllerImpl implements RankStandardCatalo
     @Override
     @Transactional
     //职级标准详情保存
-    public ResponseEntity<ResponseMessage<Object>> rankStandardCatalogInfoSave(@RequestBody @Valid RequestMessage<RankStandardCatalogInfoSaveReq> reqMsg){
-        ResponseMessage<Object> rspMsg = null;
+    public ResponseEntity<ResponseMessage<RankStandardCatalogInfoSaveRsq>> rankStandardCatalogInfoSave(@RequestBody @Valid RequestMessage<RankStandardCatalogInfoSaveReq> reqMsg){
+        ResponseMessage<RankStandardCatalogInfoSaveRsq> rspMsg = null;
         try {
             RankStandardCatalogInfoSaveReq request = reqMsg.getMessage();
             
-            rankStandardCatalogInfoServiceImpl.rankStandardCatalogInfoSave(request);
-            rspMsg = new ResponseMessage<Object>();
+            RankStandardCatalogInfoSaveRsq response=  rankStandardCatalogInfoServiceImpl.rankStandardCatalogInfoSave(request);
+            rspMsg = new ResponseMessage<RankStandardCatalogInfoSaveRsq>(response);
 
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+            return new ResponseEntity<ResponseMessage<RankStandardCatalogInfoSaveRsq>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
                 log.error("职级标准详情保存："+ reqMsg.toString(), e);
@@ -72,7 +73,7 @@ public class RankStandardCatalogInfoControllerImpl implements RankStandardCatalo
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<ResponseMessage<RankStandardCatalogInfoSaveRsq>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
