@@ -1,6 +1,13 @@
-/**
- * 员工能力标签查询
- * 根据接口定义的excel文档自动生成实体，由AutoCreateCoder.class的test方法批量生成。
+
+/*
+ * 文件名：EmployeeLabelControllerImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：员工能力标签查询controller实现类
+ * 修改人：xszhou
+ * 修改时间：2020/5/9
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
  */
 package com.amarsoft.app.ems.employee.employee.controller.impl;
 
@@ -19,11 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.amarsoft.app.ems.employee.employee.cs.dto.employeeabilitylabels.EmployeeAbilityLabelsReq;
 import com.amarsoft.app.ems.employee.employee.cs.dto.employeeabilitylabels.EmployeeAbilityLabelsRsp;
 import com.amarsoft.app.ems.employee.service.EmployeeLabelService;
-/**
- * 员工能力标签查询controller实现类
- * @author xszhou
- *
- */
+
 @Slf4j
 @RestController
 public class EmployeeLabelControllerImpl implements EmployeeLabelController {
@@ -32,7 +35,17 @@ public class EmployeeLabelControllerImpl implements EmployeeLabelController {
 	
     @Override
     @Transactional
-    //员工标签查询
+    /**
+     * Description: <br>
+     * 1、员工标签查询<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * ${tags}
+     * @see
+     */
     public ResponseEntity<ResponseMessage<EmployeeAbilityLabelsRsp>> employeeAbilityLabels(@RequestBody @Valid RequestMessage<EmployeeAbilityLabelsReq> reqMsg){
         ResponseMessage<EmployeeAbilityLabelsRsp> rspMsg = null;
         try {

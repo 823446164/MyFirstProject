@@ -27,4 +27,5 @@ public class OrgAndTeam implements Serializable{
     @Description("部门名称")
     @Length(max=80)
     private String orgName;
+    
 }

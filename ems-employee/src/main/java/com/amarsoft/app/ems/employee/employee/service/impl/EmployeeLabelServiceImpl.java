@@ -1,3 +1,13 @@
+/*
+ * 文件名：EmployeeLabelServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：员工历史职级对应的标签查询
+ * 修改人：xszhou
+ * 修改时间：2020/5/9
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.employee.employee.service.impl;
 
 import java.util.ArrayList;
@@ -14,18 +24,21 @@ import com.amarsoft.app.ems.employee.entity.EmployeeRank;
 import com.amarsoft.app.ems.employee.service.EmployeeLabelService;
 
 
-/**
- * 员工能力标签查询service的实现类:能力画像
 
- * @author xszhou
- *
- */
 @Service
 public class EmployeeLabelServiceImpl implements EmployeeLabelService{
 	
-	/**
-	 * 员工对应历史职级标签查询
-	 */
+    /**
+     * Description: <br>
+     * 1、员工对应历史职级标签查询<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * ${tags}
+     * @see
+     */
 	@Override
 	public EmployeeAbilityLabelsRsp employeeLabelQuery(@Valid EmployeeAbilityLabelsReq req) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();

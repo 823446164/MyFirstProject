@@ -55,4 +55,5 @@ public interface TeamController {
     public ResponseEntity<ResponseMessage<LevelTeamQueryRsp>> levelTeamQuery(@RequestBody @Valid RequestMessage<LevelTeamQueryReq> reqMsg);
     @PostMapping(value = "/team/getteamid", name="按法人查询团队", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<GetTeamIdRsp>> getTeamId();
+    
 }

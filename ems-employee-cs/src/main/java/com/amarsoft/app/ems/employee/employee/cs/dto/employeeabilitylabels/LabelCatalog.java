@@ -23,5 +23,4 @@ public class LabelCatalog implements Serializable{
     @NotEmpty
     @Length(max=80)
     private String labelName;
-
 }

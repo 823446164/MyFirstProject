@@ -23,4 +23,5 @@ public class EmployeeAbilityLabelsReq implements Serializable{
     @NotEmpty
     @Length(max=80)
     private String employeeNo;
+    
 }

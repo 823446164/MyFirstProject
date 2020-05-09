@@ -1,6 +1,12 @@
-/**
- * 新增团队信息
- * 根据接口定义的excel文档自动生成实体，由AutoCreateCoder.class的test方法批量生成。
+/*
+ * 文件名：TeamController
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：团队信息controller实现类
+ * 修改人：xszhou
+ * 修改时间：2020/5/9
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
  */
 package com.amarsoft.app.ems.system.controller.impl;
 
@@ -208,7 +214,18 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<GetTeamIdRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
+    /**
+     * Description: <br>
+     * 1、更新员工团队信息<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * ${tags}
+     * @see
+     */
 	@Override
 	public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@RequestBody @Valid RequestMessage<UpdateUserTeamReq> reqMsg) {
 		ResponseMessage<Object> rspMsg = null;
@@ -225,9 +242,17 @@ public class TeamControllerImpl implements TeamController {
         }
 	}
 
-	/**
-	 * 部门团队列表展示
-	 */
+    /**
+     * Description: <br>
+     * 1、部门团队列表展示<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * ${tags}
+     * @see
+     */
 	@Override
 	public ResponseEntity<ResponseMessage<TeamOrgQueryRsp>> teamOrgQuery(@Valid RequestMessage<TeamOrgQueryReq> reqMsg) {
 		ResponseMessage<TeamOrgQueryRsp> rspMsg = null;

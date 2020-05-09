@@ -18,4 +18,5 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface EmployeeLabelController {
     @PostMapping(value = "/ability/employeelabels", name="员工能力标签查询", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<EmployeeAbilityLabelsRsp>> employeeAbilityLabels(@RequestBody @Valid RequestMessage<EmployeeAbilityLabelsReq> reqMsg);
+
 }

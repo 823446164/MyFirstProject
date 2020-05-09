@@ -1,3 +1,13 @@
+/*
+ * 文件名：TeamServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：团队服务的处理接口
+ * 修改人：xszhou
+ * 修改时间：2020/5/9
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.system.service;
 
 import javax.validation.Valid;
@@ -19,10 +29,7 @@ import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 
-/**
- * 团队服务的处理接口
- * @author hzhang23
- */
+
 public interface TeamService {
     /**
      * 添加团队信息
@@ -43,8 +50,15 @@ public interface TeamService {
     void addTeamUser(AddTeamUserReq req);
     
     /**
-     * 更新员工团队
-     * @param req
+     * Description: <br>
+     * 1、更新员工团队<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * ${tags}
+     * @see
      */
     void updateUserTeam(UpdateUserTeamReq req);
     /**
@@ -81,7 +95,15 @@ public interface TeamService {
     GetTeamIdRsp getTeamId();
     
     /**
-     * 部门团队列表展示
+     * Description: <br>
+     * 1、部门团队列表展示<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * ${tags}
+     * @see
      */
     TeamOrgQueryRsp orgTeamListQuery(@Valid TeamOrgQueryReq req);
 }

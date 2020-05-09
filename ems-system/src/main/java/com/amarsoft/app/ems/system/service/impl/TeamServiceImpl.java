@@ -1,3 +1,13 @@
+/*
+ * 文件名：TeamServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：团队关联信息service实现类
+ * 修改人：xszhou
+ * 修改时间：2020/5/9
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.system.service.impl;
 
 import java.util.ArrayList;
@@ -354,7 +364,15 @@ public class TeamServiceImpl implements TeamService {
     }
     
     /**
-    * 更新员工团队信息
+     * Description: <br>
+     * 1、更新员工团队信息<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * ${tags}
+     * @see
      */
 	@Override
 	@Transactional
@@ -373,9 +391,17 @@ public class TeamServiceImpl implements TeamService {
 		
 	}
 
-	/**
-	 * 部门团队列表展示
-	 */
+    /**
+     * Description: <br>
+     * 1、部门团队列表展示<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * ${tags}
+     * @see
+     */
 	@Override
 	public TeamOrgQueryRsp orgTeamListQuery(@Valid TeamOrgQueryReq req) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
