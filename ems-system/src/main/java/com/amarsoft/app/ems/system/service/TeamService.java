@@ -1,4 +1,16 @@
+/*
+ * 文件名：TeamServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：团队服务的处理接口
+ * 修改人：xszhou
+ * 修改时间：2020/5/9
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.system.service;
+
+import javax.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
 
@@ -9,15 +21,15 @@ import com.amarsoft.app.ems.system.cs.dto.deleteteamuser.DeleteTeamUserReq;
 import com.amarsoft.app.ems.system.cs.dto.getteamid.GetTeamIdRsp;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
+import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 
-/**
- * 团队服务的处理接口
- * @author hzhang23
- */
+
 public interface TeamService {
     /**
      * 添加团队信息
@@ -36,6 +48,13 @@ public interface TeamService {
      * @param req
      */
     void addTeamUser(AddTeamUserReq req);
+    
+    /**
+     * Description:更新员工团队<br>
+     * ${tags}
+     * @see
+     */
+    void updateUserTeam(UpdateUserTeamReq req);
     /**
      * 删除团队用户
      * @param req
@@ -68,4 +87,11 @@ public interface TeamService {
      * 获取团队编号
      */
     GetTeamIdRsp getTeamId();
+    
+    /**
+     * Description:部门团队列表展示<br>
+     * ${tags}
+     * @see
+     */
+    TeamOrgQueryRsp orgTeamListQuery(@Valid TeamOrgQueryReq req);
 }
