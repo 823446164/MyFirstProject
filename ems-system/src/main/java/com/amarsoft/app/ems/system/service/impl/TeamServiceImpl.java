@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
+import com.amarsoft.app.ems.system.cs.dto.teamorgquery.OrgAndTeam;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.DataAuth;
 import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.amps.arem.exception.ALSException;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
@@ -28,11 +32,15 @@ import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
+import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userquery.User;
+import com.amarsoft.app.ems.system.entity.OrgInfo;
 import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.entity.UserBelong;
@@ -344,4 +352,49 @@ public class TeamServiceImpl implements TeamService {
         rsp.setTeamId(team.getKeyString());
         return rsp;
     }
+    
+    /**
+    * 更新员工团队信息
+     */
+	@Override
+	@Transactional
+	public void updateUserTeam(UpdateUserTeamReq req) {
+		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+		UserTeam userTeam = null;
+		List<UserTeam> userTeams = bomanager.loadBusinessObjects(UserTeam.class, "userId=:userId", "userId",req.getEmployeeNo());
+//		List<BusinessObject> userTeams = bomanager.selectBusinessObjectsBySql("select teamId as TeamId from UserTeam where userId=:userId", "userId",req.getEmployeeNo()).getBusinessObjects();
+		if (!StringUtils.isEmpty(userTeams)) {// 如果员工有对应的团队，则执行更新团队的操作
+			userTeam = userTeams.get(0);
+			userTeam.setTeamId(req.getTeamId());
+			bomanager.updateBusinessObject(userTeam);
+			bomanager.clear();
+			bomanager.updateDB();
+		}
+		
+	}
+
+	/**
+	 * 部门团队列表展示
+	 */
+	@Override
+	public TeamOrgQueryRsp orgTeamListQuery(@Valid TeamOrgQueryReq req) {
+		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+		TeamOrgQueryRsp rsp = new TeamOrgQueryRsp();
+		List<OrgAndTeam> orgTeams = new ArrayList<OrgAndTeam>();
+		OrgAndTeam orgTeam = null;
+		List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
+				"select OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName from OrgTeam OT,TeamInfo TI,OrgInfo OI where OT.teamId = TI.teamId and OT.orgId = OI.orgId order by OT.orgId").getBusinessObjects();
+		if (!StringUtils.isEmpty(orgTeamLists)) {
+			for (BusinessObject businessObject : orgTeamLists) {
+				orgTeam = new OrgAndTeam();
+				orgTeam.setOrgId(businessObject.getString("OrgId"));
+				orgTeam.setOrgName(businessObject.getString("OrgName"));
+				orgTeam.setTeamId(businessObject.getString("TeamId"));
+				orgTeam.setTeamName(businessObject.getString("TeamName"));
+				orgTeams.add(orgTeam);
+			}
+		}
+		rsp.setOrgTeams(orgTeams);
+		return rsp;
+	}
 }

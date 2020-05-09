@@ -17,7 +17,6 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.amarsoft.amps.acsc.annotation.CodeQuery;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
@@ -29,10 +28,13 @@ import com.amarsoft.app.ems.system.cs.dto.deleteteamuser.DeleteTeamUserReq;
 import com.amarsoft.app.ems.system.cs.dto.getteamid.GetTeamIdRsp;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
+import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.TeamService;
 
@@ -64,7 +66,7 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     @Override
     @Transactional
     public ResponseEntity<ResponseMessage<Object>> updateTeam(@RequestBody @Valid RequestMessage<UpdateTeamReq> reqMsg){
@@ -206,4 +208,43 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<GetTeamIdRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+	@Override
+	public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@RequestBody @Valid RequestMessage<UpdateUserTeamReq> reqMsg) {
+		ResponseMessage<Object> rspMsg = null;
+        try {
+            teamService.updateUserTeam(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("更新员工团队请求报文："+ reqMsg.toString(), e);
+            }
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901002",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+	}
+
+	/**
+	 * 部门团队列表展示
+	 */
+	@Override
+	public ResponseEntity<ResponseMessage<TeamOrgQueryRsp>> teamOrgQuery(@Valid RequestMessage<TeamOrgQueryReq> reqMsg) {
+		ResponseMessage<TeamOrgQueryRsp> rspMsg = null;
+        try {
+        	TeamOrgQueryReq req = reqMsg.getMessage();
+        	TeamOrgQueryRsp rsp = teamService.orgTeamListQuery(req);
+        	rspMsg = new ResponseMessage<TeamOrgQueryRsp>(rsp);
+            return new ResponseEntity<ResponseMessage<TeamOrgQueryRsp>>(rspMsg, HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("查询部门团队信息失败：", e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamOrgQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+	}
+
 }
