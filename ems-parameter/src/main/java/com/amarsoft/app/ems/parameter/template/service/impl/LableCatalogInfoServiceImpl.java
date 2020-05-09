@@ -1,3 +1,13 @@
+/*
+ * 文件名：LableCatalogInfoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：为LableCatalogInfo模板提供方法
+ * 修改人：yrong
+ * 修改时间：2020年5月9日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新增标签目录详情查询，选中目录查询标签，标签目录保存
+ */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
 
@@ -26,16 +36,6 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloginfo.LableCata
 import com.amarsoft.app.ems.parameter.template.cs.dto.labledescribeinfo.LableDescribeInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloginfo.LableCatalogInfo;
 
-
-/**
- * 
- * 为LabelCatalogInfo模板提供方法
- * 标签目录详情查询，选中目录查询标签，标签目录保存
- * @author amarsoft
- * @version 2020年5月9日
- * @see LableCatalogInfoServiceImpl
- * @since
- */
 @Slf4j
 @Service
 public class LableCatalogInfoServiceImpl implements LableCatalogInfoService {
@@ -107,15 +107,7 @@ public class LableCatalogInfoServiceImpl implements LableCatalogInfoService {
             lableCatalogInfoQueryRsp.setLableCatalogInfos(lableCatalogInfoLists);
         }
         return lableCatalogInfoQueryRsp;
-    }
-    
-    
-    
-    
-    
-    
-    
-    
+    } 
     
     /**
      * 标签目录保存
@@ -147,10 +139,6 @@ public class LableCatalogInfoServiceImpl implements LableCatalogInfoService {
                     
             }
             BeanUtils.copyProperties(lableCatalogInfo, lc);
-//            lc.setSerialNo(lableCatalogInfoSaveReq.getSerialNo());
-//            lc.setLabelName(lableCatalogInfoSaveReq.getLabelName());
-//            lc.setParentNo(lableCatalogInfoSaveReq.getParentNo());
-//            lc.setCatalogRemark(lableCatalogInfoSaveReq.getCatalogRemark());
             bomanager.updateBusinessObject(lc);           
         }        
         bomanager.updateDB(); 

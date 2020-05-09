@@ -1,3 +1,13 @@
+/*
+ * 文件名：LableDescribeInfoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：为LabelDescribeInfo模板提供方法
+ * 修改人：yrong
+ * 修改时间：${2020年5月9日}
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新增标签详情查询,标签生效,标签失效功能
+ */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
 
@@ -22,17 +32,6 @@ import com.amarsoft.app.ems.parameter.entity.LableCatalog;
 import com.amarsoft.app.ems.parameter.entity.LableDescribe;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labledescribeinfo.LableDescribeInfo;
 
-
-/**
- * 
- * 为LabelDescribeInfo模板提供方法
- * 标签详情查询,标签生效,标签失效
- * @author amarsoft
- * @version 2020年5月9日
- * @see LableDescribeInfoServiceImpl
- * @since
- */
-
 @Slf4j
 @Service
 public class LableDescribeInfoServiceImpl implements LableDescribeInfoService {
@@ -52,9 +51,7 @@ public class LableDescribeInfoServiceImpl implements LableDescribeInfoService {
              + "LD.serialNo as serialNo,LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.levelDescribe as levelDescribe"
              + " from  LableCatalog LC,LableDescribe LD" + " where LD.labelNo = LC.serialNo and LC.serialNo=:serialNo",
             "serialNo", lableDescribeInfoQueryReq.getSerialNo());
-//        System.out.println("111");
-        List<BusinessObject> lableDescribeInfoQueryRspBoList = lableDescribeInfoQueryRspBoa.getBusinessObjects();
-//        System.out.println("222");       
+        List<BusinessObject> lableDescribeInfoQueryRspBoList = lableDescribeInfoQueryRspBoa.getBusinessObjects();    
         if (lableDescribeInfoQueryRspBoList != null && lableDescribeInfoQueryRspBoList.size() > 0) {
             List<LableDescribeInfo> lableDescribeLists = new ArrayList<LableDescribeInfo>();
             for(int i =0;i<lableDescribeInfoQueryRspBoList.size();i++) {

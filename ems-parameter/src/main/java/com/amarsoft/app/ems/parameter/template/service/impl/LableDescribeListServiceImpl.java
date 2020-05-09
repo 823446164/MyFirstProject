@@ -1,3 +1,13 @@
+/*
+ * 文件名：LableDescribeListServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：为LableDescribeList模板提供方法:标签查询,标签保存,标签删除
+ * 修改人：yrong
+ * 修改时间：${2020年5月9日}
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新增标签查询,标签保存,标签删除功能
+ */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,15 +35,7 @@ import com.amarsoft.app.ems.parameter.entity.LableCatalog;
 import com.amarsoft.app.ems.parameter.entity.LableDescribe;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labledescribelist.LableDescribeListDeleteReq;
 
-/**
- * 
- * 为LabelDescribeInfo模板提供方法
- * 标签查询,标签保存,标签删除
- * @author amarsoft
- * @version 2020年5月9日
- * @see LableDescribeListServiceImpl
- * @since
- */
+
 @Slf4j
 @Service
 public class LableDescribeListServiceImpl implements LableDescribeListService{
@@ -57,8 +59,7 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
     public static class LableDescribeListRspConvert implements Convert<LableDescribeList> {
         @Override
         public LableDescribeList apply(BusinessObject bo) {
-            LableDescribeList temp = new LableDescribeList();
-                
+            LableDescribeList temp = new LableDescribeList();                
             //查询到的数据转换为响应实体
             temp.setLabelName(bo.getString("LabelName"));
             temp.setCodeNo(bo.getString("CodeNo"));
@@ -143,9 +144,7 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
     public void lableDescribeListSaveAction(List<LableDescribeList> lableDescribeLists){
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if(lableDescribeLists!=null){
-            
             for(LableDescribeList lableDescribeListTmp :lableDescribeLists){
-              //新增或更新label_describe表
                 LableDescribe ld = bomanager.loadBusinessObject(LableDescribe.class, lableDescribeListTmp.getLabelNo());
                 if(ld==null) {
                     ld = new LableDescribe();
@@ -153,8 +152,6 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
                 }
                 BeanUtils.copyProperties(lableDescribeListTmp, ld);
                 bomanager.updateBusinessObject(ld);
-           
-              //新增或更新label_catalog表
               LableCatalog lc = bomanager.keyLoadBusinessObject(LableCatalog.class, lableDescribeListTmp.getSerialNo());
             if(lc==null) {
                 lc = new LableCatalog();

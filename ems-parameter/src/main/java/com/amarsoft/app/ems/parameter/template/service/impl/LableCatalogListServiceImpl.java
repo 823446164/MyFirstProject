@@ -1,4 +1,15 @@
+/*
+ * 文件名：LableCatalogListServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：为LableCatalogList模板提供方法
+ * 修改人：yrong
+ * 修改时间：2020年5月9日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新增标签详情查询,标签生效,标签失效功能
+ */
 package com.amarsoft.app.ems.parameter.template.service.impl;
+
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,42 +33,32 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloglist.LableCata
 import com.amarsoft.app.ems.parameter.entity.LableCatalog;
 import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloglist.LableCatalogListDeleteReq;
 
-/**
- * 
- * 为LabelCatalogList模板提供方法
- * 〈功能详细描述〉
- * @author amarsoft
- * @version 2020年5月9日
- * @see LableCatalogListServiceImpl
- * @since
- */
-@Slf4j 
+@Slf4j
 @Service
-public class LableCatalogListServiceImpl implements LableCatalogListService{
+public class LableCatalogListServiceImpl implements LableCatalogListService {
     /**
-                   * 查询结果集
+     * 查询结果集
      */
     public static class LableCatalogListReqQuery implements RequestQuery<LableCatalogListQueryReq> {
-        @Override 
+        @Override
         public Query apply(LableCatalogListQueryReq lableCatalogListQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(lableCatalogListQueryReq, LableCatalogList.class);
-            
+
             String sql = "select LC.serialNo as serialNo,LC.labelName as labelName,LC.parentNo as parentNo,LC.catalogRemark as catalogRemark,LC.author as author,LC.version as version,LC.inputUserId as inputUserId,LC.inputTime as inputTime,LC.inputOrgId as inputOrgId,LC.updateUserId as updateUserId,LC.updateTime as updateTime,LC.updateOrgId as updateOrgId"
-                +" from LABEL_CATALOG LC"
-                +" where 1=1";
+                         + " from LABEL_CATALOG LC" + " where 1=1";
             return queryProperties.assembleSql(sql);
         }
     }
 
     /**
-                  * 查询到的数据转换为响应实体
+     * 查询到的数据转换为响应实体
      */
     public static class LableCatalogListRspConvert implements Convert<LableCatalogList> {
         @Override
         public LableCatalogList apply(BusinessObject bo) {
             LableCatalogList temp = new LableCatalogList();
-                
-            //查询到的数据转换为响应实体
+
+            // 查询到的数据转换为响应实体
             temp.setSerialNo(bo.getString("SerialNo"));
             temp.setLabelName(bo.getString("LabelName"));
             temp.setParentNo(bo.getString("ParentNo"));
@@ -70,13 +71,14 @@ public class LableCatalogListServiceImpl implements LableCatalogListService{
             temp.setUpdateUserId(bo.getString("UpdateUserId"));
             temp.setUpdateTime(bo.getString("UpdateTime"));
             temp.setUpdateOrgId(bo.getString("UpdateOrgId"));
-            
+
             return temp;
         }
     }
 
     /**
      * 标签目录树图多记录查询
+     * 
      * @param request
      * @return
      */
@@ -84,40 +86,31 @@ public class LableCatalogListServiceImpl implements LableCatalogListService{
     @Transactional
     public LableCatalogListQueryRsp lableCatalogListQuery(@Valid LableCatalogListQueryReq lableCatalogListQueryReq) {
         LableCatalogListQueryRsp lableCatalogListQueryRsp = new LableCatalogListQueryRsp();
-        
+
         Query query = new LableCatalogListReqQuery().apply(lableCatalogListQueryReq);
         String fullsql = query.getSql();
-        
+
         LableCatalogListRspConvert convert = new LableCatalogListRspConvert();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(lableCatalogListQueryReq.getBegin(), lableCatalogListQueryReq.getPageSize(), fullsql, query.getParam());
+        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(lableCatalogListQueryReq.getBegin(),
+            lableCatalogListQueryReq.getPageSize(), fullsql, query.getParam());
         List<BusinessObject> businessObjectList = boa.getBusinessObjects();
-        
-        if(null != businessObjectList && !businessObjectList.isEmpty()) {
+
+        if (null != businessObjectList && !businessObjectList.isEmpty()) {
             List<LableCatalogList> lableCatalogLists = new ArrayList<LableCatalogList>();
-            for(BusinessObject bo : businessObjectList) {
-                //查询到的数据转换为响应实体
+            for (BusinessObject bo : businessObjectList) {
+                // 查询到的数据转换为响应实体
                 lableCatalogLists.add(convert.apply(bo));
             }
             lableCatalogListQueryRsp.setLableCatalogLists(lableCatalogLists);
         }
-        lableCatalogListQueryRsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));   
+        lableCatalogListQueryRsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
         return lableCatalogListQueryRsp;
     }
 
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
      * 标签目录树图多记录保存
+     * 
      * @param request
      * @return
      */
@@ -125,24 +118,25 @@ public class LableCatalogListServiceImpl implements LableCatalogListService{
     public void lableCatalogListSave(@Valid LableCatalogListSaveReq lableCatalogListSaveReq) {
         lableCatalogListSaveAction(lableCatalogListSaveReq.getLableCatalogLists());
     }
+
     /**
      * 标签目录树图多记录保存
+     * 
      * @param
      * @return
      */
     @Transactional
-    public void lableCatalogListSaveAction(List<LableCatalogList> lableCatalogLists){
+    public void lableCatalogListSaveAction(List<LableCatalogList> lableCatalogLists) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if(lableCatalogLists!=null){
-            for(LableCatalogList lableCatalogListTmp :lableCatalogLists){
-            }
+        if (lableCatalogLists != null) {
+            for (LableCatalogList lableCatalogListTmp : lableCatalogLists) {}
         }
         bomanager.updateDB();
     }
 
-
     /**
      * 标签目录删除
+     * 
      * @param request
      * @return
      */
@@ -150,18 +144,20 @@ public class LableCatalogListServiceImpl implements LableCatalogListService{
     @Transactional
     public void lableCatalogListDelete(@Valid LableCatalogListDeleteReq lableCatalogListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        LableCatalog lableCatalog=bomanager.keyLoadBusinessObject(LableCatalog.class, lableCatalogListDeleteReq.getSerialNo());
-       //根据LabelType码值0为标签目录，1为标签。判断是要删除标签还是目录
-        if(lableCatalog.getLabelType()=="1"){
-            if(lableCatalog.getLabelStatus()=="3") {
+        LableCatalog lableCatalog = bomanager.keyLoadBusinessObject(LableCatalog.class, lableCatalogListDeleteReq.getSerialNo());
+        // 根据LabelType码值0为标签目录，1为标签。判断是要删除标签还是目录
+        if (lableCatalog.getLabelType() == "1") {
+            if (lableCatalog.getLabelStatus() == "3") {
                 bomanager.deleteBusinessObject(lableCatalog);
-            }else {
+            }
+            else {
                 System.out.println("此标签不为失效标签，无法删除");
             }
-        }else {
-            
         }
-        
+        else {
+ 
+        }
+
         bomanager.deleteBusinessObject(lableCatalog);
         // TODO 关联表数据如需删除的话，请自行补充代码
         bomanager.updateDB();
