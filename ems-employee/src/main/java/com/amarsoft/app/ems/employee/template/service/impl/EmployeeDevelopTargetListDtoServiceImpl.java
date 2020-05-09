@@ -1,3 +1,13 @@
+/*
+ * 文件名：EmployeeDevelopTargetListDtoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：修改方法employeeDevelopTargetListDtoDelete
+ * 修改人：dxiao
+ * 修改时间：2020/05/09
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.employee.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +35,7 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdt
 import com.amarsoft.app.ems.employee.entity.EmployeeDevelopTarget;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoDeleteReq;
 
-/**
- * 员工成长目标跟踪ListService实现类
- * @author dxiao
- */
+
 @Slf4j
 @Service
 public class EmployeeDevelopTargetListDtoServiceImpl implements EmployeeDevelopTargetListDtoService{
