@@ -1,26 +1,27 @@
 /*
- * 文件名：LabelStandardType.java
+ * 文件名：MasteryThree.java
  * 版权：Copyright by www.amarsoft.com
- * 描述：指标类型（RANK_STANDARD_ITEMS表）
+ * 描述：指标类型（RANK_STANDARD_ITEMS表）-掌握程度三类
  * 修改人：yqchen1
- * 修改时间：2020年5月8日
+ * 修改时间：2020年5月9日
  * 跟踪单号：
  * 修改单号：
  * 修改内容：
  */
 
-package com.amarsoft.aecd.parameter.constant;
+package com.amarsoft.aecd.employee.constant;
 
-public enum LabelStandardType {
+public enum MasteryThree {
 	
-	Basic("1","公共基础型"),
-	Optional("2","可选加分型"),
+	_1("1","一般"),
+	_2("2","良好"),
+	_3("3","优秀"),
 	;
 	
 	public final String id;
 	public final String name;
 	
-	private LabelStandardType(String id, String name) {
+	private MasteryThree(String id, String name) {
 		this.id = id;
 		this.name = name;
 	}
@@ -32,7 +33,7 @@ public enum LabelStandardType {
 	 * @return
 	 */
 	public static boolean isExist(String id) {
-		return Basic.id.equals(id) || Optional.id.equals(id);
+		return _1.id.equals(id) || _2.id.equals(id) || _3.id.equals(id);
 	}
 
 	/**
@@ -42,9 +43,9 @@ public enum LabelStandardType {
 	 * @return
 	 */
 	public static String getNameById(String id) {
-		for (LabelStandardType labelStandardType : LabelStandardType.values()) {
-			if (labelStandardType.id.equalsIgnoreCase(id)) {
-				return labelStandardType.name;
+		for (MasteryThree masteryThree : MasteryThree.values()) {
+			if (masteryThree.id.equalsIgnoreCase(id)) {
+				return masteryThree.name;
 			}
 		}
 		return "";
