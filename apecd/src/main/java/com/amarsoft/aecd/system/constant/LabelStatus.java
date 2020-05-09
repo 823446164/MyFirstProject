@@ -35,9 +35,9 @@ public enum LabelStatus {
      * @return
      */
     public static String getNameById(String id) {
-        for(LabelStatus lableStatus : LabelStatus.values()) {
-            if(lableStatus.id.equalsIgnoreCase(id)) {
-                return lableStatus.name;
+        for(LabelStatus labelStatus : LabelStatus.values()) {
+            if(labelStatus.id.equalsIgnoreCase(id)) {
+                return labelStatus.name;
             }
         }
         return "";
