@@ -5,7 +5,7 @@ package com.amarsoft.aecd.system.constant;
  * @author bjmeng
  *
  */
-public enum LableStatus {
+public enum LabelStatus {
 	
 	New("1","新增"),
     Enabled("2","生效"),
@@ -14,7 +14,7 @@ public enum LableStatus {
     public final String id;
     public final String name;
     
-    private LableStatus(String id, String name) {
+    private LabelStatus(String id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -35,7 +35,7 @@ public enum LableStatus {
      * @return
      */
     public static String getNameById(String id) {
-        for(LableStatus lableStatus : LableStatus.values()) {
+        for(LabelStatus lableStatus : LabelStatus.values()) {
             if(lableStatus.id.equalsIgnoreCase(id)) {
                 return lableStatus.name;
             }
