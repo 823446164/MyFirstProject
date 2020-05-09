@@ -48,6 +48,10 @@ public class EmployeeRank extends BusinessObject {
     @Description("职级") 
     @Column(name = "rank", nullable=false,length=40) 
     private String rank;
+    
+    @Description("方向") 
+    @Column(name = "direction", nullable=false,length=40) 
+    private String direction;
       
     @Description("版本") 
     @Column(name = "rankVersion",length=40) 
