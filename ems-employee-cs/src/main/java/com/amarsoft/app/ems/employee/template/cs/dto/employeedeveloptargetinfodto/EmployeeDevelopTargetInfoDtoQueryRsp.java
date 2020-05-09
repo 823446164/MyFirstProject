@@ -15,4 +15,5 @@ import lombok.ToString;
 public class EmployeeDevelopTargetInfoDtoQueryRsp extends EmployeeDevelopTargetInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
     
+    private EmployeeDevelopTargetInfoDto employeeDevelopTargetInfoDto;
 }

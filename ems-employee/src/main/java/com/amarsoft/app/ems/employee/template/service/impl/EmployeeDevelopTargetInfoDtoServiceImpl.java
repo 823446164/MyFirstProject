@@ -2,11 +2,18 @@ package com.amarsoft.app.ems.employee.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.employee.template.service.EmployeeDevelopTargetInfoDtoService;
 import com.amarsoft.app.ems.employee.entity.EmployeeDevelopTarget;
+import com.amarsoft.app.ems.employee.entity.EmployeeProjectExperience;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoSaveReq;
@@ -59,8 +66,8 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
      * @return
      */
     @Override
-    public void employeeDevelopTargetInfoDtoSave(@Valid EmployeeDevelopTargetInfoDtoSaveReq employeeDevelopTargetInfoDtoSaveReq) {
-        employeeDevelopTargetInfoDtoSaveAction(employeeDevelopTargetInfoDtoSaveReq);
+    public Map<String,String> employeeDevelopTargetInfoDtoSave(@Valid EmployeeDevelopTargetInfoDtoSaveReq employeeDevelopTargetInfoDtoSaveReq) {
+        return employeeDevelopTargetInfoDtoSaveAction(employeeDevelopTargetInfoDtoSaveReq);
     }
     /**
      * 员工成长目标跟踪Info单记录保存
@@ -68,10 +75,31 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
      * @return
      */
     @Transactional
-    public void employeeDevelopTargetInfoDtoSaveAction(EmployeeDevelopTargetInfoDto employeeDevelopTargetInfoDto){
+    public Map<String, String> employeeDevelopTargetInfoDtoSaveAction(EmployeeDevelopTargetInfoDto employeeDevelopTargetInfoDto){
+        //获取业务管理对象
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if(employeeDevelopTargetInfoDto!=null){
+            //根据主键获取成长目标跟踪详情
+            EmployeeDevelopTarget employeeDevelopTarget = bomanager.keyLoadBusinessObject(EmployeeDevelopTarget.class,employeeDevelopTargetInfoDto.getSerialNo());
+            //判断新增还是修改
+            if(employeeDevelopTarget == null) {//如果为空则新建对象
+                employeeDevelopTarget = new EmployeeDevelopTarget();
+                //如果主键为空,则新增主键
+                if(employeeDevelopTargetInfoDto.getSerialNo() == null)
+                    employeeDevelopTarget.generateKey();
+            }
+            //将页面属性封装进实体类
+            BeanUtils.copyProperties(employeeDevelopTargetInfoDto, employeeDevelopTarget);
+            //更新业务对象
+            bomanager.updateBusinessObject(employeeDevelopTarget);
+     
         }
+        //提交事务
         bomanager.updateDB();
+        //定义一个map封装返回信息 - 判断是否更新成功
+        Map<String,String> map = new HashMap<String,String>();
+        //定义map,更新成功返回-Y
+        map.put("status", "Y");
+        return map;
     }
 }

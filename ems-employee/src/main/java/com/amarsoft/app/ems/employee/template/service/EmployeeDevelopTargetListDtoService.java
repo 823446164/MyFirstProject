@@ -1,5 +1,7 @@
 package com.amarsoft.app.ems.employee.template.service;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoQueryRsp;
@@ -30,5 +32,5 @@ public interface EmployeeDevelopTargetListDtoService {
      * @param request
      * @return
      */
-    public void employeeDevelopTargetListDtoDelete(@Valid EmployeeDevelopTargetListDtoDeleteReq employeeDevelopTargetListDtoDeleteReq);
+    public Map<String, String> employeeDevelopTargetListDtoDelete(@Valid EmployeeDevelopTargetListDtoDeleteReq employeeDevelopTargetListDtoDeleteReq);
 }

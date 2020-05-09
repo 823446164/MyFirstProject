@@ -11,7 +11,10 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdt
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.util.DTOHelper;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
@@ -24,7 +27,7 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdt
 
 /**
  * 员工成长目标跟踪ListService实现类
- * @author lding
+ * @author dxiao
  */
 @Slf4j
 @Service
@@ -136,12 +139,20 @@ public class EmployeeDevelopTargetListDtoServiceImpl implements EmployeeDevelopT
      */
     @Override
     @Transactional
-    public void employeeDevelopTargetListDtoDelete(@Valid EmployeeDevelopTargetListDtoDeleteReq employeeDevelopTargetListDtoDeleteReq) {
+    public Map<String, String> employeeDevelopTargetListDtoDelete(@Valid EmployeeDevelopTargetListDtoDeleteReq employeeDevelopTargetListDtoDeleteReq) {
+        //获取业务对象
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        //获取要删除的list对象
         EmployeeDevelopTarget employeeDevelopTarget=bomanager.keyLoadBusinessObject(EmployeeDevelopTarget.class, employeeDevelopTargetListDtoDeleteReq.getSerialNo());
+        //执行删除操作
         bomanager.deleteBusinessObject(employeeDevelopTarget);
-        // TODO 关联表数据如需删除的话，请自行补充代码
-        bomanager.updateDB();
+        //事务提交
+        bomanager.updateDB();       
+        //定义一个map封装返回信息 - 判断是否删除成功
+        Map<String,String> map = new HashMap<String,String>();
+        //定义map,删除成功返回-Y
+        map.put("status", "Y");
+        return map;
 
     }
 }
