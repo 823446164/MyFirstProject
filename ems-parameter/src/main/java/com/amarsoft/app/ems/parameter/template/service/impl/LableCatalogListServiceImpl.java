@@ -23,8 +23,13 @@ import com.amarsoft.app.ems.parameter.entity.LableCatalog;
 import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloglist.LableCatalogListDeleteReq;
 
 /**
- * 标签目录树图Service实现类
- * @author ylgao
+ * 
+ * 为LabelCatalogList模板提供方法
+ * 〈功能详细描述〉
+ * @author amarsoft
+ * @version 2020年5月9日
+ * @see LableCatalogListServiceImpl
+ * @since
  */
 @Slf4j 
 @Service
@@ -96,11 +101,21 @@ public class LableCatalogListServiceImpl implements LableCatalogListService{
             }
             lableCatalogListQueryRsp.setLableCatalogLists(lableCatalogLists);
         }
-        lableCatalogListQueryRsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
-        
+        lableCatalogListQueryRsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));   
         return lableCatalogListQueryRsp;
     }
 
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * 标签目录树图多记录保存
      * @param request
@@ -127,7 +142,7 @@ public class LableCatalogListServiceImpl implements LableCatalogListService{
 
 
     /**
-     * 标签目录或标签删除
+     * 标签目录删除
      * @param request
      * @return
      */

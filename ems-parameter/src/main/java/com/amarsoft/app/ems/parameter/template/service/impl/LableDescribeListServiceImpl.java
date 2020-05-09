@@ -26,8 +26,13 @@ import com.amarsoft.app.ems.parameter.entity.LableDescribe;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labledescribelist.LableDescribeListDeleteReq;
 
 /**
- * 标签树图Service实现类
- * @author ylgao
+ * 
+ * 为LabelDescribeInfo模板提供方法
+ * 标签查询,标签保存,标签删除
+ * @author amarsoft
+ * @version 2020年5月9日
+ * @see LableDescribeListServiceImpl
+ * @since
  */
 @Slf4j
 @Service
@@ -40,10 +45,8 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
         public Query apply(LableDescribeListQueryReq lableDescribeListQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(lableDescribeListQueryReq, LableDescribeList.class);
             
-            String sql = "select LC.labelName as labelName,LC.codeNo as codeNo,LC.labelStatus as labelStatus,LC.cataLog as cataLog,LC.rootNo as rootNo,LC.abilityType as abilityType,LC.describe as describe,LC.version as version,LC.inputUserId as inputUserId,LC.inputTime as inputTime,LC.inputOrgId as inputOrgId,LC.updateUserId as updateUserId,LC.updateTime as updateTime,LC.updateOrgId as updateOrgId,"
-                +"LD.serialNo as serialNo,LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.labelDescribe as labelDescribe,LD.inputUserId as inputUserId,LD.inputTime as inputTime,LD.inputOrgId as inputOrgId,LD.updateUserId as updateUserId,LD.updateTime as updateTime,LD.updateOrgId as updateOrgId"
-                +" from LABEL_CATALOG LC,LABEL_DESCRIBE LD"
-                +" where 1=1";
+            String sql =    "select LC.labelName as labelName,LC.codeNo as codeNo,LC.labelStatus as labelStatus,LC.belongCataLog as belongCataLog,LC.rootNo as rootNo,LC.abilityType as abilityType,LC.labelDescribe as labelDescribe,LC.labelVersion as labelVersion,LC.inputUserId as inputUserId,LC.inputTime as inputTime,LC.inputOrgId as inputOrgId,LC.updateUserId as updateUserId,LC.updateTime as updateTime,LC.updateOrgId as updateOrgId,"
+                + "LD.serialNo as serialNo,LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.levelDescribe as levelDescribe" + " from  LableCatalog LC,LableDescribe LD" + " where LD.labelNo = LC.serialNo and LC.serialNo=:serialNo";
             return queryProperties.assembleSql(sql);
         }
     }
@@ -87,7 +90,7 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
     }
 
     /**
-     * 标签树图多记录查询
+     * 标签多记录查询
      * @param request
      * @return
      */
@@ -101,7 +104,7 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
         
         LableDescribeListRspConvert convert = new LableDescribeListRspConvert();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(lableDescribeListQueryReq.getBegin(), lableDescribeListQueryReq.getPageSize(), fullsql, query.getParam());
+        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql( fullsql, query.getParam());
         List<BusinessObject> businessObjectList = boa.getBusinessObjects();
         
         if(null != businessObjectList && !businessObjectList.isEmpty()) {
@@ -117,6 +120,11 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
         return lableDescribeListQueryRsp;
     }
 
+    
+    
+    
+    
+    
     /**
      * 标签树图多记录保存
      * @param request
@@ -127,7 +135,7 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
         lableDescribeListSaveAction(lableDescribeListSaveReq.getLableDescribeLists());
     }
     /**
-     * 标签树图多记录保存
+     * 标签多记录保存
      * @param
      * @return
      */
@@ -161,7 +169,7 @@ public class LableDescribeListServiceImpl implements LableDescribeListService{
 
 
     /**
-     * 标签树图删除
+     * 标签删除
      * @param request
      * @return
      */

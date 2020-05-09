@@ -25,4 +25,10 @@ public class LableCatalogInfoQueryReq implements Serializable {
     @NotEmpty
     @ActualColumn("LC.serialNo")
     private String serialNo;
+    
+    @Description("标签名称")
+    @Length(max=80)
+    @NotEmpty
+    @ActualColumn("LC.labelName")
+    private String labelName;
 }

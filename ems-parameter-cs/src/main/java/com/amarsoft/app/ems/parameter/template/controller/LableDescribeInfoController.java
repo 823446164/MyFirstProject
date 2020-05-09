@@ -21,4 +21,12 @@ public interface LableDescribeInfoController {
 
     @PostMapping(value = "/labledescribeinfo/save", name="标签树图保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> lableDescribeInfoSave(@RequestBody @Valid RequestMessage<LableDescribeInfoSaveReq> reqMsg);
+
+    @PostMapping(value = "/labledescribeinfo/ok", name="标签生效接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> lableStatusOk(@RequestBody @Valid RequestMessage<LableDescribeInfoSaveReq> reqMsg);
+    
+    @PostMapping(value = "/labledescribeinfo/no", name="标签失效接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> lableStatusNo(@Valid RequestMessage<LableDescribeInfoSaveReq> reqMsg);
+
+
 }

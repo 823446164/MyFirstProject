@@ -19,6 +19,10 @@ public interface LableCatalogInfoController {
     @PostMapping(value = "/lablecataloginfo/query", name="标签目录详情查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<LableCatalogInfoQueryRsp>> lableCatalogInfoQuery(@RequestBody @Valid RequestMessage<LableCatalogInfoQueryReq> reqMsg);
 
-    @PostMapping(value = "/lablecataloginfo/save", name="标签目录详情保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/lablecataloginfo/save", name="标签目录保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> lableCatalogInfoSave(@RequestBody @Valid RequestMessage<LableCatalogInfoSaveReq> reqMsg);
+    
+    @PostMapping(value = "/labelBelongCatalog/query", name="选中目录查询标签接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<LableCatalogInfoQueryRsp>> labelBelongCatalogQuery(@RequestBody @Valid RequestMessage<LableCatalogInfoQueryReq> reqMsg);
+
 }

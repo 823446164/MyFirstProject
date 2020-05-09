@@ -3,6 +3,10 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.parameter.template.service.LableCatalogInfoService;
 
 import ch.qos.logback.core.joran.util.beans.BeanUtil;
@@ -18,19 +23,24 @@ import com.amarsoft.app.ems.parameter.entity.LableCatalog;
 import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloginfo.LableCatalogInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloginfo.LableCatalogInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloginfo.LableCatalogInfoSaveReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labledescribeinfo.LableDescribeInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.lablecataloginfo.LableCatalogInfo;
 
 
 /**
- * 标签目录详情Service实现类
  * 
- * @author yrong
+ * 为LabelCatalogInfo模板提供方法
+ * 标签目录详情查询，选中目录查询标签，标签目录保存
+ * @author amarsoft
+ * @version 2020年5月9日
+ * @see LableCatalogInfoServiceImpl
+ * @since
  */
 @Slf4j
 @Service
 public class LableCatalogInfoServiceImpl implements LableCatalogInfoService {
     /** 
-     * 标签目录详情单记录查询
+     * 标签目录详情查询
      * 
      * @param request
      * @return
@@ -61,8 +71,54 @@ public class LableCatalogInfoServiceImpl implements LableCatalogInfoService {
         return null;
     }
 
+    
+    
+    
+    
+    
+    /** 
+     * 选中目录查询标签
+     * 
+     * @param request
+     * @return
+     */
+    @Override
+    @Transactional
+    public LableCatalogInfoQueryRsp labelBelongCatalogQuery(@Valid LableCatalogInfoQueryReq lableCatalogInfoQueryReq) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        LableCatalogInfoQueryRsp lableCatalogInfoQueryRsp = new LableCatalogInfoQueryRsp();
+        System.out.println(lableCatalogInfoQueryReq.getLabelName());
+        BusinessObjectAggregate<BusinessObject> labelBelongCatalogQueryRspBoa = bomanager.selectBusinessObjectsBySql(
+            "select LC.serialNo as serialNo,LC.labelName as labelName,LC.belongCataLog as belongCataLog from LableCatalog LC where LC.belongCataLog =:labelName",
+            "labelName",
+             lableCatalogInfoQueryReq.getLabelName());
+        System.out.println("1111");
+        List<BusinessObject> labelBelongCatalogQueryRspBoList = labelBelongCatalogQueryRspBoa.getBusinessObjects();
+        System.out.println("2222");
+        if (labelBelongCatalogQueryRspBoList != null) {
+            List<LableCatalogInfo> lableCatalogInfoLists = new ArrayList<LableCatalogInfo>();
+            for(int i =0 ;i<labelBelongCatalogQueryRspBoList.size();i++) {
+                BusinessObject labelBelongCatalogQueryRspBo = labelBelongCatalogQueryRspBoList.get(i);
+               
+                LableCatalogInfoQueryRsp lableCatalogInof = new LableCatalogInfoQueryRsp();
+                lableCatalogInof.setLabelName(labelBelongCatalogQueryRspBo.getString("LabelName"));
+                lableCatalogInfoLists.add(lableCatalogInof);
+            }
+            lableCatalogInfoQueryRsp.setLableCatalogInfos(lableCatalogInfoLists);
+        }
+        return lableCatalogInfoQueryRsp;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
-     * 标签目录或标签保存
+     * 标签目录保存
      * 
      * @param request
      * @return
@@ -87,6 +143,8 @@ public class LableCatalogInfoServiceImpl implements LableCatalogInfoService {
             if (lc == null) {
                 lc = new LableCatalog();
                     lc.generateKey();
+                    lableCatalogInfo.getSerialNo();
+                    
             }
             BeanUtils.copyProperties(lableCatalogInfo, lc);
 //            lc.setSerialNo(lableCatalogInfoSaveReq.getSerialNo());
