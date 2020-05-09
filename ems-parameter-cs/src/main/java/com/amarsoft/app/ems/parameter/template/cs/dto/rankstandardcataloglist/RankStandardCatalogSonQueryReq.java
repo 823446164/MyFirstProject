@@ -19,6 +19,7 @@ import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,9 +39,14 @@ import lombok.ToString;
 @QueryRule(groupBy = {})
 public class RankStandardCatalogSonQueryReq implements Serializable{
     private static final long serialVersionUID = 1L;
-    @Description("职级编号")
+    @Description("职等")
     @Length(max=40)
-    @NotEmpty
-    @ActualColumn("RSC.serialNo")
-    private String serialNo;
+    @ActualColumn("RSC.rankStandard")
+    private String rankStandard;
+    
+    @Description("所属团队")
+    @ActualColumn("RSC.belongTeam")
+    private String belongTeam;
+    
+
 }

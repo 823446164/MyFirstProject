@@ -92,6 +92,10 @@ public class RankStandardCatalog extends BusinessObject {
     @Column(name = "updateOrgId",length=40) 
     private String updateOrgId;
     
+    @Description("子职级  ") 
+    @Column(name = "childRankNo",length=10) 
+    private String childRankNo;
+    
     public String getInputTime() {
         DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
         return inputTime.format(sdf);

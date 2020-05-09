@@ -20,6 +20,10 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogListService;
+import com.amarsoft.app.ems.parameter.template.util.ParameterHelper;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListQueryRsp;
 import com.amarsoft.amps.acsc.query.QueryProperties;
@@ -66,8 +70,9 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             QueryProperties queryProperties = DTOHelper.getQueryProperties(rankStandardCatalogListQueryReq, RankStandardCatalogList.class);
 
             String sql = "select RSC.serialNo as serialNo,RSC.rankStandard as rankStandard,RSC.rankName as rankName,RSC.parentRankNo as parentRankNo,RSC.ability as ability,RSC.rankDescribe as rankDescribe,RSC.responeDescribe as responeDescribe,RSC.abilityDescribe as abilityDescribe,RSC.belongTeam as belongTeam,RSC.rankType as rankType,RSC.inputUserId as inputUserId,RSC.inputTime as inputTime,RSC.inputOrgId as inputOrgId,RSC.updateUserId as updateUserId,RSC.updateTime as updateTime,RSC.updateOrgId as updateOrgId"
-                         + " from RANK_STANDARD_CATALOG RSC" + " where 1=1  and RSC.rankType=1 and RSC.belongTeam= :belongTeam ";
-            return queryProperties.assembleSql(sql,"belongTeam",rankStandardCatalogListQueryReq.getBelongTeam());
+                         + " from RANK_STANDARD_CATALOG RSC"
+                         + " where 1=1  and RSC.rankType=1 and RSC.belongTeam= :belongTeam group by RSC.rankStandard";
+            return queryProperties.assembleSql(sql, "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
         }
     }
 
@@ -84,12 +89,12 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
         public RankStandardCatalogList apply(BusinessObject bo) {
             RankStandardCatalogList temp = new RankStandardCatalogList();
 
-            //查询到的数据转换为响应实体
+            // 查询到的数据转换为响应实体
             temp.setSerialNo(bo.getString("SerialNo"));
             temp.setRankStandard(bo.getString("RankStandard"));
             temp.setRankName(bo.getString("RankName"));
-            temp.setParentRankNo(bo.getString("ParentRankNo"));
-            temp.setAbility(bo.getString("Ability"));
+            // temp.setParentRankNo(bo.getString("ParentRankNo"));
+            // temp.setAbility(bo.getString("Ability"));
             temp.setRankDescribe(bo.getString("RankDescribe"));
             temp.setResponeDescribe(bo.getString("ResponeDescribe"));
             temp.setAbilityDescribe(bo.getString("AbilityDescribe"));
@@ -131,7 +136,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
         if (null != businessObjectList && !businessObjectList.isEmpty()) {
             List<RankStandardCatalogList> rankStandardCatalogLists = new ArrayList<RankStandardCatalogList>();
             for (BusinessObject bo : businessObjectList) {
-                //查询到的数据转换为响应实体
+                // 查询到的数据转换为响应实体
                 rankStandardCatalogLists.add(convert.apply(bo));
             }
             rankStandardCatalogListQueryRsp.setRankStandardCatalogLists(rankStandardCatalogLists);
@@ -140,6 +145,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
 
         return rankStandardCatalogListQueryRsp;
     }
+
     /**
      * 
      * Description: 根据团队查询管理下的职级列表
@@ -150,38 +156,51 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
      */
     @Override
     @Transactional
-        public RankStandardCatalogListQueryRsp ranStandardCatalogManagerQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq) {
-            BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-            List<RankStandardCatalog> ranCatalogs=bomanager.loadBusinessObjects(RankStandardCatalog.class, "belongTeam=:belongTeam and rankType=2",
-                "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
-            RankStandardCatalogListQueryRsp response=new RankStandardCatalogListQueryRsp(); 
-            List<RankStandardCatalogList> ranCatalogLists = null;
-            if(!CollectionUtils.isEmpty(ranCatalogs)) {
-                ranCatalogLists=new ArrayList<RankStandardCatalogList>();
-                for(RankStandardCatalog rank:ranCatalogs) {
-                    RankStandardCatalogList rankresponse=new RankStandardCatalogList();
-                    rankresponse.setSerialNo(rank.getSerialNo());
-                    rankresponse.setRankStandard(rank.getRankStandard());
-                    rankresponse.setRankName(rank.getRankName());
-                    rankresponse.setParentRankNo(rank.getParentRankNo());
-                    rankresponse.setAbility(rank.getAbility());
-                    rankresponse.setRankDescribe(rank.getRankDescribe());
-                    rankresponse.setResponeDescribe(rank.getResponeDescribe());
-                    rankresponse.setAbilityDescribe(rank.getAbilityDescribe());
-                    rankresponse.setBelongTeam(rank.getBelongTeam());
-                    rankresponse.setRankType(rank.getRankType());
-                    rankresponse.setInputUserId(rank.getInputUserId());
-                    rankresponse.setInputTime(rank.getInputTime());
-                    rankresponse.setInputOrgId(rank.getInputOrgId());
-                    rankresponse.setUpdateUserId(rank.getUpdateUserId());
-                    rankresponse.setUpdateTime(rank.getUpdateTime());
-                    rankresponse.setUpdateOrgId(rank.getUpdateOrgId());
-                    ranCatalogLists.add(rankresponse);
-                }
+    public RankStandardCatalogListQueryRsp ranStandardCatalogManagerQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        // BusinessObjectAggregate<RankStandardCatalog> EventCalendarObjects = null;
+        // int firstIndex = rankStandardCatalogListQueryReq.getBegin();
+        // int pageSize = rankStandardCatalogListQueryReq.getPageSize();
+        // EventCalendarObjects=bomanager.loadBusinessObjects(RankStandardCatalog.class,firstIndex,pageSize,
+        // "belongTeam=:belongTeam and rankType=2 group by rankStandard",
+        // "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
+        // List<RankStandardCatalog> ranCatalogs=EventCalendarObjects.getBusinessObjects();
+        List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
+            "belongTeam=:belongTeam and rankType=2 group by rankStandard", "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
+        // Integer totalCount = EventCalendarObjects.getAggregate("count(*) as cnt
+        // ").getInt("cnt");
+        RankStandardCatalogListQueryRsp response = new RankStandardCatalogListQueryRsp();
+        List<RankStandardCatalogList> ranCatalogLists = null;
+        if (!CollectionUtils.isEmpty(ranCatalogs)) {
+            ranCatalogLists = new ArrayList<RankStandardCatalogList>();
+            for (RankStandardCatalog rank : ranCatalogs) {
+                RankStandardCatalogList rankresponse = new RankStandardCatalogList();
+                rankresponse.setSerialNo(rank.getSerialNo());
+                rankresponse.setRankStandard(rank.getRankStandard());
+                rankresponse.setRankName(rank.getRankName());
+                // rankresponse.setParentRankNo(rank.getParentRankNo());
+                rankresponse.setAbility(rank.getAbility());
+                rankresponse.setRankDescribe(rank.getRankDescribe());
+                rankresponse.setResponeDescribe(rank.getResponeDescribe());
+                rankresponse.setAbilityDescribe(rank.getAbilityDescribe());
+                rankresponse.setBelongTeam(rank.getBelongTeam());
+                rankresponse.setRankType(rank.getRankType());
+                rankresponse.setInputUserId(rank.getInputUserId());
+                rankresponse.setInputTime(rank.getInputTime());
+                rankresponse.setInputOrgId(rank.getInputOrgId());
+                rankresponse.setUpdateUserId(rank.getUpdateUserId());
+                rankresponse.setUpdateTime(rank.getUpdateTime());
+                rankresponse.setUpdateOrgId(rank.getUpdateOrgId());
+
+                ranCatalogLists.add(rankresponse);
             }
-            response.setRankStandardCatalogLists(ranCatalogLists);
-            return response;
         }
+
+        // response.setTotalCount(totalCount);
+        response.setRankStandardCatalogLists(ranCatalogLists);
+        response.setTotalCount(response.getRankStandardCatalogLists().size());
+        return response;
+    }
 
     /**
      * 
@@ -195,37 +214,39 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     @Transactional
     public RankStandardCatalogSonQueryRsq rankStandardCatalogSonQuery(@Valid RankStandardCatalogSonQueryReq rankStandardCatalogSonQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class, "parentRankNo=:parentRankNo",
-            "parentRankNo", rankStandardCatalogSonQueryReq.getSerialNo());
+        List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
+            "rankStandard=:rankStandard and belongTeam=:belongTeam", "rankStandard", rankStandardCatalogSonQueryReq.getRankStandard(),
+            "belongTeam", rankStandardCatalogSonQueryReq.getBelongTeam());
         RankStandardCatalogSonQueryRsq response = new RankStandardCatalogSonQueryRsq();
         List<RankStandardCatalogList> ranCatalogLists = null;
-            if(!CollectionUtils.isEmpty(ranCatalogs)) {
-                ranCatalogLists=new ArrayList<RankStandardCatalogList>();
-                for(RankStandardCatalog rank:ranCatalogs) {
-                    RankStandardCatalogList rankresponse=new RankStandardCatalogList();
-                    rankresponse.setSerialNo(rank.getSerialNo());
-                    rankresponse.setRankStandard(rank.getRankStandard());
-                    rankresponse.setRankName(rank.getRankName());
-                    rankresponse.setParentRankNo(rank.getParentRankNo());
-                    rankresponse.setAbility(rank.getAbility());
-                    rankresponse.setRankDescribe(rank.getRankDescribe());
-                    rankresponse.setResponeDescribe(rank.getResponeDescribe());
-                    rankresponse.setAbilityDescribe(rank.getAbilityDescribe());
-                    rankresponse.setBelongTeam(rank.getBelongTeam());
-                    rankresponse.setRankType(rank.getRankType());
-                    rankresponse.setInputUserId(rank.getInputUserId());
-                    rankresponse.setInputTime(rank.getInputTime());
-                    rankresponse.setInputOrgId(rank.getInputOrgId());
-                    rankresponse.setUpdateUserId(rank.getUpdateUserId());
-                    rankresponse.setUpdateTime(rank.getUpdateTime());
-                    rankresponse.setUpdateOrgId(rank.getUpdateOrgId());
-                    ranCatalogLists.add(rankresponse);
-                }
-                
+        if (!CollectionUtils.isEmpty(ranCatalogs)) {
+            ranCatalogLists = new ArrayList<RankStandardCatalogList>();
+            for (RankStandardCatalog rank : ranCatalogs) {
+                RankStandardCatalogList rankresponse = new RankStandardCatalogList();
+                rankresponse.setSerialNo(rank.getSerialNo());
+                rankresponse.setRankStandard(rank.getRankStandard());
+                rankresponse.setRankName(rank.getRankName());
+                rankresponse.setChildRankNo(rank.getChildRankNo());
+                rankresponse.setAbility(rank.getAbility());
+                rankresponse.setRankDescribe(rank.getRankDescribe());
+                rankresponse.setResponeDescribe(rank.getResponeDescribe());
+                rankresponse.setAbilityDescribe(rank.getAbilityDescribe());
+                rankresponse.setBelongTeam(rank.getBelongTeam());
+                rankresponse.setRankType(rank.getRankType());
+                rankresponse.setInputUserId(rank.getInputUserId());
+                rankresponse.setInputTime(rank.getInputTime());
+                rankresponse.setInputOrgId(rank.getInputOrgId());
+                rankresponse.setUpdateUserId(rank.getUpdateUserId());
+                rankresponse.setUpdateTime(rank.getUpdateTime());
+                rankresponse.setUpdateOrgId(rank.getUpdateOrgId());
+                ranCatalogLists.add(rankresponse);
             }
-            response.setRankStandardCatalogLists(ranCatalogLists);
-            return response;
-            
+
+        }
+        response.setRankStandardCatalogLists(ranCatalogLists);
+        response.setTotalCount(response.getRankStandardCatalogLists().size());
+        return response;
+
     }
 
     /**
@@ -275,5 +296,23 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
         bomanager.deleteBusinessObject(rankStandardCatalog);
         // TODO 关联表数据如需删除的话，请自行补充代码
         bomanager.updateDB();
+    }
+
+    /**
+     * 
+     * Description: 团队记录查询
+     *
+     * @param teamQueryRep
+     * @return 
+     * @see
+     */
+    @Override
+    @Transactional
+    public TeamQueryRsp rankStandardCatalogTeamQuery(@Valid TeamQueryReq teamQueryRep) {
+        TeamQueryRsp response = new TeamQueryRsp();
+        List<TeamInfo> teamInfos = ParameterHelper.getTeamList();
+        response.setTeamInfos(teamInfos);
+        response.setTotalCount(response.getTeamInfos().size());
+        return response;
     }
 }
