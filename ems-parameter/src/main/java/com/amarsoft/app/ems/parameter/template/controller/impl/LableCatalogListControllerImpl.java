@@ -1,3 +1,13 @@
+/*
+ * 文件名：LableCatalogListControllerImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：LableCatalogListController的实现类
+ * 修改人：yrong
+ * 修改时间：2020年5月9日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：修改注释
+ */
 package com.amarsoft.app.ems.parameter.template.controller.impl;
 
 
@@ -37,8 +47,9 @@ public class LableCatalogListControllerImpl implements LableCatalogListControlle
     @Override
     @Transactional
     @TemplateExport(name = "标签目录树图", query = LableCatalogListServiceImpl.LableCatalogListReqQuery.class, convert = LableCatalogListServiceImpl.LableCatalogListRspConvert.class)
-    // 标签目录树图查询
-    
+    /**
+     * Description:  标签目录树图查询
+     */
     public ResponseEntity<ResponseMessage<LableCatalogListQueryRsp>> lableCatalogListQuery(@RequestBody @Valid RequestMessage<LableCatalogListQueryReq> reqMsg) {
         ResponseMessage<LableCatalogListQueryRsp> rspMsg = null;
         try {
@@ -63,7 +74,9 @@ public class LableCatalogListControllerImpl implements LableCatalogListControlle
 
     @Override
     @Transactional
-    // 标签目录树图保存
+    /**
+     * Description: 标签目录树图保存
+     */
     public ResponseEntity<ResponseMessage<Object>> lableCatalogListSave(@RequestBody @Valid RequestMessage<LableCatalogListSaveReq> reqMsg) {
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -88,7 +101,9 @@ public class LableCatalogListControllerImpl implements LableCatalogListControlle
 
     @Override
     @Transactional
-    // 标签目录树图删除
+    /**
+     * Description: 标签目录树图删除
+     */
     public ResponseEntity<ResponseMessage<Object>> lableCatalogListDelete(@RequestBody @Valid RequestMessage<LableCatalogListDeleteReq> reqMsg) {
         ResponseMessage<Object> rspMsg = null;
         try {
