@@ -60,6 +60,7 @@
         <module>ems-analysis-cs</module>
         <module>apecd</module>
         <module>z-plugins-bssp</module>
+        <module>ems-core</module>
     </modules>
     
     <distributionManagement>
