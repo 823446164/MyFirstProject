@@ -1,7 +1,7 @@
 /*
  * 文件名：RankStandardCatalogSonInfo.java
  * 版权：Copyright by www.amarsoft.com
- * 描述：
+ * 描述：职级标准info模板RankStandardCatalogSonInfo
  * 修改人：xphe
  * 修改时间：2020年5月9日
  * 跟踪单号：
@@ -24,8 +24,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * 〈一句话功能简述〉
- * 〈功能详细描述〉
  * @author xphe
  * @version 2020年5月9日
  * @see RankStandardCatalogSonInfo
