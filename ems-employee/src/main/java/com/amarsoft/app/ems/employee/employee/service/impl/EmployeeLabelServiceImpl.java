@@ -29,13 +29,7 @@ import com.amarsoft.app.ems.employee.service.EmployeeLabelService;
 public class EmployeeLabelServiceImpl implements EmployeeLabelService{
 	
     /**
-     * Description: <br>
-     * 1、员工对应历史职级标签查询<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
+     * Description:员工对应历史职级标签查询<br>
      * ${tags}
      * @see
      */

@@ -36,13 +36,7 @@ public class EmployeeLabelControllerImpl implements EmployeeLabelController {
     @Override
     @Transactional
     /**
-     * Description: <br>
-     * 1、员工标签查询<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
+     * Description:员工标签查询<br>
      * ${tags}
      * @see
      */

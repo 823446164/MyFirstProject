@@ -9,11 +9,6 @@
  * 修改内容：
  */
 package com.amarsoft.app.ems.employee.service;
-/**
- * 员工能力标签查询
- * @author xszhou
- *
- */
 
 import javax.validation.Valid;
 import com.amarsoft.app.ems.employee.employee.cs.dto.employeeabilitylabels.EmployeeAbilityLabelsReq;
@@ -21,13 +16,7 @@ import com.amarsoft.app.ems.employee.employee.cs.dto.employeeabilitylabels.Emplo
 
 public interface EmployeeLabelService {
     /**
-     * Description: <br>
-     * 1、员工对应历史职级标签查询<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
+     * Description: 员工对应历史职级标签查询<br>
      * ${tags}
      * @see
      */

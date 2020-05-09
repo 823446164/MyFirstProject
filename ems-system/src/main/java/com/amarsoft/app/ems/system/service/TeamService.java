@@ -50,13 +50,7 @@ public interface TeamService {
     void addTeamUser(AddTeamUserReq req);
     
     /**
-     * Description: <br>
-     * 1、更新员工团队<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
+     * Description:更新员工团队<br>
      * ${tags}
      * @see
      */
@@ -95,13 +89,7 @@ public interface TeamService {
     GetTeamIdRsp getTeamId();
     
     /**
-     * Description: <br>
-     * 1、部门团队列表展示<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
+     * Description:部门团队列表展示<br>
      * ${tags}
      * @see
      */

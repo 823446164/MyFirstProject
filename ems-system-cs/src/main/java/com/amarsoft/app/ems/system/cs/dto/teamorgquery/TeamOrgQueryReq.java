@@ -34,5 +34,4 @@ public class TeamOrgQueryReq implements Serializable{
     @Description("排序数组")
     @QueryOrderBy
     private String[] orderBy;
-    
 }

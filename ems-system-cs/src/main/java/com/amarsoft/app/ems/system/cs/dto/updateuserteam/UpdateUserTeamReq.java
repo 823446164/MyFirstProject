@@ -44,5 +44,5 @@ public class UpdateUserTeamReq implements Serializable{
     @NotEmpty
     @ActualColumn("TI.teamLeader")
     private String teamLeader;
-    
+   
 }

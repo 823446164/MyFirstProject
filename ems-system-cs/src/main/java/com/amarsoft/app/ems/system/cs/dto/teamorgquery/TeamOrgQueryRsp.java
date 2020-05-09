@@ -22,5 +22,4 @@ public class TeamOrgQueryRsp implements Serializable{
     @Valid
     @NotEmpty
     private List<OrgAndTeam> orgTeams;
-    
 }

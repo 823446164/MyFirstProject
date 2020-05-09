@@ -366,11 +366,6 @@ public class TeamServiceImpl implements TeamService {
     /**
      * Description: <br>
      * 1、更新员工团队信息<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
      * ${tags}
      * @see
      */
@@ -394,11 +389,6 @@ public class TeamServiceImpl implements TeamService {
     /**
      * Description: <br>
      * 1、部门团队列表展示<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
      * ${tags}
      * @see
      */

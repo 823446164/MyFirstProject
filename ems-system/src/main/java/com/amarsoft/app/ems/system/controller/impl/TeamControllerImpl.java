@@ -216,13 +216,7 @@ public class TeamControllerImpl implements TeamController {
     }
     
     /**
-     * Description: <br>
-     * 1、更新员工团队信息<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
+     * Description:更新员工团队信息<br>
      * ${tags}
      * @see
      */
@@ -243,13 +237,7 @@ public class TeamControllerImpl implements TeamController {
 	}
 
     /**
-     * Description: <br>
-     * 1、部门团队列表展示<br>
-     * 2、…<br>
-     * Implement: <br>
-     * 1、…<br>
-     * 2、…<br>
-     *
+     * Description: 部门团队列表展示<br>
      * ${tags}
      * @see
      */

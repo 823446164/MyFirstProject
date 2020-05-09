@@ -22,5 +22,4 @@ public class EmployeeAbilityLabelsRsp implements Serializable{
     @Description("标签数组")
     @Valid
     private List<LabelCatalog> labelList;
-    
 }
