@@ -18,6 +18,8 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.Ra
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogSonQueryRsq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogSonQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListDeleteReq;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 
 /**
  * 〈职级标准列表Service接口〉
@@ -68,6 +70,7 @@ public interface RankStandardCatalogListService {
      * @see
      */
     public RankStandardCatalogSonQueryRsq rankStandardCatalogSonQuery(@Valid RankStandardCatalogSonQueryReq rankStandardCatalogSonQueryReq);
+   
     /**
      * 
      * Description: 管理职级标准查询
@@ -77,4 +80,14 @@ public interface RankStandardCatalogListService {
      * @see
      */ 
     public RankStandardCatalogListQueryRsp ranStandardCatalogManagerQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq);
+    
+    /**
+     * 
+     * Description: 展示团队列表
+     *
+     * @param rankStandardCatalogListQueryReq
+     * @return
+     * @see
+     */ 
+    public TeamQueryRsp rankStandardCatalogTeamQuery(@Valid TeamQueryReq teamQueryRep);
 }

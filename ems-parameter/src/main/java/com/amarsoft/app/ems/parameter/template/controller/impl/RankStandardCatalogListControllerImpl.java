@@ -1,3 +1,14 @@
+/*
+ * 文件名：RankStandardCatalogListControllerImpl.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：xphe
+ * 修改时间：2020年5月8日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
+
 package com.amarsoft.app.ems.parameter.template.controller.impl;
 
 
@@ -16,6 +27,8 @@ import com.amarsoft.app.ems.parameter.template.controller.RankStandardCatalogLis
 import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogListService;
 import com.amarsoft.amps.avts.annotation.TemplateExport;
 import com.amarsoft.app.ems.parameter.template.service.impl.RankStandardCatalogListServiceImpl;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListSaveReq;
@@ -197,6 +210,36 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
             return new ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * 
+     * Description: 展示团队列表
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<TeamQueryRsp>> teamQuery(@RequestBody @Valid RequestMessage<TeamQueryReq> reqMsg){
+        ResponseMessage<TeamQueryRsp> rspMsg = null;
+        try {
+            TeamQueryReq request = reqMsg.getMessage();
+            TeamQueryRsp response = rankStandardCatalogListServiceImpl.rankStandardCatalogTeamQuery(request);
+            rspMsg = new ResponseMessage<TeamQueryRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("展示团队列表：" + reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
