@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.amps.acsc.annotation.Digits;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.arpe.annotation.GeneratedKey;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
@@ -88,6 +89,15 @@ public class EmployeeRank extends BusinessObject {
     @Description("实际调整日期") 
     @Column(name = "changeDate",length=10) 
     private LocalDate changeDate;
+    
+    @Description("评定职级层") 
+    @Column(name = "evaluateRankLevel",length=10) 
+    private String evaluateRankLevel;
+    
+    @Description("本次调整额")
+    @Column(name = "currentAdjustPay")
+    @Digits(length=24,scale=2)
+    private double currentAdjustPay;
     
     public String getGoalDate() {
         DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateFormat.format);

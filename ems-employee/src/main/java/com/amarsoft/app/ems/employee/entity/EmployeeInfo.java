@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.amps.acsc.annotation.Digits;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.arpe.annotation.GeneratedKey;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
@@ -121,6 +122,11 @@ public class EmployeeInfo extends BusinessObject {
     @Description("员工工作状态")
     @Column(name = "employeeWorkStatus", length = 10)
     private String employeeWorkStatus;
+    
+    @Description("员工现工资")
+    @Column(name = "employeePay")
+    @Digits(length=24,scale=2)
+    private double employeePay;
 
     public String getRntryTime() {
         DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateFormat.format);
