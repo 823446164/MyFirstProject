@@ -1,5 +1,7 @@
 package com.amarsoft.app.ems.employee.template.service;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoQueryRsp;
@@ -22,5 +24,5 @@ public interface EmployeeDevelopTargetInfoDtoService {
      * @param request
      * @return
      */
-    public void employeeDevelopTargetInfoDtoSave(@Valid EmployeeDevelopTargetInfoDtoSaveReq employeeDevelopTargetInfoDtoSaveReq);
+    public Map<String, String> employeeDevelopTargetInfoDtoSave(@Valid EmployeeDevelopTargetInfoDtoSaveReq employeeDevelopTargetInfoDtoSaveReq);
 }

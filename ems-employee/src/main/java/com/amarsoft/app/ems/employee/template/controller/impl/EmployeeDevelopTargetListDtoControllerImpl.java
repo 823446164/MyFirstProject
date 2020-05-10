@@ -2,6 +2,9 @@ package com.amarsoft.app.ems.employee.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Map;
+
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,9 +90,9 @@ public class EmployeeDevelopTargetListDtoControllerImpl implements EmployeeDevel
         ResponseMessage<Object> rspMsg = null;
         try {
             EmployeeDevelopTargetListDtoDeleteReq request = reqMsg.getMessage();
-            
-            employeeDevelopTargetListDtoServiceImpl.employeeDevelopTargetListDtoDelete(request);
-            rspMsg = new ResponseMessage<Object>();
+            //接收返回信息
+            Map<String, String> response = employeeDevelopTargetListDtoServiceImpl.employeeDevelopTargetListDtoDelete(request);
+            rspMsg = new ResponseMessage<Object>(response);
 
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
@@ -98,8 +101,8 @@ public class EmployeeDevelopTargetListDtoControllerImpl implements EmployeeDevel
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            //异常码设置,补充为EMS1002。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1002",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
