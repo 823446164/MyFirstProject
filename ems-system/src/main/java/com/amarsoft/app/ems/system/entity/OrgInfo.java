@@ -19,8 +19,8 @@ import com.amarsoft.aecd.common.constant.CountryCode;
 import com.amarsoft.aecd.function.impl.CodeCacheFunction;
 import com.amarsoft.aecd.system.constant.CompanyType;
 import com.amarsoft.aecd.system.constant.OrgLevel;
+import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.aecd.system.constant.OrgType;
-import com.amarsoft.aecd.system.constant.SystemStatus;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 /**
@@ -91,7 +91,7 @@ public class OrgInfo extends BusinessObject {
     private String orgAddress;
     
     @Description("状态")
-    @Enum(SystemStatus.class)
+    @Enum(OrgStatus.class)
     @Column(name = "STATUS",length=1)
     private String status;
     
@@ -244,4 +244,3 @@ public class OrgInfo extends BusinessObject {
     }
 
 }
-
