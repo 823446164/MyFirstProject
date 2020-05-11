@@ -63,4 +63,7 @@ public class TeamInfo implements Serializable{
     @Valid
     @NotEmpty
     private List<User> users;
+    @Description("团队总人数")
+    @Length(max=40)
+    private Integer count;
 }
