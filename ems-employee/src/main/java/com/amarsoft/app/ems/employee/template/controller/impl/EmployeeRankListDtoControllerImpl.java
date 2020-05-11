@@ -2,6 +2,9 @@ package com.amarsoft.app.ems.employee.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.Map;
+
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,9 +67,9 @@ public class EmployeeRankListDtoControllerImpl implements EmployeeRankListDtoCon
         try {
             EmployeeRankListDtoSaveReq request = reqMsg.getMessage();
             
-            employeeRankListDtoServiceImpl.employeeRankListDtoSave(request);
-            rspMsg = new ResponseMessage<Object>();
-
+            Map<String,String> response = employeeRankListDtoServiceImpl.employeeRankListDtoSave(request);
+            rspMsg = new ResponseMessage<Object>(response);
+            
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -74,8 +77,8 @@ public class EmployeeRankListDtoControllerImpl implements EmployeeRankListDtoCon
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            // 异常码设置
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1007",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
