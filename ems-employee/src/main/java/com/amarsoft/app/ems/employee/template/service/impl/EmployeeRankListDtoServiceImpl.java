@@ -3,6 +3,8 @@ package com.amarsoft.app.ems.employee.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
@@ -141,7 +143,7 @@ public class EmployeeRankListDtoServiceImpl implements EmployeeRankListDtoServic
             // 新增对象
             EmployeeRank employeeRank = new EmployeeRank();
             // 如果主键为空,则新增主键
-            if (employeeRankListDto.getSerialNo() == null) 
+            if (StringUtils.isEmpty(employeeRankListDto.getSerialNo())) 
                 employeeRank.generateKey();  
             // 将页面属性封装进实体类
             BeanUtils.copyProperties(employeeRankListDto, employeeRank);
