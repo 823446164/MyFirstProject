@@ -215,31 +215,33 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     public RankStandardCatalogSonQueryRsq rankStandardCatalogSonQuery(@Valid RankStandardCatalogSonQueryReq rankStandardCatalogSonQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
-            "rankStandard=:rankStandard and belongTeam=:belongTeam", "rankStandard", rankStandardCatalogSonQueryReq.getRankStandard(),
-            "belongTeam", rankStandardCatalogSonQueryReq.getBelongTeam());
+            "rankStandard=:rankStandard and belongTeam=:belongTeam", "rankStandard",
+            rankStandardCatalogSonQueryReq.getRankStandard(), "belongTeam", rankStandardCatalogSonQueryReq.getBelongTeam());
         RankStandardCatalogSonQueryRsq response = new RankStandardCatalogSonQueryRsq();
         List<RankStandardCatalogList> ranCatalogLists = null;
         if (!CollectionUtils.isEmpty(ranCatalogs)) {
             ranCatalogLists = new ArrayList<RankStandardCatalogList>();
             for (RankStandardCatalog rank : ranCatalogs) {
                 RankStandardCatalogList rankresponse = new RankStandardCatalogList();
-                rankresponse.setSerialNo(rank.getSerialNo());
-                rankresponse.setRankStandard(rank.getRankStandard());
-                rankresponse.setRankName(rank.getRankName());
-                rankresponse.setChildRankNo(rank.getChildRankNo());
-                rankresponse.setAbility(rank.getAbility());
-                rankresponse.setRankDescribe(rank.getRankDescribe());
-                rankresponse.setResponeDescribe(rank.getResponeDescribe());
-                rankresponse.setAbilityDescribe(rank.getAbilityDescribe());
-                rankresponse.setBelongTeam(rank.getBelongTeam());
-                rankresponse.setRankType(rank.getRankType());
-                rankresponse.setInputUserId(rank.getInputUserId());
-                rankresponse.setInputTime(rank.getInputTime());
-                rankresponse.setInputOrgId(rank.getInputOrgId());
-                rankresponse.setUpdateUserId(rank.getUpdateUserId());
-                rankresponse.setUpdateTime(rank.getUpdateTime());
-                rankresponse.setUpdateOrgId(rank.getUpdateOrgId());
-                ranCatalogLists.add(rankresponse);
+                if (!rank.getChildRankNo().isEmpty()) {
+                    rankresponse.setSerialNo(rank.getSerialNo());
+                    rankresponse.setRankStandard(rank.getRankStandard());
+                    rankresponse.setRankName(rank.getRankName());
+                    rankresponse.setChildRankNo(rank.getChildRankNo());
+                    rankresponse.setAbility(rank.getAbility());
+                    rankresponse.setRankDescribe(rank.getRankDescribe());
+                    rankresponse.setResponeDescribe(rank.getResponeDescribe());
+                    rankresponse.setAbilityDescribe(rank.getAbilityDescribe());
+                    rankresponse.setBelongTeam(rank.getBelongTeam());
+                    rankresponse.setRankType(rank.getRankType());
+                    rankresponse.setInputUserId(rank.getInputUserId());
+                    rankresponse.setInputTime(rank.getInputTime());
+                    rankresponse.setInputOrgId(rank.getInputOrgId());
+                    rankresponse.setUpdateUserId(rank.getUpdateUserId());
+                    rankresponse.setUpdateTime(rank.getUpdateTime());
+                    rankresponse.setUpdateOrgId(rank.getUpdateOrgId());
+                    ranCatalogLists.add(rankresponse);
+                }
             }
 
         }
