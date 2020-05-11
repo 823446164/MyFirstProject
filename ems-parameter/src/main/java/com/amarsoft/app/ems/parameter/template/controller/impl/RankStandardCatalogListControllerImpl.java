@@ -82,7 +82,7 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2004", e.getMessage());
             return new ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -114,7 +114,7 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2005", e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -146,7 +146,7 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2006", e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -177,7 +177,7 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2004", e.getMessage());
             return new ResponseEntity<ResponseMessage<RankStandardCatalogSonQueryRsq>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -208,7 +208,7 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2004", e.getMessage());
             return new ResponseEntity<ResponseMessage<RankStandardCatalogListQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -238,7 +238,7 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2007", e.getMessage());
             return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

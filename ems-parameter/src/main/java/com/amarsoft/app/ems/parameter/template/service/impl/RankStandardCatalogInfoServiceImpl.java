@@ -23,6 +23,7 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogInfoService;
 import com.amarsoft.app.ems.parameter.entity.RankStandardCatalog;
 import com.amarsoft.app.ems.parameter.entity.RankStandardItems;
+import com.amarsoft.app.ems.employee.entity.EmployeeTargetRank;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoSaveReq;
@@ -99,7 +100,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         if (rankStandardCatalogInfo != null) {
             // 保存校验－重复性校验
             if (saveValidate(rankStandardCatalogInfo.getRankName(), rankStandardCatalogInfo.getRankStandard()) == false) {
-                throw new ALSException("900204");
+                throw new ALSException("EMS2001",rankStandardCatalogInfo.getRankName(),rankStandardCatalogInfo.getRankStandard());
             }
             else {
                 // 根据主键获取实体类信息
@@ -167,7 +168,13 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             return false;
         }
     }
-
+  //删除校验,待做
+    public boolean checkRandStand(String rankName) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        List<EmployeeTargetRank> employeeTargetRanks=bomanager.loadBusinessObjects(EmployeeTargetRank.class, "targetRank=:targetRank","targetRank",rankName);
+                    
+        return false;
+    }
     /**
      * 
      * Description: 职级标准详情单记录删除
@@ -188,7 +195,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             if (log.isErrorEnabled()) {
                 log.error(serialNo + "此职级不存在!");
             }
-            throw new ALSException("204420");
+            throw new ALSException("EMS2003");
         }
         // 删除对应子职级别
         bomanager.deleteObjectBySql(RankStandardCatalog.class, "rankName=:rankName", "rankName", rankStandardCatalog.getRankName());
@@ -216,9 +223,10 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             if (log.isErrorEnabled()) {
                 log.error(serialNo + "此职级不存在!");
             }
-            throw new ALSException("204420");
+            throw new ALSException("EMS2003");
         }
-        bomanager.deleteBusinessObject(rankStandardCatalog);
+        rankStandardCatalog.setChildRankNo("");
+        bomanager.updateBusinessObject(rankStandardCatalog);
         // 删除对应职级指标
         bomanager.deleteObjectBySql(RankStandardItems.class, "rankNo=:serialNo", "serialNo", serialNo);
         bomanager.updateDB();
@@ -268,11 +276,11 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             // 保存校验－重复性校验
             if (sonSaveValidate(rankStandardCatalogSonInfoSaveReq.getChildRankNo(),
                 rankStandardCatalogSonInfoSaveReq.getRankStandard()) == false) {
-                System.out.println("当前重复");
-                throw new ALSException("900204");
+                log.info("当前重复");
+                throw new ALSException("EMS2002",rankStandardCatalogSonInfoSaveReq.getChildRankNo(),rankStandardCatalogSonInfoSaveReq.getRankStandard());
             }
             else {
-                System.out.println("可以保存");
+                log.info("可以保存");
                 // 根据主键获取实体类信息
                 RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
                     rankStandardCatalogSonInfoSaveReq.getSerialNo());
