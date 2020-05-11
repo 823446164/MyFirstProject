@@ -1,5 +1,7 @@
 package com.amarsoft.app.ems.system.service;
 
+import java.util.Map;
+
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.coperateorganizationquery.CoperateOrganizationQueryReq;
@@ -16,6 +18,12 @@ import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
+import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryRsp;
 
 /**
  * 机构服务的接口
@@ -108,4 +116,38 @@ public interface OrgService {
      * @return
      */
     boolean isParentOrg(String parentOrgId, String orgId);
+    /**
+     * Description: 查询机构信息
+     * @param request
+     * @return
+     * @see
+     */
+    OneLevelDeptDtoQueryRsp oneLevelDeptDtoQuery(OneLevelDeptDtoQueryReq message);
+    
+    /**
+     * 
+     * Description: 新增一级机构的信息
+     *
+     * @param request
+     * @return Map
+     * @see
+     */
+    Map<String, String> oneLevelDeptDtoSave(OneLevelDeptDtoSaveReq request);
+    
+    /**
+     * Description: 搜索部门
+     * @param request
+     * @return SearchSecondLevelDeptListDtoQueryRsp
+     * @see
+     */
+    SearchSecondLevelDeptListDtoQueryRsp searchSecondLevelDeptListDtoQuery(SearchSecondLevelDeptListDtoQueryReq request);
+
+    /**
+     * Description: 删除机构的信息
+     * @param request
+     * @return
+     * @see
+     */
+    Map<String, String> deleteInfoDtoQuery(DeleteInfoDtoQueryReq request);
+
 }

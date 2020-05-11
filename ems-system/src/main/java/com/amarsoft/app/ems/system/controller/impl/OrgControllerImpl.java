@@ -1,5 +1,7 @@
 package com.amarsoft.app.ems.system.controller.impl;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,13 @@ import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.UserService;
+import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
+import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryRsp;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -210,6 +219,94 @@ public class OrgControllerImpl implements OrgController {
             }
             ResponseMessage<CoperateOrganizationQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900213", e.getMessage());
             return new ResponseEntity<ResponseMessage<CoperateOrganizationQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 查询一级部门
+     * @param reqMsg
+     * @return  ResponseEntity
+     * @see
+     */
+    @Override
+    public ResponseEntity<ResponseMessage<OneLevelDeptDtoQueryRsp>> oneLevelDeptDtoQuery(@RequestBody @Valid RequestMessage<OneLevelDeptDtoQueryReq> reqMsg) {
+        try {
+            OneLevelDeptDtoQueryRsp response = orgService.oneLevelDeptDtoQuery(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<OneLevelDeptDtoQueryRsp>>(new ResponseMessage<OneLevelDeptDtoQueryRsp>(response), HttpStatus.OK);
+        } catch(Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("[请求报文：" + reqMsg.toString() + "]", e);
+            }
+            ResponseMessage<OneLevelDeptDtoQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900201", e.getMessage());
+            return new ResponseEntity<ResponseMessage<OneLevelDeptDtoQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 新增、保存一级部门
+     * @param reqMsg
+     * @return  Map
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> oneLevelDeptDtoSave(@RequestBody @Valid RequestMessage<OneLevelDeptDtoSaveReq> reqMsg) {
+        try {
+            Map<String, String> map =  orgService.oneLevelDeptDtoSave(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(map), HttpStatus.OK);
+        } catch(Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("[请求报文：" + reqMsg.toString() + "]", e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            ResponseMessage<Object> hrb = ResponseMessage.getResponseMessageFromException(e, "900203", e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 搜索二级部门list
+     * @param reqMsg
+     * @return  ResponseEntity
+     * @see
+     */
+    @Override
+    @CodeQuery
+    public ResponseEntity<ResponseMessage<SearchSecondLevelDeptListDtoQueryRsp>> searchSecondLevelDeptListDtoQuery(@RequestBody @Valid RequestMessage<SearchSecondLevelDeptListDtoQueryReq> reqMsg) {
+        try {
+            SearchSecondLevelDeptListDtoQueryRsp response = orgService.searchSecondLevelDeptListDtoQuery(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<SearchSecondLevelDeptListDtoQueryRsp>>(new ResponseMessage<SearchSecondLevelDeptListDtoQueryRsp>(response), HttpStatus.OK);
+        } catch(Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("[请求报文：" + reqMsg.toString() + "]", e);
+            }
+            ResponseMessage<SearchSecondLevelDeptListDtoQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900201", e.getMessage());
+            return new ResponseEntity<ResponseMessage<SearchSecondLevelDeptListDtoQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 删除部门信息
+     * @param reqMsg
+     * @return  
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<DeleteInfoDtoQueryRsp>> deleteInfoDtoQuery(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg) {
+        try {
+            Map<String, String> map =  orgService.deleteInfoDtoQuery(reqMsg.getMessage());
+            log.info(String.valueOf(map.size()));
+            return new ResponseEntity<ResponseMessage<DeleteInfoDtoQueryRsp>>(new ResponseMessage<DeleteInfoDtoQueryRsp>(), HttpStatus.OK);
+        } catch(Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("[请求报文：" + reqMsg.toString() + "]", e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            ResponseMessage<DeleteInfoDtoQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900205", e.getMessage());
+            return new ResponseEntity<ResponseMessage<DeleteInfoDtoQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

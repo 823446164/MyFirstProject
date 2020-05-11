@@ -4,7 +4,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.CompanyType;
 import com.amarsoft.aecd.system.constant.OrgLevel;
+import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.aecd.system.constant.OrgType;
 import com.amarsoft.aecd.system.constant.SystemStatus;
 import com.amarsoft.amps.arem.exception.ALSException;
@@ -42,16 +45,23 @@ import com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo;
+import com.amarsoft.app.ems.system.entity.ChangeEvent;
+import com.amarsoft.app.ems.system.entity.Department;
 import com.amarsoft.app.ems.system.entity.OrgInfo;
 import com.amarsoft.app.ems.system.entity.UserBelong;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.UserService;
+import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
+import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDto;
+import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryRsp;
 
 /**
  * 机构服务的接口实现类
- * 
  * @author hzhang23
- *
  */
 @Service
 @RefreshScope
@@ -916,5 +926,164 @@ public class OrgServiceImpl implements OrgService {
                     .filter(org -> org.getOrgType().equals(orgType) || org.getOrgType().equals(OrgType.Company.id)).count();
         }
         return totalCount[0];
+    }
+
+    /**
+     * Description: 查询一级部门
+     * @param req
+     * @return response
+     * @see
+     */
+    @Override
+    public OneLevelDeptDtoQueryRsp oneLevelDeptDtoQuery(OneLevelDeptDtoQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        OneLevelDeptDtoQueryRsp rsp = new OneLevelDeptDtoQueryRsp();
+
+        OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
+        Department department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
+        
+        if(orgInfo == null || department == null) 
+            throw new ALSException("900201");
+        rsp.setOrgId(orgInfo.getOrgId());
+        rsp.setParentOrgId(orgInfo.getParentOrgId());
+        rsp.setOrgName(orgInfo.getOrgName());
+        rsp.setDeptManager(department.getDeptManager());
+        //查询下一级部门list
+        List<OrgInfo> ois = bomanager.loadBusinessObjects(OrgInfo.class, "parentOrgId = :parentOrgId", "parentOrgId",
+            orgInfo.getOrgId());
+        rsp.setSecondOrgNumber(String.valueOf(ois.size()));
+        return rsp;
+    }
+
+    /**
+     * Description: 新增、保存一级机构的信息
+     * @param req
+     * @return 
+     * @see
+     */
+    @Override
+    public Map<String, String> oneLevelDeptDtoSave(OneLevelDeptDtoSaveReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+
+        OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
+        Department department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
+        if (orgInfo != null) {
+            department.setDeptId(req.getOrgId());
+            department.setDeptName(req.getOrgName());
+            department.setDeptManager(req.getDeptManager());
+            department.setDeptEquipment(req.getDeptEquipment());
+            department.setDeptAddress(req.getDeptAddress());
+            department.setRemark(req.getRemark());
+            department.setInputUserId(GlobalShareContextHolder.getOrgId());
+            
+            orgInfo.setParentOrgId(req.getParentOrgId());
+            orgInfo.setOrgId(req.getOrgId());
+            orgInfo.setSortNo(req.getOrgId());
+            orgInfo.setOrgName(req.getOrgName());
+        }else {
+            department = new Department();
+            department.setDeptId(req.getOrgId());
+            department.setDeptName(req.getOrgName());
+            department.setDeptManager(req.getDeptManager());
+            department.setDeptEquipment(req.getDeptEquipment());
+            department.setDeptAddress(req.getDeptAddress());
+            department.setRemark(req.getRemark());
+            department.setInputUserId(GlobalShareContextHolder.getOrgId());
+            
+            orgInfo = new OrgInfo();
+            //设置部门所属上级
+            orgInfo.setParentOrgId(req.getParentOrgId());
+            orgInfo.setOrgId(req.getOrgId());
+            orgInfo.setSortNo(req.getOrgId());
+            orgInfo.setOrgName(req.getOrgName());
+            orgInfo.setStatus(OrgStatus.New.id);
+            //设置部门等级，可修改  2为一级部门
+            orgInfo.setOrgLevel(OrgLevel.LEVEL_2.id); 
+        }
+        
+        // 更新到数据库
+        bomanager.updateBusinessObject(department);
+        bomanager.updateBusinessObject(orgInfo);
+        bomanager.updateDB();
+        Map<String, String> map=new HashMap<String, String>();
+        map.put("status","Y");
+        return map;
+    }
+
+    /**
+     * Description: 搜索部门
+     * @param req
+     * @return response
+     * @see
+     */
+    @Override
+    public SearchSecondLevelDeptListDtoQueryRsp searchSecondLevelDeptListDtoQuery(SearchSecondLevelDeptListDtoQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        SearchSecondLevelDeptListDtoQueryRsp response = new SearchSecondLevelDeptListDtoQueryRsp();
+        
+      List<Department> dts = bomanager.loadBusinessObjects(Department.class, "deptName like :deptName","deptName","%"+req.getOrgName()+"%");  
+        if(dts.size() == 0)
+            throw new ALSException("900201");
+        List<SearchSecondLevelDeptListDto> ssds = new ArrayList<SearchSecondLevelDeptListDto>();
+        for(Department dt : dts) {
+            SearchSecondLevelDeptListDto searchSecondLevelDeptListDto = new SearchSecondLevelDeptListDto();
+            searchSecondLevelDeptListDto.setDeptName(dt.getDeptName());
+            searchSecondLevelDeptListDto.setDeptManager(dt.getDeptManager());
+            Department department = bomanager.loadBusinessObject(Department.class,"deptName",dt.getDeptName());
+            List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class, "orgId = :orgId","orgId",department.getDeptId());
+            searchSecondLevelDeptListDto.setDeptUserNumber(String.valueOf(userBelongs.size()));
+            ssds.add(searchSecondLevelDeptListDto);
+        }
+        response.setSearchSecondLevelDeptListDtos(ssds);
+            return response;
+    }
+
+    /**
+     * Description: 删除部门
+     * @param req
+     * @return 
+     * @see
+     */
+    @Override
+    public Map<String, String> deleteInfoDtoQuery(DeleteInfoDtoQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        //删除原因不能为空
+        if(req.getChangeContext() == null) {
+            throw new ALSException("EMS6001");
+        }
+        Department department = bomanager.keyLoadBusinessObject(Department.class, req.getObjectNo());
+        OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getObjectNo());
+        ChangeEvent changeEvent = new ChangeEvent();
+        //判断删除部门是一级还是二级部门
+        if(OrgLevel.LEVEL_2.id.equals(orgInfo.getOrgLevel())) {//一级部门  
+            //部门存在部门经理时，不能删除
+            if (department.getDeptManager()!=null &&department.getDeptManager().trim().length()>0)
+                throw new ALSException("EMS6002");
+            //上海安硕信息股份有限公司未固定节点，此为固定节点，不予删除
+            if (("上海安硕信息股份有限公司").equals(orgInfo.getOrgName()))
+                throw new ALSException("EMS6003");
+            //部门存在下级部门时，不能删除
+            List<OrgInfo> ois = bomanager.loadBusinessObjects(OrgInfo.class, "parentOrgId = :parentOrgId", "parentOrgId",
+                    orgInfo.getOrgId());
+            if (!CollectionUtils.isEmpty(ois)) {
+                throw new ALSException("EMS6004");
+            }
+        }else if(orgInfo.getOrgLevel().equals(OrgLevel.LEVEL_3.id)) {//二级部门
+            if(orgInfo.getStatus().equals(OrgStatus.Completed.id)) {//未停用
+                throw new ALSException("EMS6005");
+            }
+        }
+
+        changeEvent.setObjectNo(req.getObjectNo());
+        changeEvent.setChangeContext(req.getChangeContext());
+        changeEvent.setObjectType("delete");
+        bomanager.deleteBusinessObject(orgInfo);
+        bomanager.deleteBusinessObject(department);
+        bomanager.updateBusinessObject(changeEvent);
+        bomanager.updateDB();
+        
+        Map<String, String> map=new HashMap<String, String>();
+        map.put("status","Y");
+        return map;
     }
 }
