@@ -12,14 +12,19 @@ package com.amarsoft.app.ems.employee.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.employee.template.service.EmployeeDevelopTargetListDtoService;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoQueryRsp;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.util.DTOHelper;
+import com.amarsoft.amps.arem.exception.ALSException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -151,6 +156,17 @@ public class EmployeeDevelopTargetListDtoServiceImpl implements EmployeeDevelopT
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         //获取要删除的list对象
         EmployeeDevelopTarget employeeDevelopTarget=bomanager.keyLoadBusinessObject(EmployeeDevelopTarget.class, employeeDevelopTargetListDtoDeleteReq.getSerialNo());
+        //获取流水号-校验信息
+        if(StringUtils.isEmpty(employeeDevelopTarget)) {//获取对象为空
+            // 抛出异常信息
+            throw new ALSException("EMS1005","流水号不存在");
+        }
+        //获取当前登录用户id
+        String userId = GlobalShareContextHolder.getUserId();
+        //删除校验
+        if(userId != employeeDevelopTarget.getInputUserId())
+            //当前登录人与目标制定人不一致,则不能删除
+            throw new ALSException("EMS1003");
         //执行删除操作
         bomanager.deleteBusinessObject(employeeDevelopTarget);
         //事务提交
