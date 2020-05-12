@@ -42,6 +42,6 @@ public class EmployeePersonalPerformanceListDtoQueryReq implements Serializable 
     @Description("员工编号")
     @Length(max=40)
     @NotEmpty
-    @ActualColumn("EPP.employeeNo")
-    private String employeeNo;
+    @ActualColumn("EPP.projectNo")
+    private String projectNo;
 }

@@ -39,8 +39,8 @@ public class EmployeePersonalPerformanceListDtoServiceImpl implements EmployeePe
             
             String sql = "select EPP.serialNo as serialNo,EPP.employeeNo as employeeNo,EPP.projectNo as projectNo,EPP.factors as factors,EPP.abilityDescribe as abilityDescribe,EPP.score as score,EPP.inputUserId as inputUserId,EPP.inputTime as inputTime,EPP.inputOrgId as inputOrgId,EPP.updateUserId as updateUserId,EPP.updateTime as updateTime,EPP.updateOrgId as updateOrgId"
                 +" from EMPLOYEE_PERSONAL_PERFORMANCE EPP"
-                +" where 1=1 and EPP.employeeNo = :employeeNo";
-            return queryProperties.assembleSql(sql,"employeeNo",employeePersonalPerformanceListDtoQueryReq.getEmployeeNo());
+                +" where 1=1 and EPP.projectNo = :projectNo";
+            return queryProperties.assembleSql(sql,"projectNo",employeePersonalPerformanceListDtoQueryReq.getProjectNo());
         }
     }
 
@@ -120,6 +120,7 @@ public class EmployeePersonalPerformanceListDtoServiceImpl implements EmployeePe
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if(employeePersonalPerformanceListDtos!=null){
             for(EmployeePersonalPerformanceListDto employeePersonalPerformanceListDtoTmp :employeePersonalPerformanceListDtos){
+                
             }
         }
         bomanager.updateDB();
