@@ -7,8 +7,8 @@ package com.amarsoft.aecd.system.constant;
  */
 public enum ApplyType {
 
-	_1("1", "精通/熟练使用/熟悉/了解"),
-	_2("2", "精通/熟悉/了解"),
+	_1("1", "精通/熟练/熟悉/了解"),
+	_2("2", "熟练/精通"),
 	_3("3", "优秀/良好/一般"),
 	;
 

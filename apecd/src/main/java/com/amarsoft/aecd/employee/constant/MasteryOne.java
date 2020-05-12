@@ -1,7 +1,7 @@
 /*
  * 文件名：MasteryOne.java
  * 版权：Copyright by www.amarsoft.com
- * 描述：指标类型（RANK_STANDARD_ITEMS表）-掌握程度一类
+ * 描述：指标类型（RANK_STANDARD_ITEMS表）-掌握程度一类:精通/熟练/熟悉/了解
  * 修改人：yqchen1
  * 修改时间：2020年5月8日
  * 跟踪单号：
@@ -15,7 +15,7 @@ public enum MasteryOne {
 	
 	_1("1","了解"),
 	_2("2","熟悉"),
-	_3("3","熟练使用"),
+	_3("3","熟练"),
 	_4("4","精通"),
 	;
 	

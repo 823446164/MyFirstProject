@@ -1,7 +1,7 @@
 /*
  * 文件名：MasteryTwo.java
  * 版权：Copyright by www.amarsoft.com
- * 描述：指标类型（RANK_STANDARD_ITEMS表）-掌握程度二类
+ * 描述：指标类型（RANK_STANDARD_ITEMS表）-掌握程度二类:熟练/精通
  * 修改人：yqchen1
  * 修改时间：2020年5月9日
  * 跟踪单号：
