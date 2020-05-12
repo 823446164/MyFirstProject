@@ -39,14 +39,10 @@ import lombok.ToString;
 @QueryRule(groupBy = {})
 public class RankStandardCatalogSonQueryReq implements Serializable{
     private static final long serialVersionUID = 1L;
-    @Description("职等")
+    @Description("职级编号")
     @Length(max=40)
-    @ActualColumn("RSC.rankStandard")
-    private String rankStandard;
-    
-    @Description("所属团队")
-    @ActualColumn("RSC.belongTeam")
-    private String belongTeam;
-    
+    @ActualColumn("RSC.serialNo")
+    private String serialNo;
+
 
 }

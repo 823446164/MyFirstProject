@@ -83,4 +83,10 @@ public class RankStandardCatalogSonInfo implements Serializable{
     @ActualColumn("RSC.abilityDescribe")
     @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly = false, span = 2, groupIndex = -1)
     private String abilityDescribe;
+    
+    @Description("父职级")
+    @Length(max=40)
+    @ActualColumn("RSC.parentRankNo")
+    @TemplateBody(sortNo = 16, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, isSorted = false, groupIndex = -1)
+    private String parentRankNo;
 }
