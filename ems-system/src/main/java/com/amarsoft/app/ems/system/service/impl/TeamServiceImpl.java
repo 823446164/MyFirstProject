@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.OrgAndTeam;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.aecd.common.constant.YesNo;
@@ -54,6 +56,8 @@ import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userquery.User;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
 import com.amarsoft.app.ems.system.entity.OrgInfo;
 import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
@@ -559,6 +563,7 @@ public class TeamServiceImpl implements TeamService {
 				orgTeams.add(orgTeam);
 			}
 		}
+		rsp.setTotalCount(orgTeamLists.size());
 		rsp.setOrgTeams(orgTeams);
 		return rsp;
 	}
@@ -595,4 +600,24 @@ public class TeamServiceImpl implements TeamService {
        
     }
 
+	 /**
+     * Description: 根据用户查找对应的团队<br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    public UserTeamQueryRsp userTeamQuery(@RequestBody @Valid UserTeamQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        UserTeamQueryRsp rsp = new UserTeamQueryRsp();
+        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql("select TI.teamId as TeamId,TI.teamName as TeamName from UserTeam UT,TeamInfo TI where UT.teamId=TI.teamId and UT.userId=:userId", "userId",req.getUserId()).getBusinessObjects();
+        String teamId = "";
+        String teamName = "";
+        if (!StringUtils.isEmpty(businessObjects)) {
+           teamId = businessObjects.get(0).getString("TeamId");
+           teamName = businessObjects.get(0).getString("TeamName");
+        }
+        rsp.setTeamId(teamId);
+        rsp.setTeamName(teamName);
+        return rsp;
+    }
 }

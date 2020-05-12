@@ -50,6 +50,8 @@ import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
 import com.amarsoft.app.ems.system.service.TeamListDtoService;
@@ -433,7 +435,7 @@ public class TeamControllerImpl implements TeamController {
                 log.error("更新员工团队请求报文："+ reqMsg.toString(), e);
             }
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901002",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901020",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
@@ -457,7 +459,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901021",e.getMessage());
             return new ResponseEntity<ResponseMessage<TeamOrgQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
@@ -484,5 +486,28 @@ public class TeamControllerImpl implements TeamController {
         }
     }
     
+    /**
+     * Description: 根据用户查找对应的团队<br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    public ResponseEntity<ResponseMessage<UserTeamQueryRsp>> userTeamQuery(@RequestBody @Valid RequestMessage<UserTeamQueryReq> reqMsg) {
+        ResponseMessage<UserTeamQueryRsp> rspMsg = null;
+        try {
+            UserTeamQueryReq req = reqMsg.getMessage();
+            UserTeamQueryRsp rsp = teamService.userTeamQuery(req);
+            rspMsg = new ResponseMessage<UserTeamQueryRsp>(rsp);
+            return new ResponseEntity<ResponseMessage<UserTeamQueryRsp>>(rspMsg, HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("根据用户查找对应的团队信息失败：", e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901022",e.getMessage());
+            return new ResponseEntity<ResponseMessage<UserTeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

@@ -40,6 +40,8 @@ import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
 
 public interface TeamController {
     @PostMapping(value = "/team/addteam", name="新增团队信息", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -80,6 +82,8 @@ public interface TeamController {
     public ResponseEntity<ResponseMessage<Object>> updateTeamByStatus(@RequestBody @Valid RequestMessage<UpdateTeamReq> reqMsg);
     @PostMapping(value = "/team/getsearch", name="根据条件查询团队信息", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<TeamQueryRsp>> teamSearch(@RequestBody @Valid RequestMessage<TeamQueryReq> reqMsg);
-    
+    @PostMapping(value = "/team/getteamsbyuser", name="按用户查询团队", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<UserTeamQueryRsp>> userTeamQuery(@RequestBody @Valid RequestMessage<UserTeamQueryReq> reqMsg);
+
    
 }
