@@ -1,3 +1,13 @@
+/*
+ * 文件名：LabelCatalogListControllerImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：LabelCatalogListController的实现类
+ * 修改人：yrong
+ * 修改时间：2020年5月11日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：修改注释
+ */
 package com.amarsoft.app.ems.parameter.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +33,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCata
 
 /**
  * 标签目录树图Controller实现类
- * @author ylgao
+ * @author yrong
  */
 @Slf4j
 @RestController

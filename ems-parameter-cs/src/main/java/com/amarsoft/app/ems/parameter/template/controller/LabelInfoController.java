@@ -1,3 +1,13 @@
+/*
+ * 文件名：LabelInfoController
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：LableDescribeInfoControllerImpl的接口
+ * 修改人：yrong
+ * 修改时间：2020年5月12日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新生成
+ */
 package com.amarsoft.app.ems.parameter.template.controller;
 
 import javax.validation.Valid;
@@ -13,7 +23,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq
 
 /**
  * 标签InfoController接口
- * @author ylgao
+ * @author yrong
  */
 public interface LabelInfoController {
     @PostMapping(value = "/labelinfo/query", name="标签Info查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)

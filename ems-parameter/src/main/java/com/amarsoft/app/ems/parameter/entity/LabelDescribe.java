@@ -18,8 +18,8 @@ import java.time.format.DateTimeFormatter;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter 
+@Setter 
 @Description("标签能力描述表")
 @Entity
 @Table(

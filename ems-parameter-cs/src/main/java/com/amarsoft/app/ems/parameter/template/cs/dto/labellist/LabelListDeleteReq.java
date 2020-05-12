@@ -1,3 +1,13 @@
+/*
+ * 文件名：LabelListDeleteReq.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：标签删除的请求体
+ * 修改人：yrong
+ * 修改时间：2020年5月11日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新生成
+ */
 package com.amarsoft.app.ems.parameter.template.cs.dto.labellist;
 
 import java.io.Serializable;
@@ -11,7 +21,7 @@ import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
  * 标签List删除请求实体类
- * @author ylgao
+ * @author yrong
  */
 @Getter
 @Setter

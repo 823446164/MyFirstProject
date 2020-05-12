@@ -1,3 +1,13 @@
+/*
+ * 文件名：LabelListServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：为LabelList模板提供方法
+ * 修改人：yrong
+ * 修改时间：2020年5月11日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新生成
+ */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +34,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labellist.LabelListDeleteR
 
 /**
  * 标签ListService实现类
- * @author ylgao
+ * @author yrong
  */
 @Slf4j
 @Service
