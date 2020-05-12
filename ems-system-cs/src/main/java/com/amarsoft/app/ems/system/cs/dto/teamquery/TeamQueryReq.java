@@ -20,6 +20,8 @@ import com.amarsoft.amps.acsc.annotation.Digits;
 public class TeamQueryReq implements Serializable{
     private static final long serialVersionUID = 1L;
 
+    
+    
     @Description("团队编号")
     @Length(max=40)
     private String teamId;
@@ -49,4 +51,13 @@ public class TeamQueryReq implements Serializable{
     @Description("笔数")
     @Digits(length=10,scale=0)
     private Integer pageSize;
+    @Description("部门编号")
+    @Length(max=40)
+    private String orgId;
+    @Description("员工编号")
+    @Length(max=40)
+    private String UserId;
+    @Description("团队人数")
+    @Length(max=40)
+    private Integer Count;
 }

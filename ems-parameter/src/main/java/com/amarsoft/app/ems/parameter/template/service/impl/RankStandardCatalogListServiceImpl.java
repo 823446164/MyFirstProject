@@ -71,8 +71,9 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
 
             String sql = "select RSC.serialNo as serialNo,RSC.rankStandard as rankStandard,RSC.rankName as rankName,RSC.parentRankNo as parentRankNo,RSC.ability as ability,RSC.rankDescribe as rankDescribe,RSC.responeDescribe as responeDescribe,RSC.abilityDescribe as abilityDescribe,RSC.belongTeam as belongTeam,RSC.rankType as rankType,RSC.inputUserId as inputUserId,RSC.inputTime as inputTime,RSC.inputOrgId as inputOrgId,RSC.updateUserId as updateUserId,RSC.updateTime as updateTime,RSC.updateOrgId as updateOrgId"
                          + " from RANK_STANDARD_CATALOG RSC"
-                         + " where 1=1  and RSC.rankType=1 and RSC.belongTeam= :belongTeam group by RSC.rankStandard";
+                         + " where 1=1  and RSC.rankType=1 and RSC.belongTeam= :belongTeam and RSC.parentRankNo is null ";
             return queryProperties.assembleSql(sql, "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
+                 
         }
     }
 
@@ -93,7 +94,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             temp.setSerialNo(bo.getString("SerialNo"));
             temp.setRankStandard(bo.getString("RankStandard"));
             temp.setRankName(bo.getString("RankName"));
-            // temp.setParentRankNo(bo.getString("ParentRankNo"));
+            temp.setParentRankNo(bo.getString("ParentRankNo"));
             // temp.setAbility(bo.getString("Ability"));
             temp.setRankDescribe(bo.getString("RankDescribe"));
             temp.setResponeDescribe(bo.getString("ResponeDescribe"));
@@ -215,15 +216,14 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     public RankStandardCatalogSonQueryRsq rankStandardCatalogSonQuery(@Valid RankStandardCatalogSonQueryReq rankStandardCatalogSonQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
-            "rankStandard=:rankStandard and belongTeam=:belongTeam", "rankStandard",
-            rankStandardCatalogSonQueryReq.getRankStandard(), "belongTeam", rankStandardCatalogSonQueryReq.getBelongTeam());
+            "parentRankNo=:parentRankNo or serialNo=:parentRankNo order by parentRankNo", "parentRankNo",
+            rankStandardCatalogSonQueryReq.getSerialNo());
         RankStandardCatalogSonQueryRsq response = new RankStandardCatalogSonQueryRsq();
         List<RankStandardCatalogList> ranCatalogLists = null;
         if (!CollectionUtils.isEmpty(ranCatalogs)) {
             ranCatalogLists = new ArrayList<RankStandardCatalogList>();
             for (RankStandardCatalog rank : ranCatalogs) {
                 RankStandardCatalogList rankresponse = new RankStandardCatalogList();
-                if (!rank.getChildRankNo().isEmpty()) {
                     rankresponse.setSerialNo(rank.getSerialNo());
                     rankresponse.setRankStandard(rank.getRankStandard());
                     rankresponse.setRankName(rank.getRankName());
@@ -241,7 +241,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
                     rankresponse.setUpdateTime(rank.getUpdateTime());
                     rankresponse.setUpdateOrgId(rank.getUpdateOrgId());
                     ranCatalogLists.add(rankresponse);
-                }
+                
             }
 
         }

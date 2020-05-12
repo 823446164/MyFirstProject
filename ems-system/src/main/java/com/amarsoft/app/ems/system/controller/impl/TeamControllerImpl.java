@@ -2,7 +2,7 @@
  * 文件名：TeamController
  * 版权：Copyright by www.amarsoft.com
  * 描述：团队信息controller实现类
- * 修改人：xszhou
+ * 修改人：hpli
  * 修改时间：2020/5/9
  * 跟踪单号：
  * 修改单号：
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.amarsoft.amps.acsc.annotation.CodeQuery;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
+import com.amarsoft.amps.avts.annotation.TemplateExport;
 import com.amarsoft.app.ems.system.controller.TeamController;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.addteamuser.AddTeamUserReq;
@@ -34,15 +35,26 @@ import com.amarsoft.app.ems.system.cs.dto.deleteteamuser.DeleteTeamUserReq;
 import com.amarsoft.app.ems.system.cs.dto.getteamid.GetTeamIdRsp;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
+import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteReq;
+import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoSaveReq;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
+
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.service.OrgService;
+import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
+import com.amarsoft.app.ems.system.service.TeamListDtoService;
 import com.amarsoft.app.ems.system.service.TeamService;
+import com.amarsoft.app.ems.system.service.impl.TeamListDtoServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,6 +64,8 @@ public class TeamControllerImpl implements TeamController {
 
     @Autowired
     TeamService teamService;
+    @Autowired
+    TeamInfoDtoService teamInfoDtoServiceImpl;
     
     @Autowired
     OrgService orgService;
@@ -72,7 +86,23 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+  
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> updateTeamByStatus(@RequestBody @Valid RequestMessage<UpdateTeamReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            teamService.updateTeamStatus(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("更新团队信息请求报文："+ reqMsg.toString(), e);
+            }
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901002",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @Override
     @Transactional
     public ResponseEntity<ResponseMessage<Object>> updateTeam(@RequestBody @Valid RequestMessage<UpdateTeamReq> reqMsg){
@@ -89,7 +119,7 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+  
     @Override
     @Transactional
     public ResponseEntity<ResponseMessage<Object>> addTeamUser(@RequestBody @Valid RequestMessage<AddTeamUserReq> reqMsg){
@@ -214,6 +244,178 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<GetTeamIdRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    /**
+     * Description: 根据部门编号查询团队信息
+     * <br>
+     * ${tags}
+     * @see
+     */
+    @Transactional
+    @CodeQuery
+    @Override
+   
+    public ResponseEntity<ResponseMessage<TeamQueryRsp>> teamQueryById(@RequestBody @Valid RequestMessage<TeamQueryReq> reqMsg) {
+        // TODO Auto-generated method stub
+        ResponseMessage<TeamQueryRsp> rspMsg = null;
+        try {
+            TeamQueryRsp rsp = teamService.teamQueryById(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(new ResponseMessage<TeamQueryRsp>(rsp), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("根据部门查询团队信息请求报文："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * Description: 查询团队信息
+     * <br>
+     * ${tags}
+     * @see
+     */
+    
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>> teamInfoDtoQuery(@RequestBody @Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg){
+        ResponseMessage<TeamInfoDtoQueryRsp> rspMsg = null;
+        try {
+            TeamInfoDtoQueryReq request = reqMsg.getMessage();
+            
+            TeamInfoDtoQueryRsp response = teamInfoDtoServiceImpl.teamInfoDtoQuery(request);
+            rspMsg = new ResponseMessage<TeamInfoDtoQueryRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("团队信息查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * Description: 保存团队信息
+     * <br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    @Transactional
+  
+    public ResponseEntity<ResponseMessage<Object>> teamInfoDtoSave(@RequestBody @Valid RequestMessage<TeamInfoDtoSaveReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            TeamInfoDtoSaveReq request = reqMsg.getMessage();
+            
+            teamInfoDtoServiceImpl.teamInfoDtoSave(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("团队信息保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @Autowired
+    TeamListDtoService teamListDtoServiceImpl;
+    /**
+     * Description: 查询团队信息
+     * <br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    @Transactional
+    @TemplateExport(name="团队信息", query = TeamListDtoServiceImpl.TeamListDtoReqQuery.class, convert=TeamListDtoServiceImpl.TeamListDtoRspConvert.class)
+  
+    public ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>> teamListDtoQuery(@RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg){
+        ResponseMessage<TeamListDtoQueryRsp> rspMsg = null;
+        try {
+            TeamListDtoQueryReq request = reqMsg.getMessage();
+            
+            TeamListDtoQueryRsp response = teamListDtoServiceImpl.teamListDtoQuery(request);
+            rspMsg = new ResponseMessage<TeamListDtoQueryRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("团队信息查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * Description: 团队信息保存
+     * <br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> teamListDtoSave(@RequestBody @Valid RequestMessage<TeamListDtoSaveReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            TeamListDtoSaveReq request = reqMsg.getMessage();
+            
+            teamListDtoServiceImpl.teamListDtoSave(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("团队信息保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * Description: 删除团队<br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<TeamListDtoDeleteReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            TeamListDtoDeleteReq request = reqMsg.getMessage();
+            
+            teamListDtoServiceImpl.teamListDtoDelete(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("团队信息删除："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     
     /**
      * Description:更新员工团队信息<br>
@@ -242,7 +444,7 @@ public class TeamControllerImpl implements TeamController {
      * @see
      */
 	@Override
-	public ResponseEntity<ResponseMessage<TeamOrgQueryRsp>> teamOrgQuery(@Valid RequestMessage<TeamOrgQueryReq> reqMsg) {
+	public ResponseEntity<ResponseMessage<TeamOrgQueryRsp>> teamOrgQuery(@RequestBody @Valid RequestMessage<TeamOrgQueryReq> reqMsg) {
 		ResponseMessage<TeamOrgQueryRsp> rspMsg = null;
         try {
         	TeamOrgQueryReq req = reqMsg.getMessage();
@@ -259,5 +461,28 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<TeamOrgQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
+	 /**
+     * Description: 根据条件查询团队<br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    public ResponseEntity<ResponseMessage<TeamQueryRsp>> teamSearch(@RequestBody @Valid RequestMessage<TeamQueryReq> reqMsg) {
+        // TODO Auto-generated method stub
+        ResponseMessage<TeamQueryRsp> rspMsg = null;
+        try {
+            TeamQueryRsp rsp = teamService.teamSearch(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(new ResponseMessage<TeamQueryRsp>(rsp), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("根据部门查询团队信息请求报文："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
 
 }
