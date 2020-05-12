@@ -26,6 +26,8 @@ import com.amarsoft.app.ems.system.cs.dto.rolequery.RoleQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updaterole.UpdateRoleReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
 
 public interface RoleController {
     @PostMapping(value = "/role/addrole", name="新增角色", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -44,4 +46,7 @@ public interface RoleController {
     public ResponseEntity<ResponseMessage<LevelRoleQueryRsp>> levelRoleQuery(@RequestBody @Valid RequestMessage<LevelRoleQueryReq> reqMsg);
     @PostMapping(value = "/role/getroleuser", name="查询角色关联用户", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<RoleUserQueryRsp>> roleUserQuery(@RequestBody @Valid RequestMessage<RoleUserQueryReq> reqMsg);
+    @PostMapping(value = "/role/getrolesbyuser", name="按用户查找角色", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<UserRoleQueryRsp>> userRoleQuery(@RequestBody @Valid RequestMessage<UserRoleQueryReq> reqMsg);
+
 }
