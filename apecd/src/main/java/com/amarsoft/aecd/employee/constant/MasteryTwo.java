@@ -1,7 +1,7 @@
 /*
  * 文件名：MasteryTwo.java
  * 版权：Copyright by www.amarsoft.com
- * 描述：指标类型（RANK_STANDARD_ITEMS表）-掌握程度二类
+ * 描述：指标类型（RANK_STANDARD_ITEMS表）-掌握程度二类:熟练/精通
  * 修改人：yqchen1
  * 修改时间：2020年5月9日
  * 跟踪单号：
@@ -13,7 +13,7 @@ package com.amarsoft.aecd.employee.constant;
 
 public enum MasteryTwo {
 	
-	_1("1","了解"),
+	//_1("1","了解"),
 	_2("2","熟悉"),
 	_3("3","精通"),
 	;
@@ -33,7 +33,7 @@ public enum MasteryTwo {
 	 * @return
 	 */
 	public static boolean isExist(String id) {
-		return _1.id.equals(id) || _2.id.equals(id) || _3.id.equals(id);
+		return _2.id.equals(id) || _3.id.equals(id);
 	}
 
 	/**
