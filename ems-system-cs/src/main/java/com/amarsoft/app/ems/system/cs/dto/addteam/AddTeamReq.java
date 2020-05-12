@@ -40,6 +40,7 @@ public class AddTeamReq implements Serializable{
     @NotEmpty
     @Length(max=40)
     private String belongRootOrg;
+    
     @Description("任务描述")
     @Length(max=400)
     private String description;

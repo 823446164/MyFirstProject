@@ -45,8 +45,8 @@ public class Department extends BusinessObject {
     private String deptManager;
       
     @Description("部门设施说明") 
-    @Column(name = "DeptEquipment",length=2000) 
-    private String DeptEquipment;
+    @Column(name = "deptEquipment",length=2000) 
+    private String deptEquipment;
       
     @Description("登记人") 
     @Column(name = "inputUserId",length=40) 

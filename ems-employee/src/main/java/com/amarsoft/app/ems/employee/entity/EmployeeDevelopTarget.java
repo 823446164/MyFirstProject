@@ -60,6 +60,10 @@ public class EmployeeDevelopTarget extends BusinessObject {
     @Description("跟踪记录") 
     @Column(name = "record",length=2000) 
     private String record;
+    
+    @Description("跟踪记录人") 
+    @Column(name = "traceUserId",length=40) 
+    private String traceUserId;
       
     @Description("实现情况") 
     @Column(name = "implStatus",length=2000) 
