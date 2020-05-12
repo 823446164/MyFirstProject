@@ -42,7 +42,6 @@ public class LabelByLabelCatalogQueryReq {
     
     @Description("标签名称")
     @Length(max=80)
-    @NotEmpty
     @ActualColumn("LC.labelName")
     private String labelName;
 }

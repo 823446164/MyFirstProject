@@ -125,9 +125,9 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
         LabelByLabelCatalogQueryRsp lableCatalogInfoQueryRsp = new LabelByLabelCatalogQueryRsp();
        
         BusinessObjectAggregate<BusinessObject> labelBelongCatalogQueryRspBoa = bomanager.selectBusinessObjectsBySql(
-            "select LC.serialNo as serialNo,LC.labelName as labelName,LC.belongCataLog as belongCataLog from LableCatalog LC where LC.belongCataLog =:labelName",
-            "labelName",
-            labelByLabelCatalogQueryReq.getLabelName());
+            "select LC.serialNo as serialNo,LC.labelName as labelName,LC.belongCataLog as belongCataLog from LabelCatalog LC where LC.belongCataLog =:serialNo",
+            "serialNo",
+            labelByLabelCatalogQueryReq.getSerialNo());
 
         List<BusinessObject> labelBelongCatalogQueryRspBoList = labelBelongCatalogQueryRspBoa.getBusinessObjects();
    
@@ -138,6 +138,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
                
                 LabelByLabelCatalogQueryRsp lableCatalogInof = new LabelByLabelCatalogQueryRsp();
                 lableCatalogInof.setLabelName(labelBelongCatalogQueryRspBo.getString("LabelName"));
+                lableCatalogInof.setSerialNo(labelBelongCatalogQueryRspBo.getString("SerialNo"));
                 lableCatalogInfoLists.add(lableCatalogInof);
             }
             lableCatalogInfoQueryRsp.setLableCatalogInfos(lableCatalogInfoLists);

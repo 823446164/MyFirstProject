@@ -40,7 +40,9 @@ public class LabelInfoControllerImpl implements LabelInfoController {
     
     @Override
     @Transactional
-    //标签Info查询
+    /**
+     * Description: 标签Info查询
+     */
     public ResponseEntity<ResponseMessage<LabelInfoQueryRsp>> labelInfoQuery(@RequestBody @Valid RequestMessage<LabelInfoQueryReq> reqMsg){
         ResponseMessage<LabelInfoQueryRsp> rspMsg = null;
         try {
@@ -64,7 +66,9 @@ public class LabelInfoControllerImpl implements LabelInfoController {
 
     @Override
     @Transactional
-    //标签Info保存
+    /**
+     * Description: 标签Info保存
+     */
     public ResponseEntity<ResponseMessage<Object>> labelInfoSave(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -82,6 +86,87 @@ public class LabelInfoControllerImpl implements LabelInfoController {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @Override
+    @Transactional
+    /**
+     * Description: 标签Info修改
+     */
+    public ResponseEntity<ResponseMessage<Object>> labelInfoUpdate(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            LabelInfoSaveReq request = reqMsg.getMessage();
+            
+            labelInfoServiceImpl.labelInfoUpdate(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("标签Info修改："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @Override
+    @Transactional
+    /**
+     * Description: 标签生效
+     */
+    public ResponseEntity<ResponseMessage<Object>> lableStatusOk(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg) {
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            LabelInfoSaveReq request = reqMsg.getMessage();
+
+            labelInfoServiceImpl.lableStatusOk(request);
+
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("标签生效：" + reqMsg.toString(), e);
+            }
+            // 事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @Transactional
+    /**
+     * Description: 标签失效
+     */
+    public ResponseEntity<ResponseMessage<Object>> lableStatusNo(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg) {
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            LabelInfoSaveReq request = reqMsg.getMessage();
+
+            labelInfoServiceImpl.lableStatusNo(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            if (log.isErrorEnabled()) {
+                log.error("标签失效：" + reqMsg.toString(), e);
+            }
+            // 事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
