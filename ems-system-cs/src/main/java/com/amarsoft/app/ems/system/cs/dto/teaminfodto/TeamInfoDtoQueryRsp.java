@@ -18,6 +18,7 @@ import lombok.ToString;
  * 团队信息查询响应实体类
  * @author hpli
  */
+
 @Getter
 @Setter
 @ToString

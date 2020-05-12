@@ -14,6 +14,8 @@ import com.amarsoft.amps.acsc.annotation.ActualColumn;
  * 团队信息查询请求实体类
  * @author hpli
  */
+
+
 @Getter
 @Setter
 @ToString

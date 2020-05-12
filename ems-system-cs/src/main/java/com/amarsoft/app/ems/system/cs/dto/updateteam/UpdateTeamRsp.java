@@ -18,4 +18,5 @@ public class UpdateTeamRsp {
     @Description("信息")
     private String  Meassage;
     
+    
 }

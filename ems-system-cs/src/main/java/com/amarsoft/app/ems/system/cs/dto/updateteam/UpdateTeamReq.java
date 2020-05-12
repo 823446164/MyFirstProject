@@ -37,4 +37,5 @@ public class UpdateTeamReq implements Serializable{
     @Length(max=1)
     @Enum(SystemStatus.class)
     private String status;
+    
 }

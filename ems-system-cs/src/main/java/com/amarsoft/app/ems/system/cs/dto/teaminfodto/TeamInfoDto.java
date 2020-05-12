@@ -73,4 +73,5 @@ public class TeamInfoDto implements Serializable {
     @ActualColumn("TINFO.description")
     @TemplateBody(sortNo = 8, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly = false, span = 2, groupIndex = -1)
     private String description;
+    
 }

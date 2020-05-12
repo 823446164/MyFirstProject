@@ -25,6 +25,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService{
      * @param request
      * @return
      */
+    
     @Override
     @Transactional
     public TeamInfoDtoQueryRsp teamInfoDtoQuery(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq) {

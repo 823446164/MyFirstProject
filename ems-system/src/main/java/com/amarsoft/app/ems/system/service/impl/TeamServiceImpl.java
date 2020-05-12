@@ -153,8 +153,8 @@ public class TeamServiceImpl implements TeamService {
         return  updateTeamRsp;
     }
     /**
-     * Description: <br>
-     * 1、团队状态停用<br>
+     * Description:团队状态停用 <br>
+     * <br>
      * ${tags}
      * @see
      */
@@ -183,6 +183,12 @@ public class TeamServiceImpl implements TeamService {
         bomanager.updateDB();
         return  updateTeamRsp;
     }
+    /**
+     * Description: 添加团队成员<br>
+     *<br>
+     * ${tags}
+     * @see
+     */
     @Override
     public void addTeamUser(AddTeamUserReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
@@ -200,7 +206,12 @@ public class TeamServiceImpl implements TeamService {
         bomanager.updateDB();
         
     }
-
+    /**
+     * Description: 删除团队成员<br>
+     *<br>
+     * ${tags}
+     * @see
+     */
     @Override
     public void deleteTeamUser(DeleteTeamUserReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
@@ -226,7 +237,12 @@ public class TeamServiceImpl implements TeamService {
         bomanager.updateDB();
     }
     
-
+    /**
+     * Description: 查询团队信息<br>
+     * <br>
+     * ${tags}
+     * @see
+     */
     @Override
     public TeamQueryRsp teamQuery(TeamQueryReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
@@ -414,8 +430,8 @@ public class TeamServiceImpl implements TeamService {
         return true;
     }
     /**
-     * Description: <br>
-     * 1、删除团队信息<br>
+     * Description: 删除团队信息<br>
+     *<br>
      * ${tags}
      * @see
      */
@@ -454,8 +470,8 @@ public class TeamServiceImpl implements TeamService {
     }
     
     /**
-     * Description: <br>
-     * 1、根据部门编号查询团队信息<br>
+     * Description:根据部门编号查询团队信息 <br>
+     * <br>
      * ${tags}
      * @see
      */
@@ -465,16 +481,16 @@ public class TeamServiceImpl implements TeamService {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         //根据部门编号查询团队信息
         bomanager.clear();
-        String orgId = req.getOrgId();
+       // String orgId = req.getOrgId();
         BusinessObjectAggregate<BusinessObject> TeamQueryReqBoa = bomanager.selectBusinessObjectsBySql(
-            "select  count(*),UT.userId as UserId, OT.teamId as teamId, TI.teamName as teamName,TI.teamLeader as teamLeader from UserTeam UT"
-            + " TeamInfo TI  TI.teamId = UT.teamId   "
-            + " where TI.belongOrgId =:orgId  group by  TI.teamId ","orgId",
-            orgId);
+            "select  count(*), UT.userId as userId ,TI.teamId as teamId,TI.teamName as teamName,TI.teamLeader as  teamLeader "
+            + "from UserTeam UT, TeamInfo TI "
+            + "where TI.teamId  =UT.teamId and  TI.belongOrgId= :belongOrgId  ","belongOrgId", req.getBelongOrgId());
         /**
-         * select  count(*),TI.TEAMNAME,TI.roleA  from sys_team_user TU 
-right  join sys_team_info TI on  TI.TEAMID =TU.TEAMID
-inner join sys_org_team OT on OT.TEAMID=TI.TEAMID where OT.ORGID ='00010006' group by  TI.TEAMID ;
+   "select  count(*), UT.userId as userId from UserTeam UT "
+            + "inner join (select TI.teamId as teamId  ,TI.teamname as teamname ,TI.teamLeader as  teamLeader from TeamInfo TI"
+            + " where TI.belongOrgId= :belongOrgId ) UT on TI.TEAMID =UT.TEAMID"
+
          */
         List<BusinessObject> TeamQueryList = TeamQueryReqBoa.getBusinessObjects();
         TeamQueryRsp  teamQueryRsp =new TeamQueryRsp ();
@@ -496,8 +512,8 @@ inner join sys_org_team OT on OT.TEAMID=TI.TEAMID where OT.ORGID ='00010006' gro
     }
 
     /**
-     * Description: <br>
-     * 1、更新员工团队信息<br>
+     * Description: 更新员工团队信息 <br>
+     *<br>
      * ${tags}
      * @see
      */
@@ -519,8 +535,8 @@ inner join sys_org_team OT on OT.TEAMID=TI.TEAMID where OT.ORGID ='00010006' gro
 	}
 
     /**
-     * Description: <br>
-     * 1、部门团队列表展示<br>
+     * Description: 部门团队列表展示<br>
+     *部门团队列表展示<br>
      * ${tags}
      * @see
      */
@@ -531,7 +547,8 @@ inner join sys_org_team OT on OT.TEAMID=TI.TEAMID where OT.ORGID ='00010006' gro
 		List<OrgAndTeam> orgTeams = new ArrayList<OrgAndTeam>();
 		OrgAndTeam orgTeam = null;
 		List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
-				"select OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName from OrgTeam OT,TeamInfo TI,OrgInfo OI where OT.teamId = TI.teamId and OT.orgId = OI.orgId order by OT.orgId").getBusinessObjects();
+				"select OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName "
+				+ "from OrgTeam OT,TeamInfo TI,OrgInfo OI where OT.teamId = TI.teamId and OT.orgId = OI.orgId order by OT.orgId").getBusinessObjects();
 		if (!StringUtils.isEmpty(orgTeamLists)) {
 			for (BusinessObject businessObject : orgTeamLists) {
 				orgTeam = new OrgAndTeam();
@@ -546,11 +563,11 @@ inner join sys_org_team OT on OT.TEAMID=TI.TEAMID where OT.ORGID ='00010006' gro
 		return rsp;
 	}
 	 /**
-     * Description: <br>
-     * 1、根据条件查询团队信息<br>
+     * Description: 根据条件查询团队信息<br>
      * ${tags}
      * @see
      */
+	
     @Override
     public TeamQueryRsp teamSearch(TeamQueryReq req) {
         // TODO Auto-generated method stub
@@ -563,7 +580,6 @@ inner join sys_org_team OT on OT.TEAMID=TI.TEAMID where OT.ORGID ='00010006' gro
             req.setBegin(0);
             req.setPageSize(Integer.MAX_VALUE);
             }
-        
        if (!StringUtils.isEmpty(req.getTeamName())) {//按团队名称查询
             teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "teamName = :teamName ","teamName ",req.getTeamName());
         }else if (!StringUtils.isEmpty(req.getTeamLeader())) {//按团队负责人查询
@@ -575,38 +591,7 @@ inner join sys_org_team OT on OT.TEAMID=TI.TEAMID where OT.ORGID ='00010006' gro
        rsp.setTotalCount(teamAggregate == null ? 1 : teamAggregate.getAggregate("count(teamId) as cnt").getInt("cnt")); // 为空则为查询详情，不为空返回集合数量
        rsp.setTeamInfos(new ArrayList<com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo>());
        return rsp;
-       
-        /*
-         * BusinessObjectAggregate<BusinessObject> userTeamLeaderRsp =
-         * bomanager.selectBusinessObjectsBySql("select   " +
-         * "count(*),TI.TEAMNAME from  UserTeam TU ,TeamInfo TI " +
-         * "where TI.TEAMID =TU.TEAMID and  TI.TEAMNAME","teamName", req.getSearchAttribute());
-         * List<BusinessObject> teamLeaderRsp = userTeamLeaderRsp.getBusinessObjects();
-         * TeamQueryRsp teamListQuery =new TeamQueryRsp(); List<
-         * com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo > teamList=new ArrayList<>();
-         * if(teamLeaderRsp!=null &&teamLeaderRsp.size()>0) { for(BusinessObject teamUser
-         * :teamLeaderRsp) { com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo team = new
-         * com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo();
-         * team.setTeamId(teamUser.getString("teamId"));
-         * team.setTeamName(teamUser.getString("teamName"));
-         * team.setTeamLeader(teamUser.getString("teamLeader")); //设置团队的总人数
-         * team.setCount(teamUser.getInt("count")); teamList.add(team); }
-         * teamListQuery.setTeamInfos(teamList); return teamListQuery; } //根据团队名称查询团队信息
-         * BusinessObjectAggregate<BusinessObject> userTeamRsp = bomanager.
-         * selectBusinessObjectsBySql("select   count(*),TI.TEAMNAME from  UserTeam TU ,TeamInfo TI "
-         * + "where TI.TEAMID =TU.TEAMID and  TI.TEAMNAME","teamName", req.getTeamName());
-         * List<BusinessObject> businessObjects = userTeamRsp.getBusinessObjects(); TeamQueryRsp
-         * teamQuery =new TeamQueryRsp(); List<
-         * com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo > list =new ArrayList<>();
-         * if(businessObjects!=null &&businessObjects.size()>0) { for(BusinessObject teamUser
-         * :businessObjects) { com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo team = new
-         * com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo();
-         * team.setTeamId(teamUser.getString("teamId"));
-         * team.setTeamName(teamUser.getString("teamName"));
-         * team.setTeamLeader(teamUser.getString("teamLeader")); //设置团队的总人数
-         * team.setCount(teamUser.getInt("count")); list.add(team); } teamQuery.setTeamInfos(list);
-         * return teamQuery; } return teamListQuery;
-         */
+      
        
     }
 

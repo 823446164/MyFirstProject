@@ -483,5 +483,6 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
 
 }

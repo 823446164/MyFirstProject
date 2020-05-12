@@ -26,6 +26,8 @@ import java.util.List;
 public class TeamInfo implements Serializable{
     private static final long serialVersionUID = 1L;
 
+    
+    
     @Description("团队编号")
     @Length(max=40)
     private String teamId;

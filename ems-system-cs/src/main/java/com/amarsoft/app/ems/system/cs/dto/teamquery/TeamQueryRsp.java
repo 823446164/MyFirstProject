@@ -21,6 +21,8 @@ import java.util.List;
 public class TeamQueryRsp implements Serializable{
     private static final long serialVersionUID = 1L;
 
+    
+    
     @Description("总数")
     @Digits(length=10,scale=0)
     private Integer totalCount;

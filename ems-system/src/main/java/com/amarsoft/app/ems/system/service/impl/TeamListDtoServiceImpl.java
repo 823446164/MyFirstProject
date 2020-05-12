@@ -35,6 +35,8 @@ public class TeamListDtoServiceImpl implements TeamListDtoService{
     /**
                    * 查询结果集
      */
+    
+    
     public static class TeamListDtoReqQuery implements RequestQuery<TeamListDtoQueryReq> {
         @Override
         public Query apply(TeamListDtoQueryReq teamListDtoQueryReq) {

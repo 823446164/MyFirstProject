@@ -80,5 +80,6 @@ public interface TeamController {
     public ResponseEntity<ResponseMessage<Object>> updateTeamByStatus(@RequestBody @Valid RequestMessage<UpdateTeamReq> reqMsg);
     @PostMapping(value = "/team/getsearch", name="根据条件查询团队信息", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<TeamQueryRsp>> teamSearch(@RequestBody @Valid RequestMessage<TeamQueryReq> reqMsg);
+    
    
 }

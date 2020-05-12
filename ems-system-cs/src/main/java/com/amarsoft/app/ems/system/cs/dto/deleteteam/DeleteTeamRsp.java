@@ -2,7 +2,7 @@
  * 文件名：DeleteTeamRsp.java
  * 版权：Copyright by www.amarsoft.com
  * 描述：
- * 修改人：amarsoft
+ * 修改人：hpli
  * 修改时间：2020年5月9日
  * 跟踪单号：
  * 修改单号：
@@ -30,3 +30,4 @@ public class DeleteTeamRsp {
     
 
 }
+
