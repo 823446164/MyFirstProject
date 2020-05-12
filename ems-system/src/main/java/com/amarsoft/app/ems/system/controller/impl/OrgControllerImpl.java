@@ -41,6 +41,11 @@ import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptD
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
 import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoSaveReq;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryRsp;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -92,13 +97,18 @@ public class OrgControllerImpl implements OrgController {
     }
   
 
-    
+    /**
+     * Description: 修改指定部门状态信息
+     * @param reqMsg
+     * @return  Map
+     * @see
+     */
     @Override
     @Transactional
     public ResponseEntity<ResponseMessage<Object>> orgInfoUpdate(@RequestBody @Valid RequestMessage<OrgInfoUpdateReq> reqMsg){
         try {
-            orgService.setOrgInfo(reqMsg.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(), HttpStatus.OK);
+            Map<String, String> map =  orgService.setOrgInfo(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(map), HttpStatus.OK);
         } catch(Exception e) {
             if(log.isErrorEnabled()) {
                 log.error("[请求报文：" + reqMsg.toString() + "]", e);
@@ -307,6 +317,70 @@ public class OrgControllerImpl implements OrgController {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             ResponseMessage<DeleteInfoDtoQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900205", e.getMessage());
             return new ResponseEntity<ResponseMessage<DeleteInfoDtoQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 查询二级部门
+     * @param reqMsg
+     * @return  ResponseEntity
+     * @see
+     */
+    @Override
+    @CodeQuery
+    public ResponseEntity<ResponseMessage<SecondLevelDeptInfoDtoQueryRsp>> secondLevelDeptInfoDtoQuery(@RequestBody @Valid RequestMessage<SecondLevelDeptInfoDtoQueryReq> reqMsg) {
+        try {
+            SecondLevelDeptInfoDtoQueryRsp response = orgService.secondLevelDeptInfoDtoQuery(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<SecondLevelDeptInfoDtoQueryRsp>>(new ResponseMessage<SecondLevelDeptInfoDtoQueryRsp>(response), HttpStatus.OK);
+        } catch(Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("[请求报文：" + reqMsg.toString() + "]", e);
+            }
+            ResponseMessage<SecondLevelDeptInfoDtoQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900201", e.getMessage());
+            return new ResponseEntity<ResponseMessage<SecondLevelDeptInfoDtoQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 新增、保存二级部门
+     * @param reqMsg
+     * @return  Map
+     * @see
+     */
+    @Override
+    public ResponseEntity<ResponseMessage<Object>> secondLevelDeptInfoDtoSave(@RequestBody @Valid RequestMessage<SecondLevelDeptInfoDtoSaveReq> reqMsg) {
+        try {
+            Map<String, String> map =  orgService.secondLevelDeptInfoDtoSave(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(map), HttpStatus.OK);
+        } catch(Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("[请求报文：" + reqMsg.toString() + "]", e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            ResponseMessage<Object> hrb = ResponseMessage.getResponseMessageFromException(e, "900203", e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 查询二级部门list
+     * @param reqMsg
+     * @return  ResponseEntity
+     * @see
+     */
+    @Override
+    @CodeQuery
+    public ResponseEntity<ResponseMessage<SecondLevelDeptListDtoQueryRsp>> secondLevelDeptListDtoQuery(@RequestBody @Valid RequestMessage<SecondLevelDeptListDtoQueryReq> reqMsg) {
+        try {
+            SecondLevelDeptListDtoQueryRsp response = orgService.secondLevelDeptListDtoQuery(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<SecondLevelDeptListDtoQueryRsp>>(new ResponseMessage<SecondLevelDeptListDtoQueryRsp>(response), HttpStatus.OK);
+        } catch(Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("[请求报文：" + reqMsg.toString() + "]", e);
+            }
+            ResponseMessage<SecondLevelDeptListDtoQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900201", e.getMessage());
+            return new ResponseEntity<ResponseMessage<SecondLevelDeptListDtoQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

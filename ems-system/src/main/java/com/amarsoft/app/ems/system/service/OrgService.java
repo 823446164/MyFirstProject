@@ -24,6 +24,11 @@ import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptD
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
 import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoSaveReq;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryRsp;
 
 /**
  * 机构服务的接口
@@ -39,11 +44,11 @@ public interface OrgService {
     OrgInfoAllQueryRsp getOrgAll(OrgInfoAllQueryReq request);
     
     /**
-     * 修改机构的信息
+     * 修改机构的状态信息
      * @param request
      * @return
      */
-    void setOrgInfo(OrgInfoUpdateReq request);
+    Map<String, String> setOrgInfo(OrgInfoUpdateReq request);
 
     /**
      * 新增机构的信息
@@ -117,7 +122,7 @@ public interface OrgService {
      */
     boolean isParentOrg(String parentOrgId, String orgId);
     /**
-     * Description: 查询机构信息
+     * Description: 查询一级机构信息
      * @param request
      * @return
      * @see
@@ -149,5 +154,29 @@ public interface OrgService {
      * @see
      */
     Map<String, String> deleteInfoDtoQuery(DeleteInfoDtoQueryReq request);
+
+    /**
+     * Description: 查询二级部门信息
+     * @param req
+     * @return
+     * @see
+     */
+    SecondLevelDeptInfoDtoQueryRsp secondLevelDeptInfoDtoQuery(SecondLevelDeptInfoDtoQueryReq req);
+
+    /**
+     * Description: 查询二级部门List列表
+     * @param req
+     * @return
+     * @see
+     */
+    SecondLevelDeptListDtoQueryRsp secondLevelDeptListDtoQuery(SecondLevelDeptListDtoQueryReq req);
+
+    /**
+     * Description: 新增二级机构的信息
+     * @param request
+     * @return Map
+     * @see
+     */
+    Map<String, String> secondLevelDeptInfoDtoSave(SecondLevelDeptInfoDtoSaveReq request);
 
 }
