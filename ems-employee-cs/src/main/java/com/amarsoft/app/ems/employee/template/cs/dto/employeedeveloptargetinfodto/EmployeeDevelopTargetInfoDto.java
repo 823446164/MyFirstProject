@@ -1,12 +1,15 @@
 package com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto;
 
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 
@@ -17,7 +20,7 @@ import com.amarsoft.amps.avta.annotation.TemplateBody;
 @Getter
 @Setter
 @ToString
-@TemplateHeader(id = "EmployeeDevelopTargetInfoDto", name = "员工成长目标跟踪Info", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 1)
+@TemplateHeader(id = "EmployeeDevelopTargetInfoDto", name = "员工成长目标跟踪Info", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 2)
 public class EmployeeDevelopTargetInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("成长目标编号")
@@ -29,13 +32,13 @@ public class EmployeeDevelopTargetInfoDto implements Serializable {
     @Description("员工编号")
     @Length(max=40)
     @ActualColumn("EDT.employeeNo")
-    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String employeeNo;
 
     @Description("职级编号")
     @Length(max=40)
     @ActualColumn("EDT.rankNo")
-    @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String rankNo;
 
     @Description("制定日期")
@@ -115,4 +118,7 @@ public class EmployeeDevelopTargetInfoDto implements Serializable {
     @ActualColumn("EDT.updateOrgId")
     @TemplateBody(sortNo = 15, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String updateOrgId;
+    
+
+
 }

@@ -17,7 +17,7 @@ import com.amarsoft.amps.avta.annotation.TemplateBody;
 @Getter
 @Setter
 @ToString
-@TemplateHeader(id = "EmployeeProjectExpInfoDto", name = "员工项目经历Info", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 1)
+@TemplateHeader(id = "EmployeeProjectExpInfoDto", name = "员工项目经历Info", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 2)
 public class EmployeeProjectExpInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("项目编号")
@@ -65,7 +65,7 @@ public class EmployeeProjectExpInfoDto implements Serializable {
     @Description("工作描述")
     @Length(max=2000)
     @ActualColumn("EPE.workDescribe")
-    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String workDescribe;
 
     @Description("登记人")

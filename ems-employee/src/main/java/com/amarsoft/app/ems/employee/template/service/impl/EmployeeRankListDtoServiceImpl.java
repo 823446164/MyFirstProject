@@ -49,9 +49,14 @@ public class EmployeeRankListDtoServiceImpl implements EmployeeRankListDtoServic
         @Override
         public Query apply(EmployeeRankListDtoQueryReq employeeRankListDtoQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(employeeRankListDtoQueryReq, EmployeeRankListDto.class);
+           
+            String sql = "select ER.serialNo as serialNo,ER.employeeNo as employeeNo,ER.classify as classify,max(ER.goalDate) as goalDate,ER.rank as rank,ER.direction as direction,ER.rankVersion as rankVersion,ER.inputUserId as inputUserId,ER.inputTime as inputTime,ER.inputOrgId as inputOrgId,ER.updateUserId as updateUserId,ER.updateTime as updateTime,ER.updateOrgId as updateOrgId,ER.rankIsFormal as rankIsFormal,ER.changeDate as changeDate"
+                         +" from Employee_Rank ER" 
+                         +" where 1=1 and ER.employeeNo = :employeeNo group by rankVersion";
 
-            String sql = "select ER.serialNo as serialNo,ER.employeeNo as employeeNo,ER.classify as classify,ER.goalDate as goalDate,ER.rank as rank,ER.rankVersion as rankVersion,ER.inputUserId as inputUserId,ER.inputTime as inputTime,ER.inputOrgId as inputOrgId,ER.updateUserId as updateUserId,ER.updateTime as updateTime,ER.updateOrgId as updateOrgId,ER.rankIsFormal as rankIsFormal,ER.changeDate as changeDate"
-                         + " from EMPLOYEE_RANK ER" + " where 1=1 and ER.employeeNo = :employeeNo";
+            
+            
+            
             return queryProperties.assembleSql(sql, "employeeNo", employeeRankListDtoQueryReq.getEmployeeNo());
         }
     }
