@@ -1101,7 +1101,7 @@ public class OrgServiceImpl implements OrgService {
         }
         
         changeEvent.setObjectNo(req.getObjectNo());
-        changeEvent.setRemark(req.getRemake());
+        changeEvent.setRemark(req.getRemark());
         changeEvent.setChangeContext("删除部门信息:"+orgInfo.getOrgId());
         changeEvent.setObjectType("DELETE");
         changeEvent.setInputDate(LocalDateTime.now());
