@@ -30,7 +30,10 @@ public class LabelDescribeInfoControllerImpl implements LabelDescribeInfoControl
     
     @Override
     @Transactional
-    //标签能力描述Info查询
+    /**
+     * 标签目录树图查询
+     * @author 标签能力描述Info查询
+     */
     public ResponseEntity<ResponseMessage<LabelDescribeInfoQueryRsp>> labelDescribeInfoQuery(@RequestBody @Valid RequestMessage<LabelDescribeInfoQueryReq> reqMsg){
         ResponseMessage<LabelDescribeInfoQueryRsp> rspMsg = null;
         try {
@@ -54,7 +57,10 @@ public class LabelDescribeInfoControllerImpl implements LabelDescribeInfoControl
 
     @Override
     @Transactional
-    //标签能力描述Info保存
+    /**
+     * 标签能力描述Info保存
+     * @author yrong
+     */
     public ResponseEntity<ResponseMessage<Object>> labelDescribeInfoSave(@RequestBody @Valid RequestMessage<LabelDescribeInfoSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {

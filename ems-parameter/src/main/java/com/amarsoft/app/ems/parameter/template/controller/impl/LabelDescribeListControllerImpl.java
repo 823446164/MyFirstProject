@@ -34,7 +34,10 @@ public class LabelDescribeListControllerImpl implements LabelDescribeListControl
     @Override
     @Transactional
     @TemplateExport(name="标签能力描述List", query = LabelDescribeListServiceImpl.LabelDescribeListReqQuery.class, convert=LabelDescribeListServiceImpl.LabelDescribeListRspConvert.class)
-    //标签能力描述List查询
+    /**
+     * 标签能力描述List查询
+     * @author yrong
+     */
     public ResponseEntity<ResponseMessage<LabelDescribeListQueryRsp>> labelDescribeListQuery(@RequestBody @Valid RequestMessage<LabelDescribeListQueryReq> reqMsg){
         ResponseMessage<LabelDescribeListQueryRsp> rspMsg = null;
         try {
@@ -58,7 +61,10 @@ public class LabelDescribeListControllerImpl implements LabelDescribeListControl
 
     @Override
     @Transactional
-    //标签能力描述List保存
+    /**
+     * 标签能力描述List保存
+     * @author yrong
+     */
     public ResponseEntity<ResponseMessage<Object>> labelDescribeListSave(@RequestBody @Valid RequestMessage<LabelDescribeListSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -82,7 +88,10 @@ public class LabelDescribeListControllerImpl implements LabelDescribeListControl
 
     @Override
     @Transactional
-    //标签能力描述List删除
+    /**
+     * 标签能力描述List删除
+     * @author yrong
+     */
     public ResponseEntity<ResponseMessage<Object>> labelDescribeListDelete(@RequestBody @Valid RequestMessage<LabelDescribeListDeleteReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {

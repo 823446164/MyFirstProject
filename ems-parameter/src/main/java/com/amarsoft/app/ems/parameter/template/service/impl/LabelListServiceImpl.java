@@ -1,6 +1,12 @@
 /*
- * 文件名：LabelListServiceImpl 版权：Copyright by www.amarsoft.com 描述：为LabelList模板提供方法 修改人：yrong
- * 修改时间：2020年5月11日 跟踪单号： 修改单号： 修改内容：新生成
+ * 文件名：LabelListServiceImpl 
+ * 版权：Copyright by www.amarsoft.com 
+ * 描述：为LabelList模板提供方法 
+ * 修改人：yrong
+ * 修改时间：2020年5月11日 
+ * 跟踪单号： 
+ * 修改单号： 
+ * 修改内容：新生成
  */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
@@ -91,9 +97,7 @@ public class LabelListServiceImpl implements LabelListService {
 
     /**
      * 标签List多记录查询
-     * 
-     * @param request
-     * @return
+     * @param labelListQueryReq
      */
     @Override
     @Transactional
@@ -125,8 +129,7 @@ public class LabelListServiceImpl implements LabelListService {
     /**
      * 标签List多记录保存
      * 
-     * @param request
-     * @return
+     * @param labelListSaveReq
      */
     @Override
     public void labelListSave(@Valid LabelListSaveReq labelListSaveReq) {
@@ -136,8 +139,7 @@ public class LabelListServiceImpl implements LabelListService {
     /**
      * 标签List多记录保存
      * 
-     * @param
-     * @return
+     * @param labelLists
      */
     @Transactional
     public void labelListSaveAction(List<LabelList> labelLists) {
@@ -151,8 +153,7 @@ public class LabelListServiceImpl implements LabelListService {
     /**
      * 标签List删除
      * 
-     * @param request
-     * @return
+     * @param labelListDeleteReq
      */
     @Override
     @Transactional
