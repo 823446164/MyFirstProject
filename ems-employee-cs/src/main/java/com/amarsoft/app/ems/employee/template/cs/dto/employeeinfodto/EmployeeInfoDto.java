@@ -151,4 +151,28 @@ public class EmployeeInfoDto implements Serializable {
     @ActualColumn("EI.employeeWorkStatus")
     @TemplateBody(sortNo = 21, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String employeeWorkStatus;
+    
+    @Description("所属机构编号")
+    @Length(max=40)
+    @ActualColumn("OI.orgId")
+    @TemplateBody(sortNo = 22, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    private String orgId;
+    
+    @Description("所属机构名称")
+    @Length(max=80)
+    @ActualColumn("OI.orgName")
+    @TemplateBody(sortNo = 23, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    private String orgName;
+    
+    @Description("所属团队编号")
+    @Length(max=40)
+    @ActualColumn("TI.teamId")
+    @TemplateBody(sortNo = 24, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    private String teamId;
+    
+    @Description("所属团队名称")
+    @Length(max=80)
+    @ActualColumn("TI.teamName")
+    @TemplateBody(sortNo = 25, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    private String teamName;
 }
