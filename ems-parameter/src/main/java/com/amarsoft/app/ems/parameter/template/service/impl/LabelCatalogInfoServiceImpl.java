@@ -14,7 +14,9 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,8 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
@@ -54,10 +58,8 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     @Transactional
     public LabelCatalogInfoQueryRsp labelCatalogInfoQuery(@Valid LabelCatalogInfoQueryReq labelCatalogInfoQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-
         LabelCatalog labelCatalog = bomanager.loadBusinessObject(LabelCatalog.class, "serialNo", labelCatalogInfoQueryReq.getSerialNo());
-        if (labelCatalog != null) {
-            LocalDateTime localDateTime = LocalDateTime.now();
+        if (labelCatalog != null) {            
             LabelCatalogInfoQueryRsp labelCatalogInfo = new LabelCatalogInfoQueryRsp();
             labelCatalogInfo.setSerialNo(labelCatalog.getSerialNo());
             labelCatalogInfo.setLabelName(labelCatalog.getLabelName());
@@ -66,10 +68,10 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             labelCatalogInfo.setAuthor(labelCatalog.getAuthor());
             labelCatalogInfo.setLabelVersion(labelCatalog.getLabelVersion());
             labelCatalogInfo.setInputUserId(labelCatalog.getInputUserId());
-            labelCatalogInfo.setInputTime(localDateTime);
+            labelCatalogInfo.setInputTime(labelCatalog.getInputTime());
             labelCatalogInfo.setInputOrgId(labelCatalog.getInputOrgId());
             labelCatalogInfo.setUpdateUserId(labelCatalog.getUpdateUserId());
-            labelCatalogInfo.setUpdateTime(localDateTime);
+            labelCatalogInfo.setUpdateTime(labelCatalog.getUpdateTime());
             labelCatalogInfo.setUpdateOrgId(labelCatalog.getUpdateOrgId());
             return labelCatalogInfo;
         }
@@ -100,9 +102,15 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             LabelCatalog lc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogInfo.getSerialNo());
             if (lc == null) {
                 lc = new LabelCatalog();
-                lc.generateKey();
-            }
+                lc.generateKey();               
+                lc.setInputTime(LocalDateTime.now());
+                lc.setInputOrgId(GlobalShareContextHolder.getOrgId());
+                lc.setInputUserId(GlobalShareContextHolder.getUserId());
+            }           
             BeanUtils.copyProperties(labelCatalogInfo, lc);
+            lc.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
+            lc.setUpdateTime(LocalDateTime.now());
+            lc.setUpdateUserId(GlobalShareContextHolder.getUserId());
             bomanager.updateBusinessObject(lc);
         }
         bomanager.updateDB();
@@ -145,5 +153,6 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
         }
         return lableCatalogInfoQueryRsp;
     } 
+    
     
 }

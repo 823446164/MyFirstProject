@@ -13,10 +13,14 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.parameter.template.service.LabelInfoService;
+import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.aecd.system.constant.LabelStatus;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryRsp;
@@ -107,7 +111,6 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         LabelInfoQueryRsp labelInfo = new LabelInfoQueryRsp();
         if (labelInfoQueryRspBoList != null && labelInfoQueryRspBoList.size() > 0) {
             BusinessObject labelInfoQueryRspBo = labelInfoQueryRspBoList.get(0);
-            LocalDateTime localDateTime = LocalDateTime.now();
             labelInfo.setSerialNo(labelInfoQueryRspBo.getString("SerialNo"));
             labelInfo.setLabelName(labelInfoQueryRspBo.getString("LabelName"));
             labelInfo.setCodeNo(labelInfoQueryRspBo.getString("CodeNo"));
@@ -118,17 +121,17 @@ public class LabelInfoServiceImpl implements LabelInfoService {
             labelInfo.setLabelDescribe(labelInfoQueryRspBo.getString("LabelDescribe"));
             labelInfo.setLabelVersion(labelInfoQueryRspBo.getString("LabelVersion"));
             labelInfo.setLC_InputUserId(labelInfoQueryRspBo.getString("InputUserId"));
-            labelInfo.setLC_InputTime(localDateTime);
+            labelInfo.setLC_InputTime(labelInfoQueryRspBo.getString("InputTime"));
             labelInfo.setLC_InputOrgId(labelInfoQueryRspBo.getString("InputOrgId"));
             labelInfo.setLC_UpdateUserId(labelInfoQueryRspBo.getString("UpdateUserId"));
-            labelInfo.setLC_UpdateTime(localDateTime);
+            labelInfo.setLC_UpdateTime(labelInfoQueryRspBo.getString("UpdateTime"));
             labelInfo.setLC_UpdateOrgId(labelInfoQueryRspBo.getString("UpdateOrgId"));
             labelInfo.setLabelNo(labelInfoQueryRspBo.getString("LabelNo"));
             labelInfo.setLD_InputUserId(labelInfoQueryRspBo.getString("InputUserId"));
-            labelInfo.setLD_InputTime(localDateTime);
+            labelInfo.setLD_InputTime(labelInfoQueryRspBo.getString("InputTime"));
             labelInfo.setLD_InputOrgId(labelInfoQueryRspBo.getString("InputOrgId"));
             labelInfo.setLD_UpdateUserId(labelInfoQueryRspBo.getString("UpdateUserId"));
-            labelInfo.setLD_UpdateTime(localDateTime);
+            labelInfo.setLD_UpdateTime(labelInfoQueryRspBo.getString("UpdateTime"));
             labelInfo.setLD_UpdateOrgId(labelInfoQueryRspBo.getString("UpdateOrgId"));
         }
         for (int i = 0; i < labelInfoQueryRspBoList.size(); i++ ) {
@@ -170,17 +173,17 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         labelInfoSaveAction(labelInfoSaveReq);
     }
 
-    /**
-     * 标签Info单记录修改
-     * 
-     * @param request
-     * @return
-     */
-    @Override
-    public void labelInfoUpdate(@Valid LabelInfoSaveReq labelInfoSaveReq) {
-        labelInfoUpdate(labelInfoSaveReq);
-    }
-    
+//    /**
+//     * 标签Info单记录修改
+//     * 
+//     * @param request
+//     * @return
+//     */
+//    @Override
+//    public void labelInfoUpdate(@Valid LabelInfoSaveReq labelInfoSaveReq) {
+//        labelInfoUpdate(labelInfoSaveReq);
+//    }
+
     /**
      * 标签Info单记录新增
      * 
@@ -193,9 +196,12 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         if (labelInfo != null) {
             LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelInfo.getSerialNo());
             LocalDateTime localDateTime = LocalDateTime.now();
-            labelCatalog = new LabelCatalog();
-            labelCatalog.generateKey();
-            labelCatalog.setInputTime(localDateTime);
+            if (labelCatalog == null) {
+                labelCatalog = new LabelCatalog();
+                labelCatalog.generateKey();
+                labelCatalog.setInputTime(localDateTime);
+            }
+            labelCatalog.setUpdateTime(localDateTime);
             labelCatalog.setLabelName(labelInfo.getLabelName());
             labelCatalog.setCodeNo(labelInfo.getCodeNo());
             labelCatalog.setLabelStatus(labelInfo.getLabelStatus());
@@ -209,112 +215,29 @@ public class LabelInfoServiceImpl implements LabelInfoService {
             labelCatalog.setLabelType(labelInfo.getLC_labelType());
             bomanager.updateBusinessObject(labelCatalog);
 
-//            List<LabelDescribe> labelDescribess = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo",
-//                labelInfo.getSerialNo());
-
-            List<LabelDescribe> labelDescribes = new ArrayList<LabelDescribe>();
-            if (!StringUtils.isEmpty(labelInfo.getMasterDescribe())) {
-                LabelDescribe labelDescribe = new LabelDescribe();
-                labelDescribe.generateKey();
-                labelDescribe.setLabelLevel("精通");
-                labelDescribe.setLevelDescribe(labelInfo.getMasterDescribe());
-                labelDescribes.add(labelDescribe);
-            }
-
-            if (!StringUtils.isEmpty(labelInfo.getSkilledDescribe())) {
-                LabelDescribe labelDescribe = new LabelDescribe();
-                labelDescribe.generateKey();
-                labelDescribe.setLabelLevel("熟练使用");
-                labelDescribe.setLevelDescribe(labelInfo.getSkilledDescribe());
-                labelDescribes.add(labelDescribe);
-            }
-            if (!StringUtils.isEmpty(labelInfo.getFamiliarDescribe())) {
-                LabelDescribe labelDescribe = new LabelDescribe();
-                labelDescribe.generateKey();
-                labelDescribe.setLabelLevel("熟悉");
-                labelDescribe.setLevelDescribe(labelInfo.getFamiliarDescribe());
-                labelDescribes.add(labelDescribe);
-            }
-            if (!StringUtils.isEmpty(labelInfo.getKnowDescribe())) {
-                LabelDescribe labelDescribe = new LabelDescribe();
-                labelDescribe.generateKey();
-                labelDescribe.setLabelLevel("了解");
-                labelDescribe.setLevelDescribe(labelInfo.getKnowDescribe());
-                labelDescribes.add(labelDescribe);
-            }
-            if (!StringUtils.isEmpty(labelInfo.getExcellentDescribe())) {
-                LabelDescribe labelDescribe = new LabelDescribe();
-                labelDescribe.generateKey();
-                labelDescribe.setLabelLevel("优秀");
-                labelDescribe.setLevelDescribe(labelInfo.getExcellentDescribe());
-                labelDescribes.add(labelDescribe);
-            }
-            if (!StringUtils.isEmpty(labelInfo.getGoodDescribe())) {
-                LabelDescribe labelDescribe = new LabelDescribe();
-                labelDescribe.generateKey();
-                labelDescribe.setLabelLevel("良好");
-                labelDescribe.setLevelDescribe(labelInfo.getGoodDescribe());
-                labelDescribes.add(labelDescribe);
-            }
-            if (null != labelInfo.getCommonlyDescribe()) {
-                LabelDescribe labelDescribe = new LabelDescribe();
-                labelDescribe.generateKey();
-                labelDescribe.setLabelLevel("一般");
-                labelDescribe.setLevelDescribe(labelInfo.getCommonlyDescribe());
-                labelDescribes.add(labelDescribe);
-            }
-            for (LabelDescribe labelDescribeTemp : labelDescribes) {
-                labelDescribeTemp.setLevelDescribe(labelDescribeTemp.getLevelDescribe());
-                labelDescribeTemp.setLabelLevel(labelDescribeTemp.getLabelLevel());
-                labelDescribeTemp.setLabelNo(labelInfo.getSerialNo());
-                labelDescribeTemp.setInputUserId(labelInfo.getLC_InputUserId());
-                bomanager.updateBusinessObject(labelDescribeTemp);
-            }
-        }
-        bomanager.updateDB();
-    }
-
-    /**
-     * 标签Info单记录修改
-     * 
-     * @param
-     * @return
-     */
-    @Transactional
-    public void labelInfoUpdateAction(LabelInfo labelInfo) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if (labelInfo != null) {
-            LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelInfo.getSerialNo());
-            LocalDateTime localDateTime = LocalDateTime.now();
-            labelCatalog.setLabelName(labelInfo.getLabelName());
-            labelCatalog.setCodeNo(labelInfo.getCodeNo());
-            labelCatalog.setLabelStatus(labelInfo.getLabelStatus());
-            labelCatalog.setBelongCataLog(labelInfo.getBelongCataLog());
-            labelCatalog.setRootNo(labelInfo.getRootNo());
-            labelCatalog.setAbilityType(labelInfo.getAbilityType());
-            labelCatalog.setLabelDescribe(labelInfo.getLabelDescribe());
-            labelCatalog.setLabelVersion(labelInfo.getLabelVersion());
-            labelCatalog.setUpdateUserId(labelInfo.getLC_UpdateUserId());
-            labelCatalog.setUpdateTime(localDateTime);
-            labelCatalog.setUpdateOrgId(labelInfo.getLC_UpdateOrgId());
-            labelCatalog.setLabelType(labelInfo.getLC_labelType());
-            bomanager.updateBusinessObject(labelCatalog);
-
             List<LabelDescribe> labelDescribess = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo",
                 labelInfo.getSerialNo());
-            List<LabelDescribe> labelDescribes = new ArrayList<LabelDescribe>();
-
-            String sql = "select LD.serialNo as serialNo,LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.levelDescribe as levelDescribe,LD.inputUserId as inputUserId,LD.inputTime as inputTime,LD.inputOrgId as inputOrgId,LD.updateUserId as updateUserId,LD.updateTime as updateTime,LD.updateOrgId as updateOrgId"
-                         + " from LabelDescribe LD where labelNo=:serialNo";
-            BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(sql, "serialNo",
-                labelInfo.getSerialNo());
-            List<BusinessObject> BusinessObjects = selectBusinessObjectsBySql.getBusinessObjects();
-            for (int i = 0; i < BusinessObjects.size(); i++ ) {
-                LabelDescribe labelDescribe = bomanager.keyLoadBusinessObject(LabelDescribe.class,
-                    BusinessObjects.get(i).getString("serialNo"));
-                bomanager.deleteBusinessObject(labelDescribe);
+            String inputTime = null;
+            LocalDateTime ldt = null;
+//            LabelDescribe labelDescribe = null;
+//            if(labelDescribess.size()==0) {
+//                labelDescribe = new LabelDescribe();
+//                labelDescribe.generateKey();
+//            }
+            
+            
+            
+            // 空说明是新增信息，非空说明是修改
+            if (labelDescribess != null) {
+                inputTime = labelDescribess.get(0).getInputTime();
+                DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateFormat.format);
+                ldt = LocalDateTime.parse(inputTime, sdf);
+                for (LabelDescribe labelDescribesTemp : labelDescribess) {
+                    LabelDescribe labelDescribe = bomanager.keyLoadBusinessObject(LabelDescribe.class, labelDescribesTemp.getSerialNo());
+                    bomanager.deleteBusinessObject(labelDescribe);
+                }
             }
-
+            List<LabelDescribe> labelDescribes = new ArrayList<LabelDescribe>();
             if (!StringUtils.isEmpty(labelInfo.getMasterDescribe())) {
                 LabelDescribe labelDescribe = new LabelDescribe();
                 labelDescribe.generateKey();
@@ -369,12 +292,117 @@ public class LabelInfoServiceImpl implements LabelInfoService {
                 labelDescribeTemp.setLevelDescribe(labelDescribeTemp.getLevelDescribe());
                 labelDescribeTemp.setLabelLevel(labelDescribeTemp.getLabelLevel());
                 labelDescribeTemp.setLabelNo(labelInfo.getSerialNo());
-                labelDescribeTemp.setInputUserId(labelInfo.getLC_InputUserId());
+                labelDescribeTemp.setInputUserId(GlobalShareContextHolder.getUserId());
+                labelDescribeTemp.setInputTime(ldt);
+                labelDescribeTemp.setInputOrgId(GlobalShareContextHolder.getOrgId());
+                labelDescribeTemp.setUpdateTime(LocalDateTime.now());
                 bomanager.updateBusinessObject(labelDescribeTemp);
             }
         }
         bomanager.updateDB();
     }
+
+//    /**
+//     * 标签Info单记录修改
+//     * 
+//     * @param
+//     * @return
+//     */
+//    @Transactional
+//    public void labelInfoUpdateAction(LabelInfo labelInfo) {
+//        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+//        if (labelInfo != null) {
+//            LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelInfo.getSerialNo());
+//            LocalDateTime localDateTime = LocalDateTime.now();
+//            labelCatalog.setLabelName(labelInfo.getLabelName());
+//            labelCatalog.setCodeNo(labelInfo.getCodeNo());
+//            labelCatalog.setLabelStatus(labelInfo.getLabelStatus());
+//            labelCatalog.setBelongCataLog(labelInfo.getBelongCataLog());
+//            labelCatalog.setRootNo(labelInfo.getRootNo());
+//            labelCatalog.setAbilityType(labelInfo.getAbilityType());
+//            labelCatalog.setLabelDescribe(labelInfo.getLabelDescribe());
+//            labelCatalog.setLabelVersion(labelInfo.getLabelVersion());
+//            labelCatalog.setUpdateUserId(labelInfo.getLC_UpdateUserId());
+//            labelCatalog.setUpdateTime(localDateTime);
+//            labelCatalog.setUpdateOrgId(labelInfo.getLC_UpdateOrgId());
+//            labelCatalog.setLabelType(labelInfo.getLC_labelType());
+//            bomanager.updateBusinessObject(labelCatalog);
+//
+//            List<LabelDescribe> labelDescribess = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo",
+//                labelInfo.getSerialNo());
+//            List<LabelDescribe> labelDescribes = new ArrayList<LabelDescribe>();
+//
+//            String sql = "select LD.serialNo as serialNo,LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.levelDescribe as levelDescribe,LD.inputUserId as inputUserId,LD.inputTime as inputTime,LD.inputOrgId as inputOrgId,LD.updateUserId as updateUserId,LD.updateTime as updateTime,LD.updateOrgId as updateOrgId"
+//                         + " from LabelDescribe LD where labelNo=:serialNo";
+//            BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(sql, "serialNo",
+//                labelInfo.getSerialNo());
+//            List<BusinessObject> BusinessObjects = selectBusinessObjectsBySql.getBusinessObjects();
+//            for (int i = 0; i < BusinessObjects.size(); i++ ) {
+//                LabelDescribe labelDescribe = bomanager.keyLoadBusinessObject(LabelDescribe.class,
+//                    BusinessObjects.get(i).getString("serialNo"));
+//                bomanager.deleteBusinessObject(labelDescribe);
+//            }
+//
+//            if (!StringUtils.isEmpty(labelInfo.getMasterDescribe())) {
+//                LabelDescribe labelDescribe = new LabelDescribe();
+//                labelDescribe.generateKey();
+//                labelDescribe.setLabelLevel("精通");
+//                labelDescribe.setLevelDescribe(labelInfo.getMasterDescribe());
+//                labelDescribes.add(labelDescribe);
+//            }
+//
+//            if (!StringUtils.isEmpty(labelInfo.getSkilledDescribe())) {
+//                LabelDescribe labelDescribe = new LabelDescribe();
+//                labelDescribe.generateKey();
+//                labelDescribe.setLabelLevel("熟练使用");
+//                labelDescribe.setLevelDescribe(labelInfo.getSkilledDescribe());
+//                labelDescribes.add(labelDescribe);
+//            }
+//            if (!StringUtils.isEmpty(labelInfo.getFamiliarDescribe())) {
+//                LabelDescribe labelDescribe = new LabelDescribe();
+//                labelDescribe.generateKey();
+//                labelDescribe.setLabelLevel("熟悉");
+//                labelDescribe.setLevelDescribe(labelInfo.getFamiliarDescribe());
+//                labelDescribes.add(labelDescribe);
+//            }
+//            if (!StringUtils.isEmpty(labelInfo.getKnowDescribe())) {
+//                LabelDescribe labelDescribe = new LabelDescribe();
+//                labelDescribe.generateKey();
+//                labelDescribe.setLabelLevel("了解");
+//                labelDescribe.setLevelDescribe(labelInfo.getKnowDescribe());
+//                labelDescribes.add(labelDescribe);
+//            }
+//            if (!StringUtils.isEmpty(labelInfo.getExcellentDescribe())) {
+//                LabelDescribe labelDescribe = new LabelDescribe();
+//                labelDescribe.generateKey();
+//                labelDescribe.setLabelLevel("优秀");
+//                labelDescribe.setLevelDescribe(labelInfo.getExcellentDescribe());
+//                labelDescribes.add(labelDescribe);
+//            }
+//            if (!StringUtils.isEmpty(labelInfo.getGoodDescribe())) {
+//                LabelDescribe labelDescribe = new LabelDescribe();
+//                labelDescribe.generateKey();
+//                labelDescribe.setLabelLevel("良好");
+//                labelDescribe.setLevelDescribe(labelInfo.getGoodDescribe());
+//                labelDescribes.add(labelDescribe);
+//            }
+//            if (null != labelInfo.getCommonlyDescribe()) {
+//                LabelDescribe labelDescribe = new LabelDescribe();
+//                labelDescribe.generateKey();
+//                labelDescribe.setLabelLevel("一般");
+//                labelDescribe.setLevelDescribe(labelInfo.getCommonlyDescribe());
+//                labelDescribes.add(labelDescribe);
+//            }
+//            for (LabelDescribe labelDescribeTemp : labelDescribes) {
+//                labelDescribeTemp.setLevelDescribe(labelDescribeTemp.getLevelDescribe());
+//                labelDescribeTemp.setLabelLevel(labelDescribeTemp.getLabelLevel());
+//                labelDescribeTemp.setLabelNo(labelInfo.getSerialNo());
+//                labelDescribeTemp.setInputUserId(labelInfo.getLC_InputUserId());
+//                bomanager.updateBusinessObject(labelDescribeTemp);
+//            }
+//        }
+//        bomanager.updateDB();
+//    }
 
     /**
      * 标签生效
@@ -400,8 +428,8 @@ public class LabelInfoServiceImpl implements LabelInfoService {
             LabelCatalog lc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelInfo.getSerialNo());
             System.out.println(lc.getLabelStatus());
             // 根据标签状态码值 1为新增 2 为生效 3 为失效
-            if ("1".equals(lc.getLabelStatus()) || "3".equals(lc.getLabelStatus())) {
-                lc.setLabelStatus("2");
+            if (LabelStatus.New.id.equals(lc.getLabelStatus()) || LabelStatus.Disabled.id.equals(lc.getLabelStatus())) {
+                lc.setLabelStatus(LabelStatus.Enabled.id);
                 bomanager.updateBusinessObject(lc);
             }
             else {
@@ -434,8 +462,8 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         if (labelInfo != null) {
             LabelCatalog lc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelInfo.getSerialNo());
             // 根据标签状态码值 1为新增 2 为生效 3 为失效
-            if ("2".equals(lc.getLabelStatus())) {
-                lc.setLabelStatus("3");
+            if (LabelStatus.Enabled.id.equals(lc.getLabelStatus())) {
+                lc.setLabelStatus(LabelStatus.Disabled.id);
                 bomanager.updateBusinessObject(lc);
             }
             else {

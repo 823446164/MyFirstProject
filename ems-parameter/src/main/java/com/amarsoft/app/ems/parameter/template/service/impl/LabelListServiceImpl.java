@@ -1,12 +1,6 @@
 /*
- * 文件名：LabelListServiceImpl 
- * 版权：Copyright by www.amarsoft.com 
- * 描述：为LabelList模板提供方法 
- * 修改人：yrong
- * 修改时间：2020年5月11日 
- * 跟踪单号： 
- * 修改单号： 
- * 修改内容：新生成
+ * 文件名：LabelListServiceImpl 版权：Copyright by www.amarsoft.com 描述：为LabelList模板提供方法 修改人：yrong
+ * 修改时间：2020年5月11日 跟踪单号： 修改单号： 修改内容：新生成
  */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
@@ -22,6 +16,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labellist.LabelListQueryRs
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.util.DTOHelper;
 import java.util.List;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
@@ -65,7 +60,7 @@ public class LabelListServiceImpl implements LabelListService {
         @Override
         public LabelList apply(BusinessObject bo) {
             LabelList temp = new LabelList();
-
+            LocalDateTime localDateTime = LocalDateTime.now();
             // 查询到的数据转换为响应实体
             temp.setSerialNo(bo.getString("SerialNo"));
             temp.setLabelName(bo.getString("LabelName"));
@@ -90,13 +85,13 @@ public class LabelListServiceImpl implements LabelListService {
             temp.setLD_UpdateUserId(bo.getString("UpdateUserId"));
             temp.setLD_UpdateTime(bo.getString("UpdateTime"));
             temp.setLD_UpdateOrgId(bo.getString("UpdateOrgId"));
-
             return temp;
         }
     }
 
     /**
      * 标签List多记录查询
+     * 
      * @param labelListQueryReq
      */
     @Override
@@ -167,8 +162,9 @@ public class LabelListServiceImpl implements LabelListService {
         BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(sql, "serialNo",
             labelListDeleteReq.getSerialNo());
         List<BusinessObject> BusinessObjects = selectBusinessObjectsBySql.getBusinessObjects();
-        for(int i=0;i<BusinessObjects.size();i++) {
-            LabelDescribe labelDescribe = bomanager.keyLoadBusinessObject(LabelDescribe.class, BusinessObjects.get(i).getString("serialNo"));
+        for (int i = 0; i < BusinessObjects.size(); i++ ) {
+            LabelDescribe labelDescribe = bomanager.keyLoadBusinessObject(LabelDescribe.class,
+                BusinessObjects.get(i).getString("serialNo"));
             bomanager.deleteBusinessObject(labelDescribe);
         }
         bomanager.updateDB();

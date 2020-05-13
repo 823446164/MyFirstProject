@@ -32,8 +32,8 @@ public interface LabelInfoController {
     @PostMapping(value = "/labelinfo/save", name="标签Info保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> labelInfoSave(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg);
 
-    @PostMapping(value = "/labelinfo/update", name="标签Info修改接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> labelInfoUpdate(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg);
+//    @PostMapping(value = "/labelinfo/update", name="标签Info修改接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+//    public ResponseEntity<ResponseMessage<Object>> labelInfoUpdate(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg);
     
     @PostMapping(value = "/labelinfo/ok", name="标签生效接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> lableStatusOk(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg);
