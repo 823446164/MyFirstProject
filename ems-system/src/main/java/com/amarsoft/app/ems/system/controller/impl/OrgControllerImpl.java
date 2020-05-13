@@ -29,6 +29,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfodelete.OrgInfoDeleteReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
+import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
@@ -304,19 +305,19 @@ public class OrgControllerImpl implements OrgController {
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<DeleteInfoDtoQueryRsp>> deleteInfoDtoQuery(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg) {
+    public ResponseEntity<ResponseMessage<Object>> deleteInfoDtoQuery(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg) {
         try {
             Map<String, String> map =  orgService.deleteInfoDtoQuery(reqMsg.getMessage());
             log.info(String.valueOf(map.size()));
-            return new ResponseEntity<ResponseMessage<DeleteInfoDtoQueryRsp>>(new ResponseMessage<DeleteInfoDtoQueryRsp>(), HttpStatus.OK);
+            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(map), HttpStatus.OK);
         } catch(Exception e) {
             if(log.isErrorEnabled()) {
                 log.error("[请求报文：" + reqMsg.toString() + "]", e);
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            ResponseMessage<DeleteInfoDtoQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900205", e.getMessage());
-            return new ResponseEntity<ResponseMessage<DeleteInfoDtoQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseMessage<Object> hrb = ResponseMessage.getResponseMessageFromException(e, "900205", e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -381,6 +382,27 @@ public class OrgControllerImpl implements OrgController {
             }
             ResponseMessage<SecondLevelDeptListDtoQueryRsp> hrb = ResponseMessage.getResponseMessageFromException(e, "900201", e.getMessage());
             return new ResponseEntity<ResponseMessage<SecondLevelDeptListDtoQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 一二级部门树图展示
+     * @param 
+     * @return  rsp
+     * @see
+     */
+    @Override
+    public ResponseEntity<ResponseMessage<OrgTreeQueryRsp>> oneSecondOrgTreeQuery(@RequestBody @Valid RequestMessage<OrgTreeQueryReq> reqMsg) {
+        ResponseMessage<OrgTreeQueryRsp> rspMsg = null;
+        try {
+            OrgTreeQueryRsp rsp = orgService.oneSecondOrgTreeQuery(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<OrgTreeQueryRsp>>(new ResponseMessage<OrgTreeQueryRsp>(rsp), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("查询机构树图请求报文：",e);
+            }
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "900211",e.getMessage());
+            return new ResponseEntity<ResponseMessage<OrgTreeQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
