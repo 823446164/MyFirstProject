@@ -2,10 +2,19 @@ package com.amarsoft.app.ems.employee.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.util.StringUtils;
 import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.amarsoft.amps.acsc.rpc.RequestMessage;
+import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.employee.template.service.EmployeeInfoDtoService;
+import com.amarsoft.app.ems.system.cs.client.TeamClient;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
 import com.amarsoft.app.ems.employee.entity.EmployeeInfo;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryReq;
@@ -19,17 +28,31 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInf
 @Slf4j
 @Service
 public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService{
-    /**
-     * 员工信息Info单记录查询
-     * @param request
-     * @return
-     */
+	@Autowired
+	TeamClient teamClient;
+	
+	/**
+	 * Description: 员工信息Info单记录查询<br>
+	 * ${tags}
+	 * @see
+	 */
     @Override
     @Transactional
-    public EmployeeInfoDtoQueryRsp employeeInfoDtoQuery(@Valid EmployeeInfoDtoQueryReq employeeInfoDtoQueryReq) {
+    public EmployeeInfoDtoQueryRsp employeeInfoDtoQuery(@RequestBody @Valid EmployeeInfoDtoQueryReq employeeInfoDtoQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();        
         EmployeeInfo employeeInfo = bomanager.loadBusinessObject(EmployeeInfo.class,"employeeNo",employeeInfoDtoQueryReq.getEmployeeNo());        
         if(employeeInfo!=null){
+            RequestMessage<UserTeamQueryReq> reqMsg = new RequestMessage<UserTeamQueryReq>();
+            UserTeamQueryReq req = new UserTeamQueryReq();
+            req.setUserId(employeeInfoDtoQueryReq.getEmployeeNo());
+            reqMsg.setMessage(req);
+            ResponseEntity<ResponseMessage<UserTeamQueryRsp>> userTeamQuery = teamClient.userTeamQuery(reqMsg);
+            String teamId = "";
+            String teamName = "";
+            if (!StringUtils.isEmpty(userTeamQuery)) {
+                teamId = userTeamQuery.getBody().getMessage().getTeamId(); 
+                teamName = userTeamQuery.getBody().getMessage().getTeamName();
+            }
             EmployeeInfoDtoQueryRsp employeeInfoDto = new EmployeeInfoDtoQueryRsp();
             employeeInfoDto.setEmployeeNo(employeeInfo.getEmployeeNo());
             employeeInfoDto.setEmployeeName(employeeInfo.getEmployeeName());
@@ -53,9 +76,10 @@ public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService{
             employeeInfoDto.setUpdateTime(employeeInfo.getUpdateTime());
             employeeInfoDto.setUpdateOrgId(employeeInfo.getUpdateOrgId());
             employeeInfoDto.setEmployeeWorkStatus(employeeInfo.getEmployeeWorkStatus());
+            employeeInfoDto.setTeamId(teamId);
+            employeeInfoDto.setBeforeTeam(teamName);
             return employeeInfoDto;
         }
-
         return null;
     }
 

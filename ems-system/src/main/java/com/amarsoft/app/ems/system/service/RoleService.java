@@ -12,6 +12,8 @@ import com.amarsoft.app.ems.system.cs.dto.rolequery.RoleQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updaterole.UpdateRoleReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
 
 /**
  * 角色服务的接口
@@ -79,4 +81,11 @@ public interface RoleService {
      * @return
      */
     public RoleUserQueryRsp roleUserQuery(RoleUserQueryReq roleUserQueryReq);
+    
+    /**
+     * Description: 查询用户对应的角色组<br>
+     * ${tags}
+     * @see
+     */
+    public UserRoleQueryRsp userRoleQuery(UserRoleQueryReq req);
 }

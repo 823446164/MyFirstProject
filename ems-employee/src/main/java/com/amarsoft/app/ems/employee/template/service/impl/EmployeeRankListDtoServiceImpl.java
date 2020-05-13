@@ -150,7 +150,7 @@ public class EmployeeRankListDtoServiceImpl implements EmployeeRankListDtoServic
             // 更新业务对象
             bomanager.updateBusinessObject(employeeRank);
         }else {
-            throw new ALSException("EMS1006");
+            throw new ALSException("EMS1007","获取内容为空");
         }
         // 提交事务
         bomanager.updateDB();

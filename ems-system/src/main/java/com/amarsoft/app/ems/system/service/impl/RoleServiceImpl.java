@@ -4,18 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.validation.Valid;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.aecd.common.constant.Status;
 import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.aecd.system.constant.OrgType;
 import com.amarsoft.amps.arem.exception.ALSException;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.system.cs.dto.addrole.AddRoleReq;
@@ -38,6 +42,9 @@ import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.roleuserquery.User;
 import com.amarsoft.app.ems.system.cs.dto.updaterole.UpdateRoleReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserAndRole;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
 import com.amarsoft.app.ems.system.entity.BoardRole;
 import com.amarsoft.app.ems.system.entity.GroupRole;
 import com.amarsoft.app.ems.system.entity.OrgInfo;
@@ -576,6 +583,32 @@ public class RoleServiceImpl implements RoleService {
             user.setStatus(userInfo.getStatus());
             rsp.getUsers().add(user);
         }
+        return rsp;
+    }
+    
+    /**
+     * Description: 根据用户ＩＤ找到对应的角色组<br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    public UserRoleQueryRsp userRoleQuery(@RequestBody @Valid UserRoleQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        List<UserAndRole> userAndRoles = new ArrayList<UserAndRole>();
+        UserRoleQueryRsp rsp = new UserRoleQueryRsp();
+        UserAndRole userAndRole = null;
+        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql("select userId,orgId,roleId from UserRole where userId=:userId order by roleId asc", "userId",req.getUserId()).getBusinessObjects();
+        if (!StringUtils.isEmpty(businessObjects)) {//如果用户角色数组不为空
+            for (BusinessObject bo : businessObjects) {
+                userAndRole = new UserAndRole();
+                userAndRole.setUserId(bo.getString("UserId"));
+                userAndRole.setOrgId(bo.getString("OrgId"));
+                userAndRole.setRoleId(bo.getString("RoleId"));
+                userAndRoles.add(userAndRole);
+            }
+        }
+        rsp.setTotalCount(businessObjects.size());
+        rsp.setUserRoles(userAndRoles);
         return rsp;
     }
 }

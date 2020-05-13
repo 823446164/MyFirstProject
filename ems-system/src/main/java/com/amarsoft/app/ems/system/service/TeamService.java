@@ -13,6 +13,7 @@ package com.amarsoft.app.ems.system.service;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamRsp;
@@ -35,6 +36,8 @@ import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
 
 
 public interface TeamService {
@@ -116,6 +119,13 @@ public interface TeamService {
      */
     TeamOrgQueryRsp orgTeamListQuery(@Valid TeamOrgQueryReq req);
 
+    /**
+     * Description: 根据用户查找对应的团队<br>
+     * ${tags}
+     * @see
+     */
+    UserTeamQueryRsp userTeamQuery(@Valid @RequestBody UserTeamQueryReq req);
+    
     /**
      * Description:根据条件查询团队信息 <br>
      * @param message
