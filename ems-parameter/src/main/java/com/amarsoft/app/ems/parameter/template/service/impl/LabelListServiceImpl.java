@@ -1,14 +1,15 @@
 /*
- * 文件名：LabelListServiceImpl
- * 版权：Copyright by www.amarsoft.com
- * 描述：为LabelList模板提供方法
+ * 文件名：LabelListServiceImpl 
+ * 版权：Copyright by www.amarsoft.com 
+ * 描述：为LabelList模板提供方法 
  * 修改人：yrong
- * 修改时间：2020年5月11日
- * 跟踪单号：
- * 修改单号：
+ * 修改时间：2020年5月11日 
+ * 跟踪单号： 
+ * 修改单号： 
  * 修改内容：新生成
  */
 package com.amarsoft.app.ems.parameter.template.service.impl;
+
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,40 +31,42 @@ import com.amarsoft.amps.avts.query.RequestQuery;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labellist.LabelList;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labellist.LabelListSaveReq;
 import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
+import com.amarsoft.app.ems.parameter.entity.LabelDescribe;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labellist.LabelListDeleteReq;
+
 
 /**
  * 标签ListService实现类
+ * 
  * @author yrong
  */
 @Slf4j
 @Service
-public class LabelListServiceImpl implements LabelListService{
+public class LabelListServiceImpl implements LabelListService {
     /**
-                   * 查询结果集
+     * 查询结果集
      */
     public static class LabelListReqQuery implements RequestQuery<LabelListQueryReq> {
         @Override
         public Query apply(LabelListQueryReq labelListQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(labelListQueryReq, LabelList.class);
-            
+
             String sql = "select LC.serialNo as serialNo,LC.labelName as labelName,LC.codeNo as codeNo,LC.labelStatus as labelStatus,LC.belongCataLog as belongCataLog,LC.rootNo as rootNo,LC.abilityType as abilityType,LC.labelDescribe as labelDescribe,LC.labelVersion as labelVersion,LC.inputUserId as inputUserId,LC.inputTime as inputTime,LC.inputOrgId as inputOrgId,LC.updateUserId as updateUserId,LC.updateTime as updateTime,LC.updateOrgId as updateOrgId,"
-                +"LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.inputUserId as inputUserId,LD.inputTime as inputTime,LD.inputOrgId as inputOrgId,LD.updateUserId as updateUserId,LD.updateTime as updateTime,LD.updateOrgId as updateOrgId"
-                +" from LABEL_CATALOG LC,LABEL_DESCRIBE LD"
-                +" where 1=1";
+                         + "LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.inputUserId as inputUserId,LD.inputTime as inputTime,LD.inputOrgId as inputOrgId,LD.updateUserId as updateUserId,LD.updateTime as updateTime,LD.updateOrgId as updateOrgId"
+                         + " from LABEL_CATALOG LC,LABEL_DESCRIBE LD" + " where 1=1";
             return queryProperties.assembleSql(sql);
         }
     }
 
     /**
-                  * 查询到的数据转换为响应实体
+     * 查询到的数据转换为响应实体
      */
     public static class LabelListRspConvert implements Convert<LabelList> {
         @Override
         public LabelList apply(BusinessObject bo) {
             LabelList temp = new LabelList();
-                
-            //查询到的数据转换为响应实体
+
+            // 查询到的数据转换为响应实体
             temp.setSerialNo(bo.getString("SerialNo"));
             temp.setLabelName(bo.getString("LabelName"));
             temp.setCodeNo(bo.getString("CodeNo"));
@@ -87,80 +90,87 @@ public class LabelListServiceImpl implements LabelListService{
             temp.setLD_UpdateUserId(bo.getString("UpdateUserId"));
             temp.setLD_UpdateTime(bo.getString("UpdateTime"));
             temp.setLD_UpdateOrgId(bo.getString("UpdateOrgId"));
-            
+
             return temp;
         }
     }
 
     /**
      * 标签List多记录查询
-     * @param request
-     * @return
+     * @param labelListQueryReq
      */
     @Override
     @Transactional
     public LabelListQueryRsp labelListQuery(@Valid LabelListQueryReq labelListQueryReq) {
         LabelListQueryRsp labelListQueryRsp = new LabelListQueryRsp();
-        
+
         Query query = new LabelListReqQuery().apply(labelListQueryReq);
         String fullsql = query.getSql();
-        
+
         LabelListRspConvert convert = new LabelListRspConvert();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(labelListQueryReq.getBegin(), labelListQueryReq.getPageSize(), fullsql, query.getParam());
+        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(labelListQueryReq.getBegin(),
+            labelListQueryReq.getPageSize(), fullsql, query.getParam());
         List<BusinessObject> businessObjectList = boa.getBusinessObjects();
-        
-        if(null != businessObjectList && !businessObjectList.isEmpty()) {
+
+        if (null != businessObjectList && !businessObjectList.isEmpty()) {
             List<LabelList> labelLists = new ArrayList<LabelList>();
-            for(BusinessObject bo : businessObjectList) {
-                //查询到的数据转换为响应实体
+            for (BusinessObject bo : businessObjectList) {
+                // 查询到的数据转换为响应实体
                 labelLists.add(convert.apply(bo));
             }
             labelListQueryRsp.setLabelLists(labelLists);
         }
         labelListQueryRsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
-        
+
         return labelListQueryRsp;
     }
 
     /**
      * 标签List多记录保存
-     * @param request
-     * @return
+     * 
+     * @param labelListSaveReq
      */
     @Override
     public void labelListSave(@Valid LabelListSaveReq labelListSaveReq) {
         labelListSaveAction(labelListSaveReq.getLabelLists());
     }
+
     /**
      * 标签List多记录保存
-     * @param
-     * @return
+     * 
+     * @param labelLists
      */
     @Transactional
-    public void labelListSaveAction(List<LabelList> labelLists){
+    public void labelListSaveAction(List<LabelList> labelLists) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if(labelLists!=null){
-            for(LabelList labelListTmp :labelLists){
-            }
+        if (labelLists != null) {
+            for (LabelList labelListTmp : labelLists) {}
         }
         bomanager.updateDB();
     }
 
-
     /**
      * 标签List删除
-     * @param request
-     * @return
+     * 
+     * @param labelListDeleteReq
      */
     @Override
     @Transactional
     public void labelListDelete(@Valid LabelListDeleteReq labelListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        LabelCatalog labelCatalog=bomanager.keyLoadBusinessObject(LabelCatalog.class, labelListDeleteReq.getSerialNo());
+        LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelListDeleteReq.getSerialNo());
         bomanager.deleteBusinessObject(labelCatalog);
-        // TODO 关联表数据如需删除的话，请自行补充代码
-        bomanager.updateDB();
 
+        String sql = "select LD.serialNo as serialNo,LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.levelDescribe as levelDescribe,LD.inputUserId as inputUserId,LD.inputTime as inputTime,LD.inputOrgId as inputOrgId,LD.updateUserId as updateUserId,LD.updateTime as updateTime,LD.updateOrgId as updateOrgId"
+                     + " from LabelDescribe LD where labelNo=:serialNo";
+        BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(sql, "serialNo",
+            labelListDeleteReq.getSerialNo());
+        List<BusinessObject> BusinessObjects = selectBusinessObjectsBySql.getBusinessObjects();
+        for(int i=0;i<BusinessObjects.size();i++) {
+            LabelDescribe labelDescribe = bomanager.keyLoadBusinessObject(LabelDescribe.class, BusinessObjects.get(i).getString("serialNo"));
+            bomanager.deleteBusinessObject(labelDescribe);
+        }
+        bomanager.updateDB();
     }
 }

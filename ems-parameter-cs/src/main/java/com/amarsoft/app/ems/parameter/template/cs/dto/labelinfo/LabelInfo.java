@@ -12,6 +12,7 @@ package com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 
@@ -101,7 +103,7 @@ public class LabelInfo implements Serializable {
     @Description("登记人")
     @Length(max=40)
     @ActualColumn("LC.inputUserId")
-    @TemplateBody(sortNo = 11, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 11, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LC_InputUserId;
 
     @Description("登记时间")
@@ -113,13 +115,13 @@ public class LabelInfo implements Serializable {
     @Description("登记机构")
     @Length(max=40)
     @ActualColumn("LC.inputOrgId")
-    @TemplateBody(sortNo = 13, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 13, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LC_InputOrgId;
 
     @Description("更新人")
     @Length(max=40)
     @ActualColumn("LC.updateUserId")
-    @TemplateBody(sortNo = 14, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 14, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LC_UpdateUserId;
 
     @Description("更新时间")
@@ -131,7 +133,7 @@ public class LabelInfo implements Serializable {
     @Description("更新机构")
     @Length(max=40)
     @ActualColumn("LC.updateOrgId")
-    @TemplateBody(sortNo = 16, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 16, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LC_UpdateOrgId;
 
     @Description("标签类型")
@@ -143,7 +145,7 @@ public class LabelInfo implements Serializable {
     @Description("登记人")
     @Length(max=40)
     @ActualColumn("LD.inputUserId")
-    @TemplateBody(sortNo = 17, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 17, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LD_InputUserId;
 
     @Description("登记时间")
@@ -155,13 +157,13 @@ public class LabelInfo implements Serializable {
     @Description("登记机构")
     @Length(max=40)
     @ActualColumn("LD.inputOrgId")
-    @TemplateBody(sortNo = 19, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 19, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LD_InputOrgId;
 
     @Description("更新人")
     @Length(max=40)
     @ActualColumn("LD.updateUserId")
-    @TemplateBody(sortNo = 20, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 20, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LD_UpdateUserId;
 
     @Description("更新时间")
@@ -173,9 +175,9 @@ public class LabelInfo implements Serializable {
     @Description("更新机构")
     @Length(max=40)
     @ActualColumn("LD.updateOrgId")
-    @TemplateBody(sortNo = 22, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 22, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LD_UpdateOrgId;
-
+  
     @Description("精通")
     @Length(max=2000)
     @TemplateBody(sortNo = 23, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
@@ -211,4 +213,22 @@ public class LabelInfo implements Serializable {
     @TemplateBody(sortNo = 29, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String commonlyDescribe;
     
+    public String getLD_InputTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        return LD_InputTime.format(sdf);
+    }
+    
+    public String getLD_UpdateTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        return LD_UpdateTime.format(sdf);
+    }
+    public String getLC_InputTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        return LC_InputTime.format(sdf);
+    }
+    
+    public String getLC_UpdateTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        return LC_UpdateTime.format(sdf);
+    }
 }

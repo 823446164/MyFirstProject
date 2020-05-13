@@ -25,7 +25,7 @@ import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
  * 标签目录详情
- * @author ylgao
+ * @author yrong
  */
 @Getter
 @Setter

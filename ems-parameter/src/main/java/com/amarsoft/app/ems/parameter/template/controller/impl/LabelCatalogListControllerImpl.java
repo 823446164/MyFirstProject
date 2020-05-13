@@ -44,7 +44,11 @@ public class LabelCatalogListControllerImpl implements LabelCatalogListControlle
     @Override
     @Transactional
     @TemplateExport(name="标签目录树图", query = LabelCatalogListServiceImpl.LabelCatalogListReqQuery.class, convert=LabelCatalogListServiceImpl.LabelCatalogListRspConvert.class)
-    //标签目录树图查询
+
+    /**
+     * 标签目录树图查询
+     * @author yrong
+     */
     public ResponseEntity<ResponseMessage<LabelCatalogListQueryRsp>> labelCatalogListQuery(@RequestBody @Valid RequestMessage<LabelCatalogListQueryReq> reqMsg){
         ResponseMessage<LabelCatalogListQueryRsp> rspMsg = null;
         try {
@@ -68,7 +72,11 @@ public class LabelCatalogListControllerImpl implements LabelCatalogListControlle
 
     @Override
     @Transactional
-    //标签目录树图保存
+
+    /**
+     * 标签目录树图保存
+     * @author yrong
+     */
     public ResponseEntity<ResponseMessage<Object>> labelCatalogListSave(@RequestBody @Valid RequestMessage<LabelCatalogListSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -92,7 +100,11 @@ public class LabelCatalogListControllerImpl implements LabelCatalogListControlle
 
     @Override
     @Transactional
-    //标签目录树图删除
+
+    /**
+     * 标签目录树图删除
+     * @author yrong
+     */
     public ResponseEntity<ResponseMessage<Object>> labelCatalogListDelete(@RequestBody @Valid RequestMessage<LabelCatalogListDeleteReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {

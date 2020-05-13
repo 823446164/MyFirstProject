@@ -28,9 +28,32 @@ public interface LabelInfoService {
     public LabelInfoQueryRsp labelInfoQuery(@Valid LabelInfoQueryReq labelInfoQueryReq);
 
     /**
-     * 标签Info保存
+     * 标签Info保存 
      * @param request
      * @return
      */
     public void labelInfoSave(@Valid LabelInfoSaveReq labelInfoSaveReq);
+    
+    /**
+     * 标签Info修改
+     * @param request
+     * @return
+     */
+    public void labelInfoUpdate(@Valid LabelInfoSaveReq labelInfoSaveReq);
+    
+    /**
+     * 标签生效 
+     * 
+     * @param request
+     * @return
+     */
+    public void lableStatusOk(@Valid LabelInfoSaveReq lableDescribeInfoSaveReq);
+
+    /**
+     * 标签失效
+     * 
+     * @param request
+     * @return
+     */
+    public void lableStatusNo(@Valid LabelInfoSaveReq lableDescribeInfoSaveReq);
 }
