@@ -20,6 +20,9 @@ import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSearchReq;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
@@ -81,12 +84,12 @@ public interface OrgService {
      */
     OrgInfoQueryRsp getOrgInfo(OrgInfoQueryReq request);
     /**
-     * 查询机构用户信息
+     * 查询部门或者团队的用户信息
      * @param request
      * @param userService
      * @return
      */
-    OrgUserQueryRsp orgUserQuery(OrgUserQueryReq request,UserService userService);
+    OrgUserQueryRsp orgUserQuery(OrgUserQueryReq request);
     /**
      * 查询机构树图
      * @param bomanger
@@ -186,5 +189,19 @@ public interface OrgService {
      * @return OrgTreeQueryRsp
      */
     OrgTreeQueryRsp oneSecondOrgTreeQuery(OrgTreeQueryReq req);
+
+    /**
+     * 员工详情List查询
+     * @param request
+     * @return
+     */
+    EmployeeInfoListDtoQueryRsp employeeInfoListDtoQuery(EmployeeInfoListDtoQueryReq request);
+
+    /**
+     * 搜索员工详情List
+     * @param request
+     * @return
+     */
+    EmployeeInfoListDtoQueryRsp employeeInfoListDtoQuery(EmployeeInfoListDtoSearchReq request);
 
 }

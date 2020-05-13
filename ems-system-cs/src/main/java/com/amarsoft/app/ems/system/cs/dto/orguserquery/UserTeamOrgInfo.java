@@ -10,19 +10,29 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.annotation.Length;
 
 @Getter
 @Setter
 @ToString
-public class OrgUserQueryReq implements Serializable{
+public class UserTeamOrgInfo implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    @Description("角色Id")
+    @Description("用户编号")
+    @Length(max=40)
+    private String userId;
+    @Description("部门编号")
     @Length(max=80)
-    private String roleId;
-    @Description("查询id")
+    private String orgId;
+    @Description("部门名称")
+    @Length(max=40)
+    private String orgName;
+    @Description("团队编号")
     @Length(max=80)
-    private String id;
+    private String teamId;
+    @Description("团队名称")
+    @Length(max=40)
+    private String teamName;
 
 }
