@@ -19,6 +19,8 @@ import com.amarsoft.app.ems.employee.template.service.impl.EmployeeInfoListDtoSe
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
+import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoDeleteReq;
 
 /**
@@ -42,7 +44,7 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
             
             EmployeeInfoListDtoQueryRsp response = employeeInfoListDtoServiceImpl.employeeInfoListDtoQuery(request);
             rspMsg = new ResponseMessage<EmployeeInfoListDtoQueryRsp>(response);
-
+            
             return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -101,6 +103,29 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
             // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery(@RequestBody @Valid RequestMessage<EmployeeListByEmplNoReq> reqMsg) {
+        ResponseMessage<EmployeeListByEmplNoRsp> rspMsg = null;
+        try {
+            EmployeeListByEmplNoReq request = reqMsg.getMessage();
+            
+            EmployeeListByEmplNoRsp response = employeeInfoListDtoServiceImpl.employeeListByEmployeeNo(request);
+            rspMsg = new ResponseMessage<EmployeeListByEmplNoRsp>(response);
+            
+            return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("员工信息List查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1010",e.getMessage());
+            return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
