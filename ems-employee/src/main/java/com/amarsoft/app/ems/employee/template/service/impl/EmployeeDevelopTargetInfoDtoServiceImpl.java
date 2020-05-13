@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +16,7 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
@@ -88,6 +92,7 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
      */
     @Transactional
     public Map<String, String> employeeDevelopTargetInfoDtoSaveAction(EmployeeDevelopTargetInfoDto employeeDevelopTargetInfoDto) {
+        LocalDateTime inputDate = LocalDateTime.now();
         // 获取业务管理对象
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if (employeeDevelopTargetInfoDto != null) {
@@ -100,17 +105,40 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
             if (StringUtils.isEmpty(employeeDevelopTarget)) {// 如果为空则新建对象
                 employeeDevelopTarget = new EmployeeDevelopTarget();
                 // 如果主键为空,则新增主键
-                if (StringUtils.isEmpty(employeeDevelopTargetInfoDto.getSerialNo())) 
+                if (StringUtils.isEmpty(employeeDevelopTargetInfoDto.getSerialNo())) {
                     employeeDevelopTarget.generateKey();
+                }
+                else {
+                    employeeDevelopTarget.setSerialNo(employeeDevelopTargetInfoDto.getSerialNo());
+                }
+                employeeDevelopTarget.setInputTime(inputDate);
+                employeeDevelopTarget.setInputUserId(GlobalShareContextHolder.getUserId());
+                employeeDevelopTarget.setInputOrgId(GlobalShareContextHolder.getOrgId());
             }
             // 主键不为空,判断是否有权限修改
             else {
-                if (employeeDevelopTarget.getInputUserId() != userId) // 当前用户和制定目标不一致则不能更新
-                    // 抛出异常信息
+                if (!userId.equals(employeeDevelopTarget.getInputUserId())) { // 当前用户和制定目标不一致则不能更新
                     throw new ALSException("EMS1004");
+                }
             }
             // 将页面属性封装进实体类
-            BeanUtils.copyProperties(employeeDevelopTargetInfoDto, employeeDevelopTarget);
+            employeeDevelopTarget.setUpdateTime(inputDate);
+            employeeDevelopTarget.setUpdateUserId(GlobalShareContextHolder.getUserId());
+            employeeDevelopTarget.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
+            employeeDevelopTarget.setEmployeeNo(employeeDevelopTargetInfoDto.getEmployeeNo());
+            employeeDevelopTarget.setRankNo(employeeDevelopTargetInfoDto.getRankNo());
+            // 日期格式化模板
+            DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateFormat.format);
+            // String -> LocalDate
+            LocalDate designTime = LocalDate.parse(employeeDevelopTargetInfoDto.getDesignTime(), sdf);
+            employeeDevelopTarget.setDesignTime(designTime);
+            // String -> LocalDate
+            LocalDate describeTime = LocalDate.parse(employeeDevelopTargetInfoDto.getDescribeTime(), sdf);
+            employeeDevelopTarget.setDescribeTime(describeTime);
+            employeeDevelopTarget.setTargetDescribe(employeeDevelopTargetInfoDto.getTargetDescribe());
+            employeeDevelopTarget.setDesignerId(employeeDevelopTargetInfoDto.getDesignerId());
+            employeeDevelopTarget.setRecord(employeeDevelopTargetInfoDto.getRecord());
+            employeeDevelopTarget.setImplStatus(employeeDevelopTargetInfoDto.getImplStatus());
             // 更新业务对象
             bomanager.updateBusinessObject(employeeDevelopTarget);
 
