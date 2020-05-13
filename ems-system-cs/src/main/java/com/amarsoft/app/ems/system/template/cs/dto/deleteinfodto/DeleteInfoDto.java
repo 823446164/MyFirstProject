@@ -37,9 +37,9 @@ public class DeleteInfoDto implements Serializable {
     @Description("删除理由")
     @Length(max=80)
     @NotEmpty
-    @ActualColumn("CE.changeContext")
+    @ActualColumn("CE.remake")
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
-    private String changeContext;
+    private String remake;
 
     @Description("对象类型")
     @Length(max=80)

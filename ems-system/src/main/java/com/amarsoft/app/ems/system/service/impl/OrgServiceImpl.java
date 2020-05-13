@@ -1,9 +1,13 @@
 package com.amarsoft.app.ems.system.service.impl;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.CompanyType;
 import com.amarsoft.aecd.system.constant.OrgLevel;
@@ -40,6 +45,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfodelete.OrgInfoDeleteReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
+import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
@@ -173,14 +179,14 @@ public class OrgServiceImpl implements OrgService {
 
         //判断完成　还是　停用　　0:完成;1:停用;
         if("0".equals(req.getChangeId())) {//完成功能
-            if(OrgStatus.Disabled.equals(orgInfo.getStatus()) || OrgStatus.New.id.equals(orgInfo.getStatus())) {
+            if(OrgStatus.Disabled.id.equals(orgInfo.getStatus()) || OrgStatus.New.id.equals(orgInfo.getStatus())) {
                 orgInfo.setStatus(OrgStatus.Completed.id);
             }else {
                 throw new ALSException("EMS6007");
             }
         }else if("1".equals(req.getChangeId()))  {//停用功能
             if(!OrgStatus.Completed.id.equals(orgInfo.getStatus())){
-                throw new ALSException("EMS6008");
+                throw new ALSException("EMS6001");
                 }
             Department department = bomanager.keyLoadBusinessObject(Department.class, orgId);
             if(department == null){ //部门附属表不存在
@@ -1011,8 +1017,14 @@ public class OrgServiceImpl implements OrgService {
             orgInfo.setSortNo(req.getOrgId());
             orgInfo.setOrgName(req.getOrgName());
             orgInfo.setStatus(OrgStatus.New.id);
-            //设置部门等级，可修改  2为一级部门
-            orgInfo.setOrgLevel(OrgLevel.LEVEL_2.id); 
+            //设置部门等级，可修改  2为一级部门  3为二级部门
+            if(OrgLevel.LEVEL_2.id.equals(req.getParam())) {//一级部门
+                orgInfo.setOrgLevel(OrgLevel.LEVEL_2.id); 
+            }else if(OrgLevel.LEVEL_3.id.equals(req.getParam())){//二级部门
+                orgInfo.setOrgLevel(OrgLevel.LEVEL_3.id); 
+            }else {
+                throw new ALSException("获取部门参数错误！");
+            }
         }
         
         // 更新到数据库
@@ -1087,10 +1099,16 @@ public class OrgServiceImpl implements OrgService {
                 throw new ALSException("EMS6005");
             }
         }
-
+        
         changeEvent.setObjectNo(req.getObjectNo());
-        changeEvent.setChangeContext(req.getChangeContext());
-        changeEvent.setObjectType("delete");
+        changeEvent.setRemark(req.getRemake());
+        changeEvent.setChangeContext("删除部门信息:"+orgInfo.getOrgId());
+        changeEvent.setObjectType("DELETE");
+        changeEvent.setInputDate(LocalDateTime.now());
+        changeEvent.setInputUserId(GlobalShareContextHolder.getUserId());
+        changeEvent.setOccurDate(LocalDateTime.now());
+        changeEvent.setInputOrgId( GlobalShareContextHolder.getOrgId());
+        
         bomanager.deleteBusinessObject(orgInfo);
         bomanager.deleteBusinessObject(department);
         bomanager.updateBusinessObject(changeEvent);
@@ -1226,5 +1244,46 @@ public class OrgServiceImpl implements OrgService {
         Map<String, String> map=new HashMap<String, String>();
         map.put("status","Y");
         return map;
+    }
+
+    /**
+     * Description: 获取一、二级机构的信息
+     * @param 
+     * @return  rsp
+     * @see
+     */
+    @Override
+    public OrgTreeQueryRsp oneSecondOrgTreeQuery(OrgTreeQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        OrgTreeQueryRsp rsp = new OrgTreeQueryRsp();
+        rsp.setTrees(new ArrayList<com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree>());
+        List<OrgInfo> allOrgs = new ArrayList<>();
+        int param = (req.getParam()) == null?2:Integer.valueOf(req.getParam());
+        //int param = 3;
+        allOrgs = bomanager.loadBusinessObjects(OrgInfo.class, 0, Integer.MAX_VALUE,
+            "orglevel between 1 and :param order by sortNo,orgType desc","param",param).getBusinessObjects();
+
+        for (OrgInfo orgInfo : allOrgs) {
+                com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree rootNode = new com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree();
+                rootNode.setChildren(new ArrayList<com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree>());
+                rootNode.setTitle(orgInfo.getOrgName());
+                rootNode.setSortNo(orgInfo.getSortNo());
+                rootNode.setOrgType(orgInfo.getOrgType());
+                rootNode.setKey(orgInfo.getOrgId());
+                rootNode.setExpanded(CollectionUtils.isEmpty(rsp.getTrees()));// 展开第一个根节点
+                rootNode.setLeaf(Boolean.FALSE);
+                if (OrgStatus.Completed.id.equals(orgInfo.getStatus()) || OrgStatus.New.id.equals(orgInfo.getStatus())) {// 有效、停用展示，无效则不展示
+                    rootNode.setDisable(Boolean.FALSE);
+                } else if (orgInfo.getStatus().equals(OrgStatus.Disabled.id)) {
+                    rootNode.setDisable(Boolean.TRUE);
+                }
+                this.addChildren(rootNode, orgInfo, allOrgs);
+                this.sortTreeNode(rootNode);
+                if (rsp.getTrees().stream().anyMatch(tree -> tree.getKey().equals(rootNode.getKey()))) { // 去重
+                    continue;
+                }
+                rsp.getTrees().add(rootNode);
+        }
+        return rsp;
     }
 }

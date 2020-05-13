@@ -15,6 +15,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfodelete.OrgInfoDeleteReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
+import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
@@ -178,5 +179,12 @@ public interface OrgService {
      * @see
      */
     Map<String, String> secondLevelDeptInfoDtoSave(SecondLevelDeptInfoDtoSaveReq request);
+
+    /**
+     * 查询机构树图
+     * @param bomanger
+     * @return OrgTreeQueryRsp
+     */
+    OrgTreeQueryRsp oneSecondOrgTreeQuery(OrgTreeQueryReq req);
 
 }

@@ -32,6 +32,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfodelete.OrgInfoDeleteReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
+import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
@@ -75,7 +76,7 @@ public interface OrgController {
     @PostMapping(value = "/system/searchsecondleveldeptlistdto/query", name="搜索二级部门信息List查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<SearchSecondLevelDeptListDtoQueryRsp>> searchSecondLevelDeptListDtoQuery(@RequestBody @Valid RequestMessage<SearchSecondLevelDeptListDtoQueryReq> reqMsg);
     @PostMapping(value = "/system/deleteinfodto/delete", name="删除部门Info查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<DeleteInfoDtoQueryRsp>> deleteInfoDtoQuery(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg);
+    public ResponseEntity<ResponseMessage<Object>> deleteInfoDtoQuery(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg);
     @PostMapping(value = "/system/secondleveldeptinfodto/query", name="二级部门信息Info查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<SecondLevelDeptInfoDtoQueryRsp>> secondLevelDeptInfoDtoQuery(@RequestBody @Valid RequestMessage<SecondLevelDeptInfoDtoQueryReq> reqMsg);
     @PostMapping(value = "/system/secondleveldeptinfodto/save", name="二级部门信息Info保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -84,5 +85,6 @@ public interface OrgController {
     public ResponseEntity<ResponseMessage<SecondLevelDeptListDtoQueryRsp>> secondLevelDeptListDtoQuery(@RequestBody @Valid RequestMessage<SecondLevelDeptListDtoQueryReq> reqMsg);
     @PostMapping(value = "/system/setorginfo", name="修改指定机构的状态信息", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> orgInfoUpdate(@RequestBody @Valid RequestMessage<OrgInfoUpdateReq> reqMsg);
-
+    @PostMapping(value = "/system/getonesecondorgtree", name="机构树图展示", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<OrgTreeQueryRsp>> oneSecondOrgTreeQuery(@RequestBody @Valid RequestMessage<OrgTreeQueryReq> reqMsg);
 }
