@@ -39,7 +39,7 @@ public class EmployeePersonalPerformanceListDtoQueryReq implements Serializable 
     @QueryOrderBy
     private String[] orderBy;
 
-    @Description("员工编号")
+    @Description("项目编号")
     @Length(max=40)
     @NotEmpty
     @ActualColumn("EPP.projectNo")

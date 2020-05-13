@@ -102,14 +102,11 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
             // 获取当前登录用户id
             String userId = GlobalShareContextHolder.getUserId();
             // 判断新增还是修改
-            if (StringUtils.isEmpty(employeeDevelopTarget)) {// 如果为空则新建对象
+            if (employeeDevelopTarget == null) {// 如果为空则新建对象
                 employeeDevelopTarget = new EmployeeDevelopTarget();
                 // 如果主键为空,则新增主键
                 if (StringUtils.isEmpty(employeeDevelopTargetInfoDto.getSerialNo())) {
                     employeeDevelopTarget.generateKey();
-                }
-                else {
-                    employeeDevelopTarget.setSerialNo(employeeDevelopTargetInfoDto.getSerialNo());
                 }
                 employeeDevelopTarget.setInputTime(inputDate);
                 employeeDevelopTarget.setInputUserId(GlobalShareContextHolder.getUserId());
