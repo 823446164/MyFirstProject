@@ -36,7 +36,11 @@ public class LabelDescribe extends BusinessObject {
     @Description("标签编号") 
     @Column(name = "labelNo",length=40) 
     private String labelNo;
-      
+    
+    @Description("适用要求类别") 
+    @Column(name = "abilityType",length=10) 
+    private String abilityType;
+    
     @Description("标签等级") 
     @Column(name = "labelLevel",length=40) 
     private String labelLevel;
