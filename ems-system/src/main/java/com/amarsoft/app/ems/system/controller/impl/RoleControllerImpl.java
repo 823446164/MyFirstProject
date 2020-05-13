@@ -28,6 +28,8 @@ import com.amarsoft.app.ems.system.cs.dto.rolequery.RoleQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updaterole.UpdateRoleReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.RoleService;
 
@@ -173,6 +175,29 @@ public class RoleControllerImpl implements RoleController {
             //事务回滚
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "900709",e.getMessage());
             return new ResponseEntity<ResponseMessage<RoleUserQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Description: 根据用户查询角色信息<br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    public ResponseEntity<ResponseMessage<UserRoleQueryRsp>> userRoleQuery(@RequestBody @Valid RequestMessage<UserRoleQueryReq> reqMsg) {
+        ResponseMessage<UserRoleQueryRsp> rspMsg = null;
+        try {
+            rspMsg = new ResponseMessage<UserRoleQueryRsp>();
+            UserRoleQueryRsp rsp = roleService.userRoleQuery(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<UserRoleQueryRsp>>(new ResponseMessage<UserRoleQueryRsp>(rsp), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("查询用户角色请求报文："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            //TODO
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<UserRoleQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
