@@ -42,6 +42,8 @@ import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
 
 public interface TeamController {
     @PostMapping(value = "/team/addteam", name="新增团队信息", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -97,4 +99,9 @@ public interface TeamController {
     @PostMapping(value = "/teaminfodto/queryrole", name="团队角色查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>> queryRoele(@RequestBody @Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg);
     
+    @PostMapping(value = "/team/getteamsbyuser", name="按用户查询团队", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<UserTeamQueryRsp>> userTeamQuery(@RequestBody @Valid RequestMessage<UserTeamQueryReq> reqMsg);
+    
+    @PostMapping(value = "/team/updateteamuser", name="更新员工团队", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@RequestBody @Valid RequestMessage<UpdateUserTeamReq> reqMsg);
 }
