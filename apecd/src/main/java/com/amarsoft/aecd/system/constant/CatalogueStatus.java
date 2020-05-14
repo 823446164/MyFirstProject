@@ -24,4 +24,18 @@ public enum CatalogueStatus {
         return Show.id.equals(id)
                 ||Hide.id.equals(id);
     }
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
+        for (CatalogueStatus catalogueStatus : CatalogueStatus.values()) {
+            if (catalogueStatus.id.equalsIgnoreCase(id)) {
+                return catalogueStatus.name;
+            }
+        }
+        return "";
+    }
 }
