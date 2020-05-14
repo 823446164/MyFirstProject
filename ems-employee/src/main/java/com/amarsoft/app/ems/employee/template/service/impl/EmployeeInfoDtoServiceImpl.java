@@ -4,17 +4,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
+import com.amarsoft.amps.arem.exception.ALSException;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.employee.template.service.EmployeeInfoDtoService;
 import com.amarsoft.app.ems.system.cs.client.TeamClient;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
+import com.amarsoft.app.ems.employee.cs.dto.employeebelongupdate.EmployeeBelongUpdateReq;
 import com.amarsoft.app.ems.employee.entity.EmployeeInfo;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryReq;
@@ -104,4 +110,5 @@ public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService{
         }
         bomanager.updateDB();
     }
+    
 }

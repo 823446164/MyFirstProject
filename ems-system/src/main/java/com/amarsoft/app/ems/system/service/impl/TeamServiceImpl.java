@@ -542,10 +542,9 @@ public class TeamServiceImpl implements TeamService {
 		    UserBelong userBelong = bomanager.loadBusinessObject(UserBelong.class, "userId",req.getEmployeeNo());
 			userTeam.setTeamId(req.getTeamId());
 			userBelong.setOrgId(teamInfo.getBelongOrgId()); 
-			
 			bomanager.updateBusinessObject(userTeam);    //  更新user_team中间表中的所属部门
 			bomanager.updateBusinessObject(userBelong);  //  更新user_belong表中的所属部门
-
+			bomanager.clear();
 			bomanager.updateDB();
 		}
 		
@@ -564,7 +563,7 @@ public class TeamServiceImpl implements TeamService {
 		List<OrgAndTeam> orgTeams = new ArrayList<OrgAndTeam>();
 		OrgAndTeam orgTeam = null;
 		List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
-				"select OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.teamLeader as TeamLeader "
+				"select OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.roleA as RoleA "
 				+ "from OrgTeam OT,TeamInfo TI,OrgInfo OI where OT.teamId = TI.teamId and OT.orgId = OI.orgId order by OT.orgId").getBusinessObjects();
 		if (!StringUtils.isEmpty(orgTeamLists)) {
 			for (BusinessObject businessObject : orgTeamLists) {
@@ -577,7 +576,7 @@ public class TeamServiceImpl implements TeamService {
                     orgTeam.setTeamId(businessObject.getString("TeamId"));
                     orgTeam.setTeamName(businessObject.getString("TeamName"));
                     orgTeam.setDeptManager(dept.getDeptManager());
-                    orgTeam.setTeamLeader(businessObject.getString("TeamLeader"));
+                    orgTeam.setRoleA(businessObject.getString("RoleA"));
                     orgTeams.add(orgTeam);
                 }
 			}

@@ -23,7 +23,7 @@ public class OrgAndTeam implements Serializable{
     private String teamName;
     @Description("团队负责人")
     @Length(max=40)
-    private String teamLeader;
+    private String roleA;
     @Description("部门编号")
     @Length(max=40)
     private String orgId;
