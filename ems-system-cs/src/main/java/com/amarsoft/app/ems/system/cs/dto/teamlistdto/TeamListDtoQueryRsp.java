@@ -17,6 +17,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+
 public class TeamListDtoQueryRsp implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("总笔数")
@@ -39,7 +40,8 @@ public class TeamListDtoQueryRsp implements Serializable {
     private String belongOrgId;
     @Description("团队名称")
     private String teamName;
-  
+    
+ 
   
     
     

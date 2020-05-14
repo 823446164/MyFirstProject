@@ -27,6 +27,12 @@
             <artifactId>apecd</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.amarsoft.app.ems</groupId>
+            <artifactId>ems-employee-cs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+         
         
         <dependency>
             <groupId>com.amarsoft.a3.amps</groupId>

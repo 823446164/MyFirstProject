@@ -13,7 +13,6 @@ package com.amarsoft.app.ems.system.service;
 import javax.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamRsp;
@@ -21,6 +20,7 @@ import com.amarsoft.app.ems.system.cs.dto.addteamuser.AddTeamUserReq;
 import com.amarsoft.app.ems.system.cs.dto.deleteteam.DeleteTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.deleteteam.DeleteTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.deleteteamuser.DeleteTeamUserReq;
+import com.amarsoft.app.ems.system.cs.dto.getteamid.GetTeamIdReq;
 import com.amarsoft.app.ems.system.cs.dto.getteamid.GetTeamIdRsp;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
@@ -36,8 +36,6 @@ import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
-import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
-import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
 
 
 public interface TeamService {
@@ -48,17 +46,8 @@ public interface TeamService {
      */
     AddTeamRsp addTeam(AddTeamReq req);
     
-    /**
-     * 团队状态完成
-     * @param req
-     */
-    UpdateTeamRsp  updateTeam(UpdateTeamReq req);
-    /**
-     * 团队状态停用
-     * @param req
-     */
-    UpdateTeamRsp  updateTeamStatus(UpdateTeamReq req);
-
+    
+   
     /**
      * 增加团队用户
      * @param req
@@ -99,19 +88,7 @@ public interface TeamService {
      */
     DeleteTeamRsp deleteTeam(DeleteTeamReq req);
 
-    /**
-     * 获取团队编号
-     */
-    GetTeamIdRsp getTeamId();
-
-    /**
-     * Description:根据部门编号查询团队<br>
-     * ${tags}
-     * @see
-     */
-    TeamQueryRsp teamQueryById(TeamQueryReq req);
- 
-    
+  
     /**
      * Description:部门团队列表展示<br>
      * ${tags}
@@ -120,12 +97,13 @@ public interface TeamService {
     TeamOrgQueryRsp orgTeamListQuery(@Valid TeamOrgQueryReq req);
 
     /**
-     * Description: 根据用户查找对应的团队<br>
-     * ${tags}
-     * @see
+     * 根据部门编号查询团队
+     * @param orgService 
+     * @param req
      */
-    UserTeamQueryRsp userTeamQuery(@Valid @RequestBody UserTeamQueryReq req);
-    
+    TeamQueryRsp teamQueryById(TeamQueryReq req);
+   
+
     /**
      * Description:根据条件查询团队信息 <br>
      * @param message
@@ -133,5 +111,5 @@ public interface TeamService {
      * @see
      */
     TeamQueryRsp teamSearch(TeamQueryReq message);
-
+  
 }

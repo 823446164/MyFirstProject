@@ -23,5 +23,9 @@ public class TeamListDtoSaveReq implements Serializable {
 
     @Description("总笔数")
     private Integer totalCount = 0;
+   
+
+    
+   
     
 }

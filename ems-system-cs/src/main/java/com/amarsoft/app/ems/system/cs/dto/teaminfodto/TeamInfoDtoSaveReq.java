@@ -10,10 +10,13 @@ import lombok.ToString;
  * @author hpli
  */
 
+
 @Getter
 @Setter
 @ToString
 public class TeamInfoDtoSaveReq extends TeamInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
     
+    
 }
+
