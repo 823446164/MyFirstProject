@@ -28,9 +28,6 @@ public interface TeamInfoDtoService {
      */
     public void teamInfoDtoSave(@Valid TeamInfoDtoSaveReq teamInfoDtoSaveReq);
 
-    
-  
-
     /**
      * 团队状态
      * @param request

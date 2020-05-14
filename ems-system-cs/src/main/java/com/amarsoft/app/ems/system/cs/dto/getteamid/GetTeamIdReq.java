@@ -2,7 +2,7 @@
  * 文件名：GetTeamIdReq.java
  * 版权：Copyright by www.amarsoft.com
  * 描述：
- * 修改人：amarsoft
+ * 修改人：hpli
  * 修改时间：2020年5月12日
  * 跟踪单号：
  * 修改单号：
@@ -20,9 +20,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * 〈一句话功能简述〉
- * 〈功能详细描述〉
- * @author amarsoft
+ * 团队编号响应体
+ * @author hpli
  * @version 2020年5月12日
  * @see GetTeamIdReq
  * @since

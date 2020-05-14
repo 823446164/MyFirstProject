@@ -47,17 +47,7 @@ public interface TeamService {
     AddTeamRsp addTeam(AddTeamReq req);
     
     
-    /**
-     * 团队状态完成
-     * @param req
-     */
-    UpdateTeamRsp  updateTeam(UpdateTeamReq req);
-    /**
-     * 团队状态停用
-     * @param req
-     */
-    UpdateTeamRsp  updateTeamStatus(UpdateTeamReq req);
-
+   
     /**
      * 增加团队用户
      * @param req

@@ -41,7 +41,7 @@ public class TeamListDtoQueryRsp implements Serializable {
     @Description("团队名称")
     private String teamName;
     
-  
+ 
   
     
     

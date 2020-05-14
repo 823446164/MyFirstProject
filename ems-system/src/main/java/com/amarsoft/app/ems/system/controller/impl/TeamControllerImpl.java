@@ -38,6 +38,7 @@ import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
@@ -89,31 +90,7 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    /**
-     * Description: 团队状态信息
-     * <br>
-     * ${tags}
-     * @see
-     */
     
-   
-    @Override
-    @Transactional
-    public ResponseEntity<ResponseMessage<Object>> updateTeam(@RequestBody @Valid RequestMessage<UpdateTeamReq> reqMsg){
-        ResponseMessage<Object> rspMsg = null;
-        try {
-            teamService.updateTeam(reqMsg.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()), HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("更新团队信息请求报文："+ reqMsg.toString(), e);
-            }
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901002",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-  
     @Override
     @Transactional
     public ResponseEntity<ResponseMessage<Object>> addTeamUser(@RequestBody @Valid RequestMessage<AddTeamUserReq> reqMsg){
@@ -382,7 +359,7 @@ public class TeamControllerImpl implements TeamController {
      * @see
      */
     @Override
-       @Transactional
+    @Transactional
     public ResponseEntity<ResponseMessage<TeamOrgQueryRsp>> teamOrgQuery(@RequestBody @Valid RequestMessage<TeamOrgQueryReq> reqMsg) {
         ResponseMessage<TeamOrgQueryRsp> rspMsg = null;
         try {
@@ -440,7 +417,7 @@ public class TeamControllerImpl implements TeamController {
      * @see
      */
     @Override
-       @Transactional
+    @Transactional
     public ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>> updateStatus(
             @RequestBody @Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg) {
         // TODO Auto-generated method stub
@@ -468,6 +445,7 @@ public class TeamControllerImpl implements TeamController {
      * ${tags}
      * @see
      */
+    @Override
     @Transactional
     public ResponseEntity<ResponseMessage<Object>> teamRoleSave( @RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
         // TODO Auto-generated method stub
@@ -490,15 +468,29 @@ public class TeamControllerImpl implements TeamController {
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    /* (non-Javadoc)
-     * @see com.amarsoft.app.ems.system.controller.TeamController#getTeamId(com.amarsoft.amps.acsc.rpc.RequestMessage)
+
+    /**
+     * Description: 角色查询br>
+     * ${tags}
+     * @see
      */
     @Override
-    public ResponseEntity<ResponseMessage<GetTeamIdRsp>> getTeamId(@Valid RequestMessage<GetTeamIdReq> reqMsg) {
-        // TODO Auto-generated method stub
+    @Transactional
+    public ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>> queryRoele(@Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg) {
+        // TODO 未完成
+        
         return null;
     }
+
+   
+   
+
+   
+  
     
+    
+
+  
     
      
 }

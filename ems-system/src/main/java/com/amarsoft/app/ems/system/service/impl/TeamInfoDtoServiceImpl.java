@@ -1,5 +1,6 @@
 package com.amarsoft.app.ems.system.service.impl;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -41,34 +42,36 @@ import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
 
 /**
  * 团队信息Service实现类
+ * 
  * @author hpli
  */
 @Slf4j
 @Service
-public class TeamInfoDtoServiceImpl implements TeamInfoDtoService{
+public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
     @Autowired
-    EmployeeInfoListDtoClient  employeeInfoDtoClient;
-    
+    EmployeeInfoListDtoClient employeeInfoDtoClient;
+
     /**
      * @param request
      * @return
      */
-    
+
     @Override
     @Transactional
     public TeamInfoDtoQueryRsp teamInfoDtoQuery(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfoDtoQueryRsp  rsp= new TeamInfoDtoQueryRsp ();
-        TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class,"teamId",teamInfoDtoQueryReq.getTeamId());
+        TeamInfoDtoQueryRsp rsp = new TeamInfoDtoQueryRsp();
+        TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class, "teamId", teamInfoDtoQueryReq.getTeamId());
         TeamInfoDtoQueryRsp teamInfoDto = new TeamInfoDtoQueryRsp();
-        BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql("select count(*)  as count from  UserTeam  where teamId=:teamId ","teamId",teamInfoDtoQueryReq.getTeamId());
+        BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(
+            "select count(*)  as count from  UserTeam  where teamId=:teamId ", "teamId", teamInfoDtoQueryReq.getTeamId());
         List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
-        if(businessObjects !=null && businessObjects .size()>0) {
-            
+        if (businessObjects != null && businessObjects.size() > 0) {
+
             int count = businessObjects.get(0).getInt("count");
             teamInfoDto.setCount(count);
-         }
-        if(teamInfo!=null){
+        }
+        if (teamInfo != null) {
             teamInfoDto.setTeamId(teamInfo.getTeamId());
             teamInfoDto.setTeamName(teamInfo.getTeamName());
             teamInfoDto.setRoleA(teamInfo.getRoleA());
@@ -80,71 +83,65 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService{
             teamInfoDto.setDescription(teamInfo.getDescription());
             return teamInfoDto;
         }
-        //调用员工接口
-        /*
-         * RequestMessage<EmployeeInfoListDtoQueryReq> reMsg =new
-         * RequestMessage<EmployeeInfoListDtoQueryReq>() ; EmployeeInfoListDtoQueryReq dto=new
-         * EmployeeInfoListDtoQueryReq(); dto.setTeamId(teamInfo.getTeamId());
-         * reMsg.setMessage(dto); ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>
-         * employeeInfoListDtoQuery = employeeInfoDtoClient.employeeInfoListDtoQuery(reMsg);
-         * List<com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.
-         * EmployeeInfoListDto> employeeInfoListDtos =
-         * employeeInfoListDtoQuery.getBody().getMessage().getEmployeeInfoListDtos();
-         */        return rsp;  
-       
+        return rsp;
+
     }
 
     /**
      * 团队信息单记录保存
+     * 
      * @param request
      * @return
      */
     @Override
     @Transactional
     public void teamInfoDtoSave(@Valid TeamInfoDtoSaveReq teamInfoDtoSaveReq) {
-        
+
         teamInfoDtoSaveAction(teamInfoDtoSaveReq);
     }
+
     /**
      * 团队信息单记录保存
+     * 
      * @param
      * @return
      */
     @Transactional
-    public void  teamInfoDtoSaveAction(TeamInfoDto teamInfoDto){
+    public void teamInfoDtoSaveAction(TeamInfoDto teamInfoDto) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        //AddTeamRsp  addTeamRsP=new AddTeamRsp();
-        if(teamInfoDto==null){
-            throw   new ALSException("901009");
+        // AddTeamRsp addTeamRsP=new AddTeamRsp();
+        if (teamInfoDto == null) {
+            throw new ALSException("901009");
         }
         String teamId = teamInfoDto.getTeamId();
-        TeamInfo  teamInfo = null;  
-        if(StringUtils.isEmpty(teamId)) {
-            //新增
-            BusinessObjectAggregate<BusinessObject> teamOrgRsq = bomanager. selectBusinessObjectsBySql(" select  TI.teamName as teamName"
-                         + " from OrgTeam OT,TeamInfo TI" +
-                         " where OT.teamId =TI.teamId and TI.teamName=:teamName",
-                         "teamName",teamInfoDto.getTeamName());
+        TeamInfo teamInfo = null;
+        if (StringUtils.isEmpty(teamId)) {
+            // 新增
+            BusinessObjectAggregate<BusinessObject> teamOrgRsq = bomanager.selectBusinessObjectsBySql(
+                " select  TI.teamName as teamName" + " from OrgTeam OT,TeamInfo TI" + " where OT.teamId =TI.teamId and TI.teamName=:teamName",
+                "teamName", teamInfoDto.getTeamName());
             List<BusinessObject> teamOrg = teamOrgRsq.getBusinessObjects();
-            if(teamOrg!=null&&teamOrg.size()>0) {
-                      throw  new ALSException("901009");
-            }else {
-                  teamInfo =new TeamInfo(); 
-                  teamInfo.generateKey();                               
-            }                  
-        }else {
-            //更新
-             teamInfo= bomanager.keyLoadBusinessObject(TeamInfo.class,teamInfoDto.getTeamId());
+            if (teamOrg != null && teamOrg.size() > 0) {
+                throw new ALSException("901009");
+            }
+            else {
+                teamInfo = new TeamInfo();
+                teamInfo.generateKey();
+            }
         }
-        //拷贝属性
+        else {
+            // 更新
+            teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamInfoDto.getTeamId());
+        }
+        // 拷贝属性
         BeanUtils.copyProperties(teamInfoDto, teamInfo);
-        bomanager.updateBusinessObject(teamInfo);   
-        bomanager.updateDB();   
+        bomanager.updateBusinessObject(teamInfo);
+        bomanager.updateDB();
     }
 
-  
     /**
-     * 团队状态  1.表示完成 2.表示停用
+     * 团队状态 1.表示完成 2.表示停用
+     * 
      * @param
      * @return
      */
@@ -152,39 +149,38 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService{
     @Transactional
     public TeamInfoDtoQueryRsp updateStatus(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq) {
         // TODO Auto-generated method stub
-          BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-          //根据部门编号查询团队状态
-         TeamInfo  teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamInfoDtoQueryReq.getTeamId());
-         TeamInfoDtoQueryRsp rsp =new TeamInfoDtoQueryRsp();
-         if (teamInfo  == null) {
-             //不存在该团队
-               throw new ALSException("901017");
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        // 根据部门编号查询团队状态
+        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamInfoDtoQueryReq.getTeamId());
+        TeamInfoDtoQueryRsp rsp = new TeamInfoDtoQueryRsp();
+        if (teamInfo == null) {
+            // 不存在该团队
+            throw new ALSException("901017");
+        }
+        // 判断状态 1:完成;2:停用;
+        if (teamInfoDtoQueryReq.getStringflag) { // 点击执行完成
+            teamInfo.setStatus(OrgStatus.Completed.id);
+            bomanager.updateBusinessObject(teamInfo);
+            bomanager.updateDB();
+
+        }
+        else { // 执行停用删除
+
+            if ((OrgStatus.Disabled.id).equals(teamInfo.getStatus())) {
+                throw new ALSException("EMS6012");
             }
-            //判断状态　　1:完成;2:停用;
-         if(teamInfoDtoQueryReq.getStringflag) { //点击执行完成
-             teamInfo.setStatus(OrgStatus.Completed.id);
-             bomanager.updateBusinessObject(teamInfo);   
-             bomanager.updateDB();   
-             
-         }else { //执行停用删除
-            
-             if(( OrgStatus.Disabled.id).equals(teamInfo.getStatus())) {
-                 throw new ALSException("EMS6012"); 
-               }
-          BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql("select  UT.userId  from  UserTeam UT ,TeamInfo TI where TI.teamId = UT.teamId", teamInfo.getTeamId());
-          List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
-          if(businessObjects !=null) {
-                throw new ALSException("EMS6011");  
+            BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(
+                "select  UT.userId  from  UserTeam UT ,TeamInfo TI where TI.teamId = UT.teamId", teamInfo.getTeamId());
+            List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
+            if (businessObjects != null) {
+                throw new ALSException("EMS6011");
             }
-            bomanager.updateBusinessObject(teamInfo);   
-            bomanager.updateDB();   
-            
-         }
-             
+            bomanager.updateBusinessObject(teamInfo);
+            bomanager.updateDB();
+
+        }
+
         return rsp;
     }
 
-   
-    
 }
-

@@ -52,7 +52,7 @@ public class TeamListDtoQueryReq implements Serializable {
     @QueryOrderBy
     private String[] orderBy;
 
-  
+ 
     @Description("团队名称")
     public String TeamName;
 
