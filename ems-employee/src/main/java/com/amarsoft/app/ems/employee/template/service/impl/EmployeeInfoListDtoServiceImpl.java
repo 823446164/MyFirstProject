@@ -1,51 +1,54 @@
 package com.amarsoft.app.ems.employee.template.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.util.StringUtils;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 
-import org.bouncycastle.jcajce.provider.asymmetric.ecgost12.ECGOST2012SignatureSpi256;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
-import com.amarsoft.app.ems.employee.template.service.EmployeeInfoListDtoService;
-import com.amarsoft.app.ems.system.cs.client.RoleClient;
-import com.amarsoft.app.ems.system.cs.client.TeamClient;
-import com.amarsoft.app.ems.system.cs.dto.addteamuser.UserTeam;
-import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserAndRole;
-import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
-import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
-import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
-import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.amarsoft.aecd.system.constant.ArchitectureType;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
-import com.amarsoft.amps.acsc.util.DTOHelper;
-import com.amarsoft.amps.arem.exception.ALSException;
-import java.util.List;
-import java.util.ArrayList;
-import com.amarsoft.amps.arpe.businessobject.BusinessObject;
-import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
+import com.amarsoft.amps.acsc.util.DTOHelper;
+import com.amarsoft.amps.arem.exception.ALSException;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
+import com.amarsoft.app.ems.employee.entity.EmployeeInfo;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoDeleteReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSaveReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUser;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
-import com.amarsoft.app.ems.employee.entity.EmployeeInfo;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoDeleteReq;
+import com.amarsoft.app.ems.employee.template.service.EmployeeInfoListDtoService;
+import com.amarsoft.app.ems.system.cs.client.OrgClient;
+import com.amarsoft.app.ems.system.cs.client.RoleClient;
+import com.amarsoft.app.ems.system.cs.client.TeamClient;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserAndRole;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 员工信息ListService实现类
@@ -58,6 +61,8 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
 	    RoleClient roleClient;
 	    @Autowired
 	    TeamClient teamClient;
+	    @Autowired
+	    OrgClient orgClient;
 	    
     /**
                    * 查询结果集
@@ -207,66 +212,57 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         }
         UserAndRole userAndRole = userRoles.get(0); //获取用户的最高权限（099、110、210）
         String roleId = userAndRole.getRoleId(); 
-        if ("099".equals(roleId)) {//如果用户为系统管理员，展示所有员工
-            EmployeeInfoListDtoQueryReq employeeInfoListDtoQueryReq = new EmployeeInfoListDtoQueryReq();
-            EmployeeInfoListDtoQueryRsp query = employeeInfoListDtoQuery(employeeInfoListDtoQueryReq);
-            List<EmployeeInfoListDto> employeeInfoLists = query.getEmployeeInfoListDtos();
-            rsp.setTotalCount(employeeInfoLists.size());
-            rsp.setEmployeeList(employeeInfoLists);    
+        if (ArchitectureType.All.equals(roleId)) {//如果用户为系统管理员，展示所有员工
+            String id = "";
+            rsp = showList(roleId, id);
          }else if ("110".equals(roleId)) {//如果用户为部门管理员，展示所在部门所有员工
-            //TODO 将角色ｉｄ和ｏｒｇＩＤ封装到部门服务的请求体中         
-         }else if("210".equals(roleId)){//如果用户为团队负责人，展示所在团队所有员工
-            //TODO 将角色ｉｄ和ｕｓｅｒＩＤ封装到部门服务的请求体中      
-         } 
+             rsp = showList(roleId, orgId);
+         }else if(ArchitectureType.Team.equals(roleId)){//如果用户为团队负责人，展示所在团队所有员工
+             rsp = showList(roleId, userId);
+         }
         
         return rsp; 
     }
     
     /**
-     * Description: 根据权限列出员工的公共方法体<br>
+     * Description: 根据条件获取员工列表公共部分<br>
      * ${tags}
      * @see
      */
-    public EmployeeListByUserQueryRsp showList(List<BusinessObject> businessObjects) {
-        
-        EmployeeListByUserQueryRsp rsp = new EmployeeListByUserQueryRsp();
-        List<EmployeeInfoListDto> employeeList = new ArrayList<EmployeeInfoListDto>();
-        EmployeeInfoListDto employee = null;
-        if (!StringUtils.isEmpty(businessObjects)) {
-            for (BusinessObject bo : businessObjects) {
-                employee = new EmployeeInfoListDto();
-                employee.setEmployeeNo(bo.getString("EmployeeNo"));
-                employee.setEmployeeName(bo.getString("EmployeeName"));
-                employee.setEmployeeAcct(bo.getString("EmployeeAcct"));
-                employee.setPhoneNum(bo.getString("PhoneNum"));
-                employee.setNowRank(bo.getString("NowRank"));
-                employee.setGoalRank(bo.getString("GoalRank"));
-                employee.setRntryTime(bo.getString("RntryTime"));
-                employee.setChangeTime(bo.getString("ChangeTime"));
-                employee.setEmployeeStatus(bo.getString("EmployeeStatus"));
-                employee.setResignationReason(bo.getString("ResignationReason"));
-                employee.setEmployeeeDucation(bo.getString("EmployeeeDucation"));
-                employee.setGraduationTime(bo.getString("GraduationTime"));
-                employee.setGraduatedSchool(bo.getString("GraduatedSchool"));
-                employee.setMajor(bo.getString("Major"));
-                employee.setHomeTown(bo.getString("HomeTown"));
-                employee.setInputUserId(bo.getString("InputUserId"));
-                employee.setInputTime(bo.getString("InputTime"));
-                employee.setInputOrgId(bo.getString("InputOrgId"));
-                employee.setUpdateUserId(bo.getString("UpdateUserId"));
-                employee.setUpdateTime(bo.getString("UpdateTime"));
-                employee.setUpdateOrgId(bo.getString("UpdateOrgId"));
-                employee.setEmployeeWorkStatus(bo.getString("EmployeeWorkStatus"));
-                employee.setTeamId(bo.getString("TeamId"));
-                employee.setTeamName(bo.getString("TeamName"));
-                employeeList.add(employee);
-            }
+    public EmployeeListByUserQueryRsp showList(String roleId,String Id) {
+        EmployeeListByUserQueryRsp rsp = null;
+        RequestMessage<OrgUserQueryReq> reqMessage = new RequestMessage<OrgUserQueryReq>();
+        OrgUserQueryReq orgUserQueryReq = new OrgUserQueryReq();
+        orgUserQueryReq.setRoleId(roleId);
+        orgUserQueryReq.setId(Id);
+        reqMessage.setMessage(orgUserQueryReq);
+        //获取员工其他信息
+        ResponseEntity<ResponseMessage<OrgUserQueryRsp>> orgUserQuery = orgClient.orgUserQuery(reqMessage);
+        List<UserTeamOrgInfo> utois = orgUserQuery.getBody().getMessage().getUserTeamOrgInfos();
+        //获取所有的员工ＩＤ
+        List<String> userIdList = new ArrayList<String>();
+        for (UserTeamOrgInfo userTeamOrgInfo : utois) {
+           userIdList.add(userTeamOrgInfo.getUserId()); 
         }
-        rsp.setTotalCount(employeeList.size());
-        rsp.setEmployeeList(employeeList);
+        //调用employeeListByEmployeeNo方法
+        EmployeeListByEmplNoReq emplNoReq = new EmployeeListByEmplNoReq();
+        emplNoReq.setEmployeeNoList(userIdList);
+        EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq);
+        //将用户ＩＤ一致的团队部门信息添加到员工详情信息上
+        for(EmployeeInfoDto eiDto:emplNoRsp.getEmployeeInfoList()) {
+            for(UserTeamOrgInfo utoi:utois) {
+                if(eiDto.getEmployeeNo().equals(utoi.getUserId())){
+                    eiDto.setOrgId(utoi.getOrgId());
+                    eiDto.setOrgName(utoi.getOrgName());
+                    eiDto.setTeamId(utoi.getTeamId());
+                    eiDto.setTeamName(utoi.getTeamName());
+                }
+            }
+        } 
+        rsp.setEmployeeList(emplNoRsp.getEmployeeInfoList());
         return rsp;
     }
-
+    
     /**
      * Description: 根据条件获取员工列表<br>
      * ${tags}

@@ -19,6 +19,8 @@ import com.amarsoft.app.ems.employee.template.service.impl.EmployeeInfoListDtoSe
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoDeleteReq;
@@ -106,6 +108,39 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
         }
     }
 
+    /**
+     * Description: 根据用户权限获取员工列表<br>
+     * ${tags}
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<EmployeeListByUserQueryRsp>> employeeListByUserQuery(@RequestBody @Valid RequestMessage<EmployeeListByUserQueryReq> reqMsg) {
+        ResponseMessage<EmployeeListByUserQueryRsp> rspMsg = null;
+        try {
+            EmployeeListByUserQueryReq request = reqMsg.getMessage();
+            
+            EmployeeListByUserQueryRsp response = employeeInfoListDtoServiceImpl.employeeListByUserQuery(request);
+            rspMsg = new ResponseMessage<EmployeeListByUserQueryRsp>(response);
+            
+            return new ResponseEntity<ResponseMessage<EmployeeListByUserQueryRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("员工信息List查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<EmployeeListByUserQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Description: 根据条件获取员工列表<br>
+     * ${tags}
+     * @see
+     */
     @Override
     @Transactional
     public ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery(@RequestBody @Valid RequestMessage<EmployeeListByEmplNoReq> reqMsg) {
