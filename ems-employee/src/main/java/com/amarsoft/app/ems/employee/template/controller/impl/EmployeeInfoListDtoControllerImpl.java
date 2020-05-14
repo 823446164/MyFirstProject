@@ -162,6 +162,5 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1010",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-    
+    }    
 }
