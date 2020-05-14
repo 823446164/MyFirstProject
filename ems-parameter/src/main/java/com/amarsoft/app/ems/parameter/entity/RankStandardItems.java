@@ -52,6 +52,10 @@ public class RankStandardItems extends BusinessObject {
     @Column(name = "labelStandardType",length=10) 
     private String labelStandardType;
     
+    @Description("所属目录") 
+    @Column(name = "belongCatalog",length=80) 
+    private String belongCatalog;
+    
     @Description("登记人") 
     @Column(name = "inputUserId", nullable=false,length=40) 
     private String inputUserId;

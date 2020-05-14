@@ -1,5 +1,6 @@
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,36 +16,39 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labeldescribeinfo.LabelDes
 import com.amarsoft.app.ems.parameter.template.cs.dto.labeldescribeinfo.LabelDescribeInfoSaveReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labeldescribeinfo.LabelDescribeInfo;
 
+
 /**
  * 标签能力描述InfoService实现类
+ * 
  * @author yrong
  */
 @Slf4j
 @Service
-public class LabelDescribeInfoServiceImpl implements LabelDescribeInfoService{
+public class LabelDescribeInfoServiceImpl implements LabelDescribeInfoService {
     /**
      * 标签能力描述Info单记录查询
-     * @param request
+     * 
+     * @param labelDescribeInfoQueryReq
      * @return
      */
     @Override
     @Transactional
     public LabelDescribeInfoQueryRsp labelDescribeInfoQuery(@Valid LabelDescribeInfoQueryReq labelDescribeInfoQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        
-        LabelDescribe labelDescribe = bomanager.loadBusinessObject(LabelDescribe.class,"serialNo",labelDescribeInfoQueryReq.getSerialNo());
-        if(labelDescribe!=null){
+
+        LabelDescribe labelDescribe = bomanager.loadBusinessObject(LabelDescribe.class, "serialNo",
+            labelDescribeInfoQueryReq.getSerialNo());
+        if (labelDescribe != null) {
             LabelDescribeInfoQueryRsp labelDescribeInfo = new LabelDescribeInfoQueryRsp();
-            LocalDateTime localDateTime = LocalDateTime.now();
             labelDescribeInfo.setSerialNo(labelDescribe.getSerialNo());
             labelDescribeInfo.setLabelNo(labelDescribe.getLabelNo());
             labelDescribeInfo.setLabelLevel(labelDescribe.getLabelLevel());
             labelDescribeInfo.setLevelDescribe(labelDescribe.getLevelDescribe());
             labelDescribeInfo.setInputUserId(labelDescribe.getInputUserId());
-            labelDescribeInfo.setInputTime(localDateTime);
+            labelDescribeInfo.setInputTime(labelDescribe.getInputTime());
             labelDescribeInfo.setInputOrgId(labelDescribe.getInputOrgId());
             labelDescribeInfo.setUpdateUserId(labelDescribe.getUpdateUserId());
-            labelDescribeInfo.setUpdateTime(localDateTime);
+            labelDescribeInfo.setUpdateTime(labelDescribe.getUpdateTime());
             labelDescribeInfo.setUpdateOrgId(labelDescribe.getUpdateOrgId());
             return labelDescribeInfo;
         }
@@ -54,23 +58,25 @@ public class LabelDescribeInfoServiceImpl implements LabelDescribeInfoService{
 
     /**
      * 标签能力描述Info单记录保存
-     * @param request
+     * 
+     * @param labelDescribeInfoSaveReq
      * @return
      */
     @Override
     public void labelDescribeInfoSave(@Valid LabelDescribeInfoSaveReq labelDescribeInfoSaveReq) {
         labelDescribeInfoSaveAction(labelDescribeInfoSaveReq);
     }
+
     /**
      * 标签能力描述Info单记录保存
-     * @param
+     * 
+     * @param labelDescribeInfo
      * @return
      */
     @Transactional
-    public void labelDescribeInfoSaveAction(LabelDescribeInfo labelDescribeInfo){
+    public void labelDescribeInfoSaveAction(LabelDescribeInfo labelDescribeInfo) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if(labelDescribeInfo!=null){
-        }
+        if (labelDescribeInfo != null) {}
         bomanager.updateDB();
     }
 }

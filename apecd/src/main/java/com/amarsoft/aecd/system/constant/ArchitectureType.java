@@ -8,6 +8,7 @@ package com.amarsoft.aecd.system.constant;
 public enum ArchitectureType {
     Department("110","部门"),
     Team("210","团队"),
+
     ;
     public String id;
     public String name;

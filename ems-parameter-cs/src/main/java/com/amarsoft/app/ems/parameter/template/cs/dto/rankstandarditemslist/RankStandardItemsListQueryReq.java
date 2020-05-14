@@ -17,7 +17,6 @@ import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogsoninfo.RankStandardCatalogSonInfoQueryReq;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
@@ -37,19 +36,16 @@ public class RankStandardItemsListQueryReq implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("指标编号")
     @Length(max=40)
-    @NotEmpty
     @ActualColumn("RSI.serialNo")
     private String serialNo;
 
     @Description("职级编号")
     @Length(max=40)
-    @NotEmpty
     @ActualColumn("RSI.rankNo")
     private String rankNo;
     
     @Description("所属目录")
     @Length(max=40)
-    @NotEmpty
     @ActualColumn("RSI.belongCatalog")
     private String belongCatalog;
 }

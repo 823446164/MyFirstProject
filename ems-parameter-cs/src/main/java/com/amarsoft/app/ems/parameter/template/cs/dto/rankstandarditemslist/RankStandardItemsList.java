@@ -16,7 +16,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogsoninfo.RankStandardCatalogSonInfo;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;

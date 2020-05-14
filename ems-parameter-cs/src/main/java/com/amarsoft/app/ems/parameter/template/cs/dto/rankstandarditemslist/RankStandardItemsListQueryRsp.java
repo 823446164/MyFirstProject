@@ -15,8 +15,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogList;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
