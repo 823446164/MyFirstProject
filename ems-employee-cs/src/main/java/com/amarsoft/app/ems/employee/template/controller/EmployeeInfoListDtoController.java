@@ -35,5 +35,4 @@ public interface EmployeeInfoListDtoController {
     
     @PostMapping(value = "/employeelistbyemployeeno/query", name="按条件查询员工信息List接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery(@RequestBody @Valid RequestMessage<EmployeeListByEmplNoReq> reqMsg);
-
 }

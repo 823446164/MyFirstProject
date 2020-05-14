@@ -200,10 +200,12 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         String orgId = GlobalShareContextHolder.getOrgId();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeListByUserQueryRsp rsp = null;
+        //查询用户角色的信息
         RequestMessage<UserRoleQueryReq> reqMsg = new RequestMessage<UserRoleQueryReq>();
         UserRoleQueryReq userRoleQueryReq = new UserRoleQueryReq();
         userRoleQueryReq.setUserId(userId);
         reqMsg.setMessage(userRoleQueryReq);
+        //获取用户角色
         ResponseEntity<ResponseMessage<UserRoleQueryRsp>> userRoleQuery = roleClient.userRoleQuery(reqMsg);
         List<UserAndRole> userRoles = userRoleQuery.getBody().getMessage().getUserRoles();
 
@@ -211,14 +213,13 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             throw new ALSException("EMS1008");
         }
         UserAndRole userAndRole = userRoles.get(0); //获取用户的最高权限（099、110、210）
-        String roleId = userAndRole.getRoleId(); 
-        if (ArchitectureType.All.equals(roleId)) {//如果用户为系统管理员，展示所有员工
+        if ("099".equals(userAndRole.getRoleId())) {//如果用户为系统管理员，展示所有员工
             String id = "";
-            rsp = showList(roleId, id);
-         }else if ("110".equals(roleId)) {//如果用户为部门管理员，展示所在部门所有员工
-             rsp = showList(roleId, orgId);
-         }else if(ArchitectureType.Team.equals(roleId)){//如果用户为团队负责人，展示所在团队所有员工
-             rsp = showList(roleId, userId);
+            rsp = showList(userAndRole.getRoleId(), id);
+         }else if ("110".equals(userAndRole.getRoleId())) {//如果用户为部门管理员，展示所在部门所有员工
+             rsp = showList(userAndRole.getRoleId(), orgId);
+         }else if("210".equals(userAndRole.getRoleId())){//如果用户为团队负责人，展示所在团队所有员工
+             rsp = showList(userAndRole.getRoleId(), userId);
          }
         
         return rsp; 

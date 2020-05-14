@@ -20,6 +20,5 @@ public class EmployeeListByUserQueryRsp implements Serializable{
     private Integer totalCount = 0;
 
     @Description("员工信息List")
-    private List<EmployeeInfoDto> employeeList;
-    
+    private List<EmployeeInfoDto> employeeList; 
 }
