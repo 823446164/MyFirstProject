@@ -10,9 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.acsc.annotation.Digits;
-import javax.validation.Valid;
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import java.util.List;
 
 @Getter
@@ -21,11 +18,6 @@ import java.util.List;
 public class OrgUserQueryRsp implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    @Description("用户数量")
-    @Digits(length=5,scale=0)
-    private Integer totalCount;
-    @Description("用户信息组")
-    @Valid
-    @NotEmpty
-    private List<UserInfo> users;
+    @Description("员工Id LIST")
+    private List<UserTeamOrgInfo> userTeamOrgInfos;
 }

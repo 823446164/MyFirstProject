@@ -37,6 +37,10 @@ import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.UserService;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSearchReq;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
@@ -171,12 +175,17 @@ public class OrgControllerImpl implements OrgController {
     }
 
 
-
+    /**
+     * Description: 查询部门或团队下员工
+     * @param reqMsg
+     * @return  ResponseEntity
+     * @see
+     */
     @Override
     public ResponseEntity<ResponseMessage<OrgUserQueryRsp>> orgUserQuery(@RequestBody @Valid RequestMessage<OrgUserQueryReq> reqMsg){
         ResponseMessage<OrgUserQueryRsp> rspMsg = null;
         try {
-            OrgUserQueryRsp rsp = orgService.orgUserQuery(reqMsg.getMessage(),userService);
+            OrgUserQueryRsp rsp = orgService.orgUserQuery(reqMsg.getMessage());
             return new ResponseEntity<ResponseMessage<OrgUserQueryRsp>>(new ResponseMessage<OrgUserQueryRsp>(rsp), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -387,7 +396,7 @@ public class OrgControllerImpl implements OrgController {
 
     /**
      * Description: 一二级部门树图展示
-     * @param 
+     * @param reqMsg
      * @return  rsp
      * @see
      */
@@ -403,6 +412,57 @@ public class OrgControllerImpl implements OrgController {
             }
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "900211",e.getMessage());
             return new ResponseEntity<ResponseMessage<OrgTreeQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 二级部门员工List
+     * @param reqMsg
+     * @return  rsp
+     * @see
+     */
+    @Override
+    public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> employeeInfoListDtoQuery(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg) {
+        ResponseMessage<EmployeeInfoListDtoQueryRsp> rspMsg = null;
+        try {
+            EmployeeInfoListDtoQueryReq request = reqMsg.getMessage();
+            EmployeeInfoListDtoQueryRsp response = orgService.employeeInfoListDtoQuery(request);
+            rspMsg = new ResponseMessage<EmployeeInfoListDtoQueryRsp>(response);
+            return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("员工详情List查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "900201",e.getMessage());
+            return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 搜索二级部门员工List
+     * @param reqMsg
+     * @return  rsp
+     * @see
+     */
+    @Override
+    @CodeQuery
+    public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> employeeInfoListDtoSearch(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoSearchReq> reqMsg) {
+        ResponseMessage<EmployeeInfoListDtoQueryRsp> rspMsg = null;
+        try {
+            EmployeeInfoListDtoSearchReq request = reqMsg.getMessage();
+            EmployeeInfoListDtoQueryRsp response = orgService.employeeInfoListDtoQuery(request);
+            rspMsg = new ResponseMessage<EmployeeInfoListDtoQueryRsp>(response);
+            return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("员工详情List查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "900201",e.getMessage());
+            return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

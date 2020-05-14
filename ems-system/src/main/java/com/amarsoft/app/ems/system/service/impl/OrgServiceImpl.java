@@ -1,13 +1,10 @@
 package com.amarsoft.app.ems.system.service.impl;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +17,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
-import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.aecd.common.constant.YesNo;
+import com.amarsoft.aecd.system.constant.ArchitectureType;
 import com.amarsoft.aecd.system.constant.CompanyType;
 import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.aecd.system.constant.OrgStatus;
@@ -31,6 +28,7 @@ import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.coperateorganizationquery.CoperateOrg;
@@ -51,13 +49,19 @@ import com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
 import com.amarsoft.app.ems.system.entity.ChangeEvent;
 import com.amarsoft.app.ems.system.entity.Department;
 import com.amarsoft.app.ems.system.entity.OrgInfo;
+import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.entity.UserBelong;
+import com.amarsoft.app.ems.system.entity.UserTeam;
 import com.amarsoft.app.ems.system.service.OrgService;
-import com.amarsoft.app.ems.system.service.UserService;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSearchReq;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
@@ -496,99 +500,50 @@ public class OrgServiceImpl implements OrgService {
         return orgInfos;
     }
 
+    /**
+     * Description:　查询部门或者团队下员工Id List
+     * @param req
+     * @return  rsp
+     * @see
+     */
     @Override
-    public OrgUserQueryRsp orgUserQuery(OrgUserQueryReq req, UserService userService) {
+    public OrgUserQueryRsp orgUserQuery(OrgUserQueryReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         OrgUserQueryRsp rsp = new OrgUserQueryRsp();
-        rsp.setUsers(new ArrayList<UserInfo>());
-        String[] searchAttributes = { "userId", "userName" ,"logonId", "status"};// 查询条件
-        BusinessObjectAggregate<com.amarsoft.app.ems.system.entity.UserInfo> orgUserAggregate = null;
-        BusinessObjectAggregate<com.amarsoft.app.ems.system.entity.UserInfo> departUserAggregate = null;
-        int userCount = 0;
-        String condition = "";
-        if (req.getEntireFlag().equals(YesNo.Yes.id)) {
-            condition = req.getOrgId() + "%";
-        }else {
-            condition = req.getOrgId();
-        }
-        if (StringUtils.isEmpty(req.getSearchAttribute()) && StringUtils.isEmpty(req.getSearchContent())) {// 不走查询条件
-            if (StringUtils.isEmpty(req.getOrgLevel())) {// 机构级别为空
-                orgUserAggregate = bomanager.loadBusinessObjects(com.amarsoft.app.ems.system.entity.UserInfo.class,
-                        req.getBegin(), req.getPageSize(),
-                        " userId in ( select distinct(userId) from UserBelong where orgId in (select orgId from OrgInfo where orgId like :orgId))",
-                        "orgId", condition);
-            } else {
-                orgUserAggregate = bomanager.loadBusinessObjects(com.amarsoft.app.ems.system.entity.UserInfo.class,
-                        req.getBegin(), req.getPageSize(),
-                        " userId in ( select distinct(userId) from UserBelong where orgId in (select orgId from OrgInfo where orgId like :orgId and orgLevel = :orgLevel and orgType <> :orgType))",
-                        "orgId", condition, "orgLevel", req.getOrgLevel(), "orgType", OrgType.Department.id);
-                departUserAggregate = bomanager.loadBusinessObjects(com.amarsoft.app.ems.system.entity.UserInfo.class,
-                        req.getBegin(), req.getPageSize(),
-                        " userId in ( select distinct(userId) from UserBelong where orgId in (select orgId from OrgInfo where orgId like :orgId and orgLevel = :orgLevel and orgType = :orgType))",
-                        "orgId", condition, "orgLevel", OrgLevel.getNextLevel(req.getOrgLevel()),  "orgType", OrgType.Department.id);
-
+        List<UserTeamOrgInfo> userTeamOrgInfos = new ArrayList<UserTeamOrgInfo>();
+        if (ArchitectureType.DEPARTMENT.id.equals(req.getRoleId())) {//部门
+            String orgId = req.getId();//orgId
+            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, 
+                "orgId like :orgId", "orgId",orgId+"%"); 
+            for (UserBelong userBelong : ubs) {
+                UserTeam userTeam = bomanager.keyLoadBusinessObject(UserTeam.class, userBelong.getUserId());
+                UserTeamOrgInfo userTeamOrgInfo = new UserTeamOrgInfo();
+                userTeamOrgInfo.setUserId(userBelong.getUserId());
+                userTeamOrgInfo.setOrgId(orgId);
+                userTeamOrgInfo.setTeamId(userTeam.getTeamId());
+                //查询对应的部门名称和团队名称
+                OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, orgId);
+                TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
+                userTeamOrgInfo.setOrgName(oInfo.getOrgName());
+                userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
+                userTeamOrgInfos.add(userTeamOrgInfo);
             }
-
-            userCount = orgUserAggregate.getAggregate("count(userId) as cnt").getInt("cnt") + (departUserAggregate == null ? 0 :departUserAggregate.getAggregate("count(userId) as cnt").getInt("cnt"));
-        } else {
-            if (Stream.of(searchAttributes)
-                    .anyMatch(searchAttribute -> searchAttribute.equalsIgnoreCase(req.getSearchAttribute()))) {// 验证查询条件
-                if (StringUtils.isEmpty(req.getOrgLevel())) {// 机构级别为空
-                    orgUserAggregate = bomanager.loadBusinessObjects(com.amarsoft.app.ems.system.entity.UserInfo.class,
-                            req.getBegin(), req.getPageSize(),
-                            " userId in(select distinct(userId) from UserBelong where orgId in (select orgId from OrgInfo where orgId like :orgId)) and "
-                                    + req.getSearchAttribute() + " like :searchContent",
-                            "orgId", condition, "searchContent", "%" + req.getSearchContent() + "%");
-                } else {
-                    orgUserAggregate = bomanager.loadBusinessObjects(com.amarsoft.app.ems.system.entity.UserInfo.class,
-                            req.getBegin(), req.getPageSize(),
-                            " userId in(select distinct(userId) from UserBelong where orgId in (select orgId from OrgInfo where orgId like :orgId and orgLevel=:orgLevel and orgType <> :orgType)) and "
-                                    + req.getSearchAttribute() + " like :searchContent",
-                            "orgId", condition, "orgLevel", req.getOrgLevel(),"orgType", OrgType.Department.id, "searchContent",
-                            "%" + req.getSearchContent() + "%");
-                    departUserAggregate = bomanager.loadBusinessObjects(com.amarsoft.app.ems.system.entity.UserInfo.class,
-                            req.getBegin(), req.getPageSize(),
-                            " userId in(select distinct(userId) from UserBelong where orgId in (select orgId from OrgInfo where orgId like :orgId and orgLevel=:orgLevel and orgType = :orgType )) and "
-                                    + req.getSearchAttribute() + " like :searchContent",
-                            "orgId", condition, "orgLevel", OrgLevel.getNextLevel(req.getOrgLevel()), "orgType", OrgType.Department.id, "searchContent",
-                            "%" + req.getSearchContent() + "%");
-                }
-
-                userCount = orgUserAggregate.getAggregate("count(userId) as cnt").getInt("cnt") + (departUserAggregate == null ? 0 :departUserAggregate.getAggregate("count(userId) as cnt").getInt("cnt"));
-            } else {
-                throw new ALSException("900215");
-            }
+        }else if (ArchitectureType.TEAM.id.equals(req.getRoleId())) {//团队
+            String userId = req.getId();//userId
+            UserTeamOrgInfo userTeamOrgInfo = new UserTeamOrgInfo();
+            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",userId);
+            //因数据问题，返回第一条数据
+            UserTeam userTeam = bomanager.keyLoadBusinessObject(UserTeam.class,userId);
+            userTeamOrgInfo.setUserId(userId);
+            userTeamOrgInfo.setOrgId(ubs.get(0).getOrgId());
+            userTeamOrgInfo.setTeamId(userTeam.getTeamId());
+            OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, ubs.get(0).getOrgId());
+            TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
+            userTeamOrgInfo.setOrgName(oInfo.getOrgName());
+            userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
+            userTeamOrgInfos.add(userTeamOrgInfo);
         }
-        ArrayList<com.amarsoft.app.ems.system.entity.UserInfo> allUsers = new ArrayList<>();
-        for (com.amarsoft.app.ems.system.entity.UserInfo user : orgUserAggregate.getBusinessObjects()) {
-            if (allUsers.stream().anyMatch(u -> u.getUserId().equals(user.getUserId()))) {
-                continue;
-            }
-            allUsers.add(user);
-        }
-        if (departUserAggregate != null) {
-            for (com.amarsoft.app.ems.system.entity.UserInfo user : departUserAggregate.getBusinessObjects()) {
-                if (allUsers.stream().anyMatch(u -> u.getUserId().equals(user.getUserId()))) {
-                    continue;
-                }
-                allUsers.add(user);
-            }
-        }
-        for (com.amarsoft.app.ems.system.entity.UserInfo user : allUsers) {
-            UserInfo userInfo = new UserInfo();
-            userInfo.setUserId(user.getUserId());
-            userInfo.setLogonId(user.getLogonId());
-            userInfo.setUserName(user.getUserName());
-            userInfo.setCounter(user.getCounter());
-            userInfo.setEmail(user.getEmail());
-            userInfo.setEmpNo(user.getEmpNo());
-            userInfo.setPhoneNo(user.getPhoneNo());
-            userInfo.setJobTitle(user.getJobTitle());
-            userInfo.setOfficeTel(user.getOfficeTel());
-            userInfo.setStatus(user.getStatus());
-            rsp.getUsers().add(userInfo);
-        }
-        rsp.setTotalCount(userCount);
+        rsp.setUserTeamOrgInfos(userTeamOrgInfos);
         return rsp;
     }
 
@@ -1001,6 +956,11 @@ public class OrgServiceImpl implements OrgService {
             orgInfo.setSortNo(req.getOrgId());
             orgInfo.setOrgName(req.getOrgName());
         }else {
+            //根据名称查询部门，判断是否有重名的部门名称
+            OrgInfo OI = bomanager.loadBusinessObject(OrgInfo.class,"orgName",req.getOrgName());
+            if(OI != null) {
+                throw new ALSException("该部门名称已存在，请核实后再操作！");
+            }
             department = new Department();
             department.setDeptId(req.getOrgId());
             department.setDeptName(req.getOrgName());
@@ -1185,6 +1145,7 @@ public class OrgServiceImpl implements OrgService {
             secondLevelDeptListDto.setDeptName(dt.getDeptName());
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",orgInfo.getOrgId()+"%");  
             secondLevelDeptListDto.setDeptUserNumber(String.valueOf(ubs.size()));
+            secondLevelDeptListDto.setOrgId(dt.getDeptId());
             secondLevelDeptListDtos.add(secondLevelDeptListDto);
         }
         rsp.setSecondLevelDeptListDtos(secondLevelDeptListDtos);
@@ -1284,6 +1245,56 @@ public class OrgServiceImpl implements OrgService {
                 }
                 rsp.getTrees().add(rootNode);
         }
+        return rsp;
+    }
+
+    /**
+     * Description: 查询二级部门员工List
+     * @param req
+     * @return  rsp
+     * @see
+     */
+    @Override
+    public EmployeeInfoListDtoQueryRsp employeeInfoListDtoQuery(EmployeeInfoListDtoQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
+
+        OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
+        //查询部门员工
+        List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",
+            orgInfo.getOrgId()+"%");    
+        //新建员工id的list
+        List<String> ids = new ArrayList<String>();
+        for(UserBelong oi : ubs) {
+            ids.add(oi.getUserId()); 
+        }
+        //给id的list，返回员工对象List
+        List<EmployeeInfoListDto> list = new ArrayList<EmployeeInfoListDto>();
+        //根据返回list循环 新建dto对象　赋值
+        EmployeeInfoDto employeeInfoDto = new EmployeeInfoDto();
+        //TODO zcluo
+        rsp.setEmployeeInfoListDtos(list);
+        return rsp;
+    }
+
+    /**
+     * Description: 搜索二级部门员工List
+     * @param req
+     * @return  rsp
+     * @see
+     */
+    @Override
+    public EmployeeInfoListDtoQueryRsp employeeInfoListDtoQuery(EmployeeInfoListDtoSearchReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
+        List<com.amarsoft.app.ems.system.entity.UserInfo> us = bomanager.loadBusinessObjects(UserInfo.class, 
+            "userName like :userName","userName","%"+req.getUserName()+"%");  
+        List<String> ids = new ArrayList<String>();
+        for (com.amarsoft.app.ems.system.entity.UserInfo userInfo : us) {
+            ids.add(userInfo.getUserId());
+        }
+        //根据ids调用获取员工List
+        //TODO zcluo
         return rsp;
     }
 }

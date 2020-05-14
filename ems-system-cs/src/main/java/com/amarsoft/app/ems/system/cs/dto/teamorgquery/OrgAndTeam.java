@@ -19,13 +19,19 @@ public class OrgAndTeam implements Serializable{
     @Length(max=40)
     private String teamId;
     @Description("团队名称")
-    @Length(max=40)
+    @Length(max=80)
     private String teamName;
+    @Description("团队负责人")
+    @Length(max=40)
+    private String teamLeader;
     @Description("部门编号")
     @Length(max=40)
     private String orgId;
     @Description("部门名称")
     @Length(max=80)
     private String orgName;
+    @Description("部门负责人")
+    @Length(max=40)
+    private String deptManager;
    
 }

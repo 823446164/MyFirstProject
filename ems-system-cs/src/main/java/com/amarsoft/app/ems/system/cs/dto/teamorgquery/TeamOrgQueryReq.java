@@ -20,18 +20,5 @@ import lombok.ToString;
 @ToString
 public class TeamOrgQueryReq implements Serializable{
 	private static final long serialVersionUID = 1L;
-    @Description("起始条数")
-    @NotEmpty
-    @QueryBegin
-    private Integer begin;
 
-    @Description("查询笔数")
-    @Range(min=1,max=10)
-    @NotEmpty
-    @QueryPageSize
-    private Integer pageSize;
-
-    @Description("排序数组")
-    @QueryOrderBy
-    private String[] orderBy;
 }

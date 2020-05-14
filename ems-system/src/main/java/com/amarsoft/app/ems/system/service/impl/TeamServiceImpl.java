@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.OrgAndTeam;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.DataAuth;
 import com.amarsoft.aecd.system.constant.OrgLevel;
@@ -33,6 +35,8 @@ import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
+import com.amarsoft.app.ems.employee.cs.dto.employeebelongupdate.EmployeeBelongUpdateReq;
+import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoDtoClient;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.addteamuser.AddTeamUserReq;
@@ -58,6 +62,7 @@ import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userquery.User;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
+import com.amarsoft.app.ems.system.entity.Department;
 import com.amarsoft.app.ems.system.entity.OrgInfo;
 import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
@@ -75,6 +80,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class TeamServiceImpl implements TeamService {
+    @Autowired
+    EmployeeInfoDtoClient employeeInfoDtoClient;
     /**
      * Description: <br>
      * 新增团队<br>
@@ -523,16 +530,22 @@ public class TeamServiceImpl implements TeamService {
      */
 	@Override
 	@Transactional
-	public void updateUserTeam(UpdateUserTeamReq req) {
+	public void updateUserTeam(@RequestBody @Valid UpdateUserTeamReq req) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-		UserTeam userTeam = null;
-		List<UserTeam> userTeams = bomanager.loadBusinessObjects(UserTeam.class, "userId=:userId", "userId",req.getEmployeeNo());
-//		List<BusinessObject> userTeams = bomanager.selectBusinessObjectsBySql("select teamId as TeamId from UserTeam where userId=:userId", "userId",req.getEmployeeNo()).getBusinessObjects();
-		if (!StringUtils.isEmpty(userTeams)) {// 如果员工有对应的团队，则执行更新团队的操作
-			userTeam = userTeams.get(0);
+		
+		UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class, "userId",req.getEmployeeNo());
+		if (!StringUtils.isEmpty(userTeam)) {// 如果员工有对应的团队，则执行更新团队的操作   
+		    if (userTeam.getTeamId().equals(req.getTeamId())) {   //  如果调整前后团队一致，则不允许
+                throw new ALSException("901020");
+            }
+		    TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class, "teamId",req.getTeamId());
+		    UserBelong userBelong = bomanager.loadBusinessObject(UserBelong.class, "userId",req.getEmployeeNo());
 			userTeam.setTeamId(req.getTeamId());
-			bomanager.updateBusinessObject(userTeam);
-			bomanager.clear();
+			userBelong.setOrgId(teamInfo.getBelongOrgId()); 
+			
+			bomanager.updateBusinessObject(userTeam);    //  更新user_team中间表中的所属部门
+			bomanager.updateBusinessObject(userBelong);  //  更新user_belong表中的所属部门
+
 			bomanager.updateDB();
 		}
 		
@@ -551,16 +564,22 @@ public class TeamServiceImpl implements TeamService {
 		List<OrgAndTeam> orgTeams = new ArrayList<OrgAndTeam>();
 		OrgAndTeam orgTeam = null;
 		List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
-				"select OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName "
+				"select OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.teamLeader as TeamLeader "
 				+ "from OrgTeam OT,TeamInfo TI,OrgInfo OI where OT.teamId = TI.teamId and OT.orgId = OI.orgId order by OT.orgId").getBusinessObjects();
 		if (!StringUtils.isEmpty(orgTeamLists)) {
 			for (BusinessObject businessObject : orgTeamLists) {
 				orgTeam = new OrgAndTeam();
-				orgTeam.setOrgId(businessObject.getString("OrgId"));
-				orgTeam.setOrgName(businessObject.getString("OrgName"));
-				orgTeam.setTeamId(businessObject.getString("TeamId"));
-				orgTeam.setTeamName(businessObject.getString("TeamName"));
-				orgTeams.add(orgTeam);
+				//获取当前部门的附属信息表中的部门管理员
+				Department dept = bomanager.loadBusinessObject(Department.class,"deptId",businessObject.getString("OrgId"));
+                if (!StringUtils.isEmpty(dept)) {
+                    orgTeam.setOrgId(businessObject.getString("OrgId"));
+                    orgTeam.setOrgName(businessObject.getString("OrgName"));
+                    orgTeam.setTeamId(businessObject.getString("TeamId"));
+                    orgTeam.setTeamName(businessObject.getString("TeamName"));
+                    orgTeam.setDeptManager(dept.getDeptManager());
+                    orgTeam.setTeamLeader(businessObject.getString("TeamLeader"));
+                    orgTeams.add(orgTeam);
+                }
 			}
 		}
 		rsp.setTotalCount(orgTeamLists.size());
