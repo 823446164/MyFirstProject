@@ -53,8 +53,11 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
 
         RankStandardCatalog rankStandardCatalog = bomanager.loadBusinessObject(RankStandardCatalog.class, "serialNo",
             rankStandardCatalogInfoQueryReq.getSerialNo());
-        if (null!=rankStandardCatalog ) {
+        if (null != rankStandardCatalog) {
             RankStandardCatalogInfoQueryRsp rankStandardCatalogInfo = new RankStandardCatalogInfoQueryRsp();
+            rankStandardCatalogInfo.setSerialNo(rankStandardCatalog.getSerialNo());
+            rankStandardCatalogInfo.setBelongTeam(rankStandardCatalog.getBelongTeam());
+            rankStandardCatalogInfo.setRankType(rankStandardCatalog.getRankType());
             rankStandardCatalogInfo.setRankStandard(rankStandardCatalog.getRankStandard());
             rankStandardCatalogInfo.setRankName(rankStandardCatalog.getRankName());
             rankStandardCatalogInfo.setRankDescribe(rankStandardCatalog.getRankDescribe());
@@ -98,43 +101,35 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         // 定义业务对象管理容器
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if (rankStandardCatalogInfo != null) {
-            // 保存校验－重复性校验
-            if (saveValidate(rankStandardCatalogInfo.getRankName(), rankStandardCatalogInfo.getRankStandard()) == false) {
-                throw new ALSException("EMS2001", rankStandardCatalogInfo.getRankName(), rankStandardCatalogInfo.getRankStandard());
-            }
-            else {
-                // 根据主键获取实体类信息
-                RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
-                    rankStandardCatalogInfo.getSerialNo());
-                if (rankStandardCatalog == null ) {
-                    rankStandardCatalog = new RankStandardCatalog();
-                    if (StringUtils.isEmpty(rankStandardCatalogInfo.getSerialNo()) ) {
-                        rankStandardCatalog.generateKey();
-                    }
-                    else {
-                        rankStandardCatalog.setSerialNo(rankStandardCatalogInfo.getSerialNo());
-                    }
-                    rankStandardCatalog.setInputTime(inputDate);
-                    rankStandardCatalog.setInputUserId(GlobalShareContextHolder.getUserId());
-                    rankStandardCatalog.setInputOrgId(GlobalShareContextHolder.getOrgId());
+            // 根据主键获取实体类信息
+            RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
+                rankStandardCatalogInfo.getSerialNo());
+            if (rankStandardCatalog == null) {
+                // 保存校验－重复性校验
+                if (saveValidate(rankStandardCatalogInfo.getRankName(), rankStandardCatalogInfo.getRankStandard()) == false) {
+                    throw new ALSException("EMS2001", rankStandardCatalogInfo.getRankName(), rankStandardCatalogInfo.getRankStandard());
                 }
-                // 属性复制
+                rankStandardCatalog = new RankStandardCatalog();
+                rankStandardCatalog.generateKey();
+                rankStandardCatalog.setInputTime(inputDate);
+                rankStandardCatalog.setInputUserId(GlobalShareContextHolder.getUserId());
+                rankStandardCatalog.setInputOrgId(GlobalShareContextHolder.getOrgId());
+            }else {
                 rankStandardCatalog.setUpdateTime(inputDate);
                 rankStandardCatalog.setUpdateUserId(GlobalShareContextHolder.getUserId());
                 rankStandardCatalog.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
-                rankStandardCatalog.setBelongTeam(rankStandardCatalogInfo.getBelongTeam());
-                rankStandardCatalog.setRankStandard(rankStandardCatalogInfo.getRankStandard());
-                rankStandardCatalog.setRankName(rankStandardCatalogInfo.getRankName());
-                rankStandardCatalog.setRankDescribe(rankStandardCatalogInfo.getRankDescribe());
-                rankStandardCatalog.setResponeDescribe(rankStandardCatalogInfo.getResponeDescribe());
-                rankStandardCatalog.setAbilityDescribe(rankStandardCatalogInfo.getAbilityDescribe());
-                rankStandardCatalog.setRankType(rankStandardCatalogInfo.getRankType());
-
-                // 更新业务对象
-                bomanager.updateBusinessObject(rankStandardCatalog);
-                serialAndTeam = rankStandardCatalog.getSerialNo() + "/" + rankStandardCatalog.getBelongTeam();
-
             }
+            // 属性复制
+            rankStandardCatalog.setBelongTeam(rankStandardCatalogInfo.getBelongTeam());
+            rankStandardCatalog.setRankStandard(rankStandardCatalogInfo.getRankStandard());
+            rankStandardCatalog.setRankName(rankStandardCatalogInfo.getRankName());
+            rankStandardCatalog.setRankDescribe(rankStandardCatalogInfo.getRankDescribe());
+            rankStandardCatalog.setResponeDescribe(rankStandardCatalogInfo.getResponeDescribe());
+            rankStandardCatalog.setAbilityDescribe(rankStandardCatalogInfo.getAbilityDescribe());
+            rankStandardCatalog.setRankType(rankStandardCatalogInfo.getRankType());
+            // 更新业务对象
+            bomanager.updateBusinessObject(rankStandardCatalog);
+            serialAndTeam = rankStandardCatalog.getSerialNo() + "/" + rankStandardCatalog.getBelongTeam();
         }
         // 事务提交
         bomanager.updateDB();
@@ -186,23 +181,22 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         }
     }
 
- // 删除校验,待做
+    // 删除校验,待做
     // TODO xphe 删除校验－－－输入：所属团队 当前时间（本月内）团队的职级体系是否有人在申请（目标申请表，状态审批中，待处理）
-    public boolean checkDeleteRandStand(String belongTeam,String type) {
+    public boolean checkDeleteRandStand(String belongTeam, String type) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        //TeamInfo teaminfo = bomanager.keyLoadBusinessObject(TeamInfo.class, belongTeam);
-       // String teamManager = teaminfo.getRoleA();
+        // TeamInfo teaminfo = bomanager.keyLoadBusinessObject(TeamInfo.class, belongTeam);
+        // String teamManager = teaminfo.getRoleA();
         BusinessObjectAggregate<BusinessObject> flowCount = bomanager.selectBusinessObjectsBySql(
-            "select count(1) as cnt from EmployeeTargetRank er,FlowObject fo where" +
-        " (er.teamManager=:teamManager and date_format(er.inputTime,'%Y%m')=date_format(NOW(),'%Y%m') and er.rankSerialNo=fo.objectNo and fo.phaseName in ('审批中','待处理'))");
+            "select count(1) as cnt from EmployeeTargetRank er,FlowObject fo where" + " (er.teamManager=:teamManager and date_format(er.inputTime,'%Y%m')=date_format(NOW(),'%Y%m') and er.rankSerialNo=fo.objectNo and fo.phaseName in ('审批中','待处理'))");
         // List<EmployeeTargetRank> employeeTargetRanks =
         // bomanager.loadBusinessObjects(EmployeeTargetRank.class,
         // "teamManager=:teamManager and date_format(inputTime,'%Y%m')=date_format(NOW(),'%Y%m')",
         // "teamManager", teamManager);
-        BusinessObjectAggregate<BusinessObject> addCount=bomanager.selectBusinessObjectsBySql("select count(1) as cnt from ");
+        BusinessObjectAggregate<BusinessObject> addCount = bomanager.selectBusinessObjectsBySql("select count(1) as cnt from ");
         int count = flowCount.getBusinessObjects().get(0).getInt("cnt");
-        int addcount=addCount.getBusinessObjects().get(0).getInt("cnt");
-        if (count == 0 || addcount==0) {
+        int addcount = addCount.getBusinessObjects().get(0).getInt("cnt");
+        if (count == 0 || addcount == 0) {
             return true;
         }
         else {
@@ -309,51 +303,48 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         // 定义业务对象管理容器
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if (rankStandardCatalogSonInfoSaveReq != null) {
-            // 保存校验－重复性校验
-            if (sonSaveValidate(rankStandardCatalogSonInfoSaveReq.getChildRankNo(),
-                rankStandardCatalogSonInfoSaveReq.getRankStandard()) == false) {
-                log.info("当前重复");
-                throw new ALSException("EMS2002", rankStandardCatalogSonInfoSaveReq.getChildRankNo(),
-                    rankStandardCatalogSonInfoSaveReq.getRankStandard());
-            }
-            else {
                 log.info("可以保存");
                 // 根据主键获取实体类信息
                 RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
                     rankStandardCatalogSonInfoSaveReq.getSerialNo());
-                String parentNo= rankStandardCatalog.getParentRankNo();
+                String parentNo = rankStandardCatalog.getParentRankNo();
                 if (StringUtils.isEmpty(parentNo)) {
+                    // 保存校验－重复性校验
+                    if (sonSaveValidate(rankStandardCatalogSonInfoSaveReq.getChildRankNo(),
+                        rankStandardCatalogSonInfoSaveReq.getRankStandard()) == false) {
+                        log.info("当前重复");
+                        throw new ALSException("EMS2002", rankStandardCatalogSonInfoSaveReq.getChildRankNo(),
+                            rankStandardCatalogSonInfoSaveReq.getRankStandard());
+                    }
                     log.info("执行至新增");
-                    RankStandardCatalog   newrankStandardCatalog = new RankStandardCatalog();
+                    RankStandardCatalog newrankStandardCatalog = new RankStandardCatalog();
                     newrankStandardCatalog.generateKey();
-                        log.info("生成主键");
-                        newrankStandardCatalog.setInputTime(inputDate);
-                        newrankStandardCatalog.setInputUserId(GlobalShareContextHolder.getUserId());
-                        newrankStandardCatalog.setInputOrgId(GlobalShareContextHolder.getOrgId());
-                        newrankStandardCatalog.setParentRankNo(rankStandardCatalogSonInfoSaveReq.getSerialNo());
-                        newrankStandardCatalog.setRankStandard(rankStandardCatalogSonInfoSaveReq.getRankStandard());
-                        newrankStandardCatalog.setRankName(rankStandardCatalogSonInfoSaveReq.getRankName());
-                        newrankStandardCatalog.setRankDescribe(rankStandardCatalogSonInfoSaveReq.getRankDescribe());
-                        newrankStandardCatalog.setAbilityDescribe(rankStandardCatalogSonInfoSaveReq.getAbilityDescribe());
-                        newrankStandardCatalog.setResponeDescribe(rankStandardCatalogSonInfoSaveReq.getResponeDescribe());
-                        newrankStandardCatalog.setUpdateTime(inputDate);
-                        newrankStandardCatalog.setUpdateUserId(GlobalShareContextHolder.getUserId());
-                        newrankStandardCatalog.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
-                        newrankStandardCatalog.setChildRankNo(rankStandardCatalogSonInfoSaveReq.getChildRankNo());
-                        newrankStandardCatalog.setAbility(rankStandardCatalogSonInfoSaveReq.getAbility());
-                        bomanager.updateBusinessObject(newrankStandardCatalog);
-                }else {
-                // 属性复制
-                rankStandardCatalog.setUpdateTime(inputDate);
-                rankStandardCatalog.setUpdateUserId(GlobalShareContextHolder.getUserId());
-                rankStandardCatalog.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
-                rankStandardCatalog.setChildRankNo(rankStandardCatalogSonInfoSaveReq.getChildRankNo());
-                rankStandardCatalog.setAbility(rankStandardCatalogSonInfoSaveReq.getAbility());
-                // 更新业务对象
-                bomanager.updateBusinessObject(rankStandardCatalog);
+                    log.info("生成主键");
+                    newrankStandardCatalog.setInputTime(inputDate);
+                    newrankStandardCatalog.setInputUserId(GlobalShareContextHolder.getUserId());
+                    newrankStandardCatalog.setInputOrgId(GlobalShareContextHolder.getOrgId());
+                    newrankStandardCatalog.setParentRankNo(rankStandardCatalogSonInfoSaveReq.getSerialNo());
+                    newrankStandardCatalog.setRankStandard(rankStandardCatalogSonInfoSaveReq.getRankStandard());
+                    newrankStandardCatalog.setRankName(rankStandardCatalogSonInfoSaveReq.getRankName());
+                    newrankStandardCatalog.setRankDescribe(rankStandardCatalogSonInfoSaveReq.getRankDescribe());
+                    newrankStandardCatalog.setAbilityDescribe(rankStandardCatalogSonInfoSaveReq.getAbilityDescribe());
+                    newrankStandardCatalog.setResponeDescribe(rankStandardCatalogSonInfoSaveReq.getResponeDescribe());
+                    newrankStandardCatalog.setChildRankNo(rankStandardCatalogSonInfoSaveReq.getChildRankNo());
+                    newrankStandardCatalog.setAbility(rankStandardCatalogSonInfoSaveReq.getAbility());
+                    bomanager.updateBusinessObject(newrankStandardCatalog);
+                }
+                else {
+                    // 属性复制
+                    rankStandardCatalog.setUpdateTime(inputDate);
+                    rankStandardCatalog.setUpdateUserId(GlobalShareContextHolder.getUserId());
+                    rankStandardCatalog.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
+                    rankStandardCatalog.setChildRankNo(rankStandardCatalogSonInfoSaveReq.getChildRankNo());
+                    rankStandardCatalog.setAbility(rankStandardCatalogSonInfoSaveReq.getAbility());
+                    // 更新业务对象
+                    bomanager.updateBusinessObject(rankStandardCatalog);
                 }
 
-            }
+            
         }
         // 事务提交
         bomanager.updateDB();

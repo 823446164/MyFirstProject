@@ -14,8 +14,6 @@ import com.amarsoft.amps.acsc.annotation.ActualColumn;
  * 团队信息查询请求实体类
  * @author hpli
  */
-
-
 @Getter
 @Setter
 @ToString
@@ -27,4 +25,14 @@ public class TeamInfoDtoQueryReq implements Serializable {
     @NotEmpty
     @ActualColumn("TINFO.teamId")
     private String teamId;
+    /**
+     * Description:执行状态 <br>
+     * @return
+     * @see
+     */
+    @Description("执行状态")
+    public boolean getStringflag ;
+    
+ 
+    
 }

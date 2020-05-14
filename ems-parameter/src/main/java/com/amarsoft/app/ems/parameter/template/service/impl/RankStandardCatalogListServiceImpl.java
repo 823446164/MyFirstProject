@@ -26,6 +26,7 @@ import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListQueryRsp;
+import com.amarsoft.aecd.parameter.constant.RankType;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.util.DTOHelper;
 import java.util.List;
@@ -71,8 +72,8 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
 
             String sql = "select RSC.serialNo as serialNo,RSC.rankStandard as rankStandard,RSC.rankName as rankName,RSC.parentRankNo as parentRankNo,RSC.ability as ability,RSC.rankDescribe as rankDescribe,RSC.responeDescribe as responeDescribe,RSC.abilityDescribe as abilityDescribe,RSC.belongTeam as belongTeam,RSC.rankType as rankType,RSC.inputUserId as inputUserId,RSC.inputTime as inputTime,RSC.inputOrgId as inputOrgId,RSC.updateUserId as updateUserId,RSC.updateTime as updateTime,RSC.updateOrgId as updateOrgId"
                          + " from RANK_STANDARD_CATALOG RSC"
-                         + " where 1=1  and RSC.rankType=1 and RSC.belongTeam= :belongTeam and RSC.parentRankNo is null ";
-            return queryProperties.assembleSql(sql, "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
+                         + " where 1=1  and RSC.rankType=:rankType and RSC.belongTeam= :belongTeam and RSC.parentRankNo is null ";
+            return queryProperties.assembleSql(sql, "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam(),"rankType",RankType.Develop.id);
                  
         }
     }
@@ -159,7 +160,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     public RankStandardCatalogListQueryRsp ranStandardCatalogManagerQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
-            "belongTeam=:belongTeam and rankType='2'  group by rankStandard", "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
+            "belongTeam=:belongTeam and rankType=:rankType  group by rankStandard", "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam(),"rankType",RankType.Management.id);
         RankStandardCatalogListQueryRsp response = new RankStandardCatalogListQueryRsp();
         List<RankStandardCatalogList> ranCatalogLists = null;
         if (!CollectionUtils.isEmpty(ranCatalogs)) {

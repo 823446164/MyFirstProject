@@ -137,61 +137,7 @@ public class TeamServiceImpl implements TeamService {
         return addTeamRsP;
      
     }
-    /**
-     * Description: <br>
-     * 1、团队状态完成<br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    public UpdateTeamRsp  updateTeam(UpdateTeamReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, req.getTeamId());
-        UpdateTeamRsp  updateTeamRsp =new   UpdateTeamRsp();
-            if(req.getStatus().equals(OrgStatus.Completed.id)) {
-                updateTeamRsp.setMeassage("团队状态已完成"); 
-                return  updateTeamRsp;
-            }
-           
-        teamInfo.setTeamName(req.getTeamName());
-        teamInfo.setStatus(req.getStatus());
-        teamInfo.setDescription(req.getDescription());
-       
-        bomanager.updateBusinessObject(teamInfo);
-        bomanager.updateDB();
-        return  updateTeamRsp;
-    }
-    /**
-     * Description:团队状态停用 <br>
-     * <br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    public UpdateTeamRsp  updateTeamStatus(UpdateTeamReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, req.getTeamId());
-        UpdateTeamRsp  updateTeamRsp =new   UpdateTeamRsp();
-            if(req.getStatus().equals(OrgStatus.Disabled.id)) {
-                updateTeamRsp.setMeassage("团队已停用");  
-                return  updateTeamRsp;
-            }
-           //查询团队下员工
-            BusinessObjectAggregate<BusinessObject> userTeamListBoa = bomanager.selectBusinessObjectsBySql("select UT.userId as userId,TI.roleA as roleA from TeamInfo TI,UserTeam UT where"
-                + " TI.teamId=UT.teamId and UT.teamId =:teamId","teamId",req.getTeamId());
-            List<BusinessObject> userTeamList = userTeamListBoa.getBusinessObjects();
-            if(userTeamList!=null &&userTeamList.size()>0) {
-                updateTeamRsp.setMeassage("团队已停用");  
-                return  updateTeamRsp;
-            }
-        teamInfo.setTeamName(req.getTeamName());
-        teamInfo.setStatus(req.getStatus());
-        teamInfo.setDescription(req.getDescription());
-       
-        bomanager.updateBusinessObject(teamInfo);
-        bomanager.updateDB();
-        return  updateTeamRsp;
-    }
+   
     /**
      * Description: 添加团队成员<br>
      *<br>
@@ -469,14 +415,7 @@ public class TeamServiceImpl implements TeamService {
         return deleteTeamRsp;
     }
 
-    @Override
-    public GetTeamIdRsp getTeamId() {
-        GetTeamIdRsp rsp = new GetTeamIdRsp();
-        TeamInfo team = new TeamInfo();
-        team.generateKey();
-        rsp.setTeamId(team.getKeyString());
-        return rsp;
-    }
+  
     
     /**
      * Description:根据部门编号查询团队信息 <br>
@@ -486,7 +425,7 @@ public class TeamServiceImpl implements TeamService {
      */
     @Override
     public TeamQueryRsp teamQueryById(TeamQueryReq req) {
-        // TODO Auto-generated method stub
+      
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         //根据部门编号查询团队信息
         bomanager.clear();
@@ -495,12 +434,7 @@ public class TeamServiceImpl implements TeamService {
             "select  count(*), UT.userId as userId ,TI.teamId as teamId,TI.teamName as teamName,TI.teamLeader as  teamLeader "
             + "from UserTeam UT, TeamInfo TI "
             + "where TI.teamId  =UT.teamId and  TI.belongOrgId= :belongOrgId  ","belongOrgId", req.getBelongOrgId());
-        /**
-   "select  count(*), UT.userId as userId from UserTeam UT "
-            + "inner join (select TI.teamId as teamId  ,TI.teamname as teamname ,TI.teamLeader as  teamLeader from TeamInfo TI"
-            + " where TI.belongOrgId= :belongOrgId ) UT on TI.TEAMID =UT.TEAMID"
-
-         */
+       
         List<BusinessObject> TeamQueryList = TeamQueryReqBoa.getBusinessObjects();
         TeamQueryRsp  teamQueryRsp =new TeamQueryRsp ();
         if(TeamQueryList !=null && TeamQueryList.size()>0) {
@@ -592,7 +526,7 @@ public class TeamServiceImpl implements TeamService {
 	
     @Override
     public TeamQueryRsp teamSearch(TeamQueryReq req) {
-        // TODO Auto-generated method stub
+      
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager(); 
         BusinessObjectAggregate<TeamInfo> teamAggregate = null;
         List<TeamInfo> teamInfos = new ArrayList<TeamInfo>();
@@ -617,24 +551,5 @@ public class TeamServiceImpl implements TeamService {
        
     }
 
-	 /**
-     * Description: 根据用户查找对应的团队<br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    public UserTeamQueryRsp userTeamQuery(@RequestBody @Valid UserTeamQueryReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        UserTeamQueryRsp rsp = new UserTeamQueryRsp();
-        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql("select TI.teamId as TeamId,TI.teamName as TeamName from UserTeam UT,TeamInfo TI where UT.teamId=TI.teamId and UT.userId=:userId", "userId",req.getUserId()).getBusinessObjects();
-        String teamId = "";
-        String teamName = "";
-        if (!StringUtils.isEmpty(businessObjects)) {
-           teamId = businessObjects.get(0).getString("TeamId");
-           teamName = businessObjects.get(0).getString("TeamName");
-        }
-        rsp.setTeamId(teamId);
-        rsp.setTeamName(teamName);
-        return rsp;
-    }
+	
 }
