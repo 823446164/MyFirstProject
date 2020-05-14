@@ -207,5 +207,5 @@ public class LabelList implements Serializable {
     @Description("一般")
     @Length(max=2000)
     @TemplateBody(sortNo = 29, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
-    private String commonlyDescribe;
+    private String commonlyDescribe; 
 }

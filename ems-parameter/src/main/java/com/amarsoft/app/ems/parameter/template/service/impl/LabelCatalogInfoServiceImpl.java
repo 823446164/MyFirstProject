@@ -1,11 +1,11 @@
 /*
- * 文件名：LableCatalogInfoServiceImpl
- * 版权：Copyright by www.amarsoft.com
+ * 文件名：LableCatalogInfoServiceImpl 
+ * 版权：Copyright by www.amarsoft.com 
  * 描述：为LableCatalogInfo模板提供方法
- * 修改人：yrong
- * 修改时间：2020年5月11日
- * 跟踪单号：
- * 修改单号：
+ * 修改人：yrong 
+ * 修改时间：2020年5月11日 
+ * 跟踪单号： 
+ * 修改单号： 
  * 修改内容：新增标签目录详情查询，选中目录查询标签，标签目录保存
  */
 package com.amarsoft.app.ems.parameter.template.service.impl;
@@ -13,7 +13,6 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
@@ -54,10 +54,8 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     @Transactional
     public LabelCatalogInfoQueryRsp labelCatalogInfoQuery(@Valid LabelCatalogInfoQueryReq labelCatalogInfoQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-
         LabelCatalog labelCatalog = bomanager.loadBusinessObject(LabelCatalog.class, "serialNo", labelCatalogInfoQueryReq.getSerialNo());
         if (labelCatalog != null) {
-            LocalDateTime localDateTime = LocalDateTime.now();
             LabelCatalogInfoQueryRsp labelCatalogInfo = new LabelCatalogInfoQueryRsp();
             labelCatalogInfo.setSerialNo(labelCatalog.getSerialNo());
             labelCatalogInfo.setLabelName(labelCatalog.getLabelName());
@@ -66,10 +64,10 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             labelCatalogInfo.setAuthor(labelCatalog.getAuthor());
             labelCatalogInfo.setLabelVersion(labelCatalog.getLabelVersion());
             labelCatalogInfo.setInputUserId(labelCatalog.getInputUserId());
-            labelCatalogInfo.setInputTime(localDateTime);
+            labelCatalogInfo.setInputTime(labelCatalog.getInputTime());
             labelCatalogInfo.setInputOrgId(labelCatalog.getInputOrgId());
             labelCatalogInfo.setUpdateUserId(labelCatalog.getUpdateUserId());
-            labelCatalogInfo.setUpdateTime(localDateTime);
+            labelCatalogInfo.setUpdateTime(labelCatalog.getUpdateTime());
             labelCatalogInfo.setUpdateOrgId(labelCatalog.getUpdateOrgId());
             return labelCatalogInfo;
         }
@@ -101,41 +99,38 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             if (lc == null) {
                 lc = new LabelCatalog();
                 lc.generateKey();
+                lc.setInputTime(LocalDateTime.now());
+                lc.setInputOrgId(GlobalShareContextHolder.getOrgId());
+                lc.setInputUserId(GlobalShareContextHolder.getUserId());
             }
             BeanUtils.copyProperties(labelCatalogInfo, lc);
+            lc.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
+            lc.setUpdateTime(LocalDateTime.now());
+            lc.setUpdateUserId(GlobalShareContextHolder.getUserId());
             bomanager.updateBusinessObject(lc);
         }
         bomanager.updateDB();
     }
-    
-    
- 
-    
-    /** 
+
+    /**
      * 选中目录查询标签
      * 
      * @param request
      * @return
      */
     @Override
-    @Transactional   
-    //LabelByLabelCatalogQueryReq labelByLabelCatalogQueryReq
+    @Transactional
     public LabelByLabelCatalogQueryRsp labelBelongCatalogQuery(@Valid LabelByLabelCatalogQueryReq labelByLabelCatalogQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         LabelByLabelCatalogQueryRsp lableCatalogInfoQueryRsp = new LabelByLabelCatalogQueryRsp();
-       
         BusinessObjectAggregate<BusinessObject> labelBelongCatalogQueryRspBoa = bomanager.selectBusinessObjectsBySql(
             "select LC.serialNo as serialNo,LC.labelName as labelName,LC.belongCataLog as belongCataLog from LabelCatalog LC where LC.belongCataLog =:serialNo",
-            "serialNo",
-            labelByLabelCatalogQueryReq.getSerialNo());
-
+            "serialNo", labelByLabelCatalogQueryReq.getSerialNo());
         List<BusinessObject> labelBelongCatalogQueryRspBoList = labelBelongCatalogQueryRspBoa.getBusinessObjects();
-   
         if (labelBelongCatalogQueryRspBoList != null) {
             List<LabelCatalogInfo> lableCatalogInfoLists = new ArrayList<LabelCatalogInfo>();
-            for(int i =0 ;i<labelBelongCatalogQueryRspBoList.size();i++) {
+            for (int i = 0; i < labelBelongCatalogQueryRspBoList.size(); i++ ) {
                 BusinessObject labelBelongCatalogQueryRspBo = labelBelongCatalogQueryRspBoList.get(i);
-               
                 LabelByLabelCatalogQueryRsp lableCatalogInof = new LabelByLabelCatalogQueryRsp();
                 lableCatalogInof.setLabelName(labelBelongCatalogQueryRspBo.getString("LabelName"));
                 lableCatalogInof.setSerialNo(labelBelongCatalogQueryRspBo.getString("SerialNo"));
@@ -144,6 +139,5 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             lableCatalogInfoQueryRsp.setLableCatalogInfos(lableCatalogInfoLists);
         }
         return lableCatalogInfoQueryRsp;
-    } 
-    
+    }
 }
