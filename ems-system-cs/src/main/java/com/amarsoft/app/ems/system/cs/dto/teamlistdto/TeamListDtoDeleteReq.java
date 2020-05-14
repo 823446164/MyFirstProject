@@ -13,6 +13,7 @@ import com.amarsoft.amps.avta.annotation.TemplateBody;
  * 团队信息删除请求实体类
  * @author hpli
  */
+
 @Getter
 @Setter
 @ToString

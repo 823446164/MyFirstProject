@@ -3,12 +3,18 @@ package com.amarsoft.app.ems.system.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import javax.validation.Valid;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
-
+import com.amarsoft.aecd.system.constant.OrgStatus;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.util.DTOHelper;
+import com.amarsoft.amps.arem.exception.ALSException;
+
 import java.util.List;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
@@ -18,9 +24,13 @@ import com.amarsoft.amps.avts.query.RequestQuery;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDto;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDto;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteReq;
+import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoSaveReq;
+import com.amarsoft.app.ems.system.entity.ChangeEvent;
+import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.service.TeamListDtoService;
 
@@ -32,6 +42,7 @@ import com.amarsoft.app.ems.system.service.TeamListDtoService;
 @Slf4j
 @Service
 public class TeamListDtoServiceImpl implements TeamListDtoService{
+    
     /**
                    * 查询结果集
      */
@@ -125,45 +136,136 @@ public class TeamListDtoServiceImpl implements TeamListDtoService{
         }
         bomanager.updateDB();
     }
+  
     /**
-     * 团队信息删除
+     * 根据部门/关键字查询团队信息
      * @param request
      * @return
      */
+    
     @Override
     @Transactional
-    public void teamListDtoDelete(@Valid TeamListDtoDeleteReq teamListDtoDeleteReq) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo teamInfo=bomanager.keyLoadBusinessObject(TeamInfo.class, teamListDtoDeleteReq.getTeamId());
-        bomanager.deleteBusinessObject(teamInfo);
-        // TODO 关联表数据如需删除的话，请自行补充代码
-        bomanager.updateDB();
-    }
-    /**
-     * 团队员工信息多记录查询
-     * @param request
-     * @return
-     */
-    @Transactional
-    @Override
-    public TeamListDtoQueryRsp teamUserQuery(@Valid TeamListDtoQueryReq teamListDtoQueryReq) {
-        TeamListDtoQueryRsp   teamListDtoQueryRsp=new   TeamListDtoQueryRsp ();
+    public TeamListDtoQueryRsp teamQueryById(TeamListDtoQueryReq request) {
         // TODO Auto-generated method stub
+        
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        //查询员工信息
-        BusinessObjectAggregate<BusinessObject> TeamUser = bomanager.selectBusinessObjectsBySql(" select EI.employeeNo as employeeNo, "
-                + "EI.employeeName as employeeName,EI.sex as sex,EI.employeeAcct as employeeAcct,EI. nowRank as  nowRank,EI.rntryTime as rntryTime,"
-                + "TI belongOrgId as  belongOrgId ,TI. teamName as  teamName"
-                + " from   sys_team_info TI,sys_team_user  TU,employee_info EI where \n" + 
-                "    EI.employeeNo=TU.USERID and  TI.TEAMID =TU.TEAMID   and TI.TEAMID=: teamId", "teamId" ,teamListDtoQueryReq.getQuery_teamId());
-        List<BusinessObject> userTeam = TeamUser.getBusinessObjects();
-        BusinessObject employeeList  = userTeam .get(0);
-        teamListDtoQueryRsp.setBelongOrgId(employeeList.getString("BelongOrgId"));
-        teamListDtoQueryRsp.setEmployeeAcct(employeeList.getString("EmployeeAcct"));
-        teamListDtoQueryRsp.setEmployeeId(employeeList.getString("EmployeeId"));
-        teamListDtoQueryRsp.setEmployeeName(employeeList.getString("EmployeeName"));
-        teamListDtoQueryRsp.setNowRank(employeeList.getString("NowRank"));
-         
-        return teamListDtoQueryRsp;
+        TeamListDtoQueryRsp  rsp =new  TeamListDtoQueryRsp ();
+        List<TeamListDto> teamListDtos= new ArrayList<>();
+        List<BusinessObject> loadBusinessObjects = bomanager.loadBusinessObjects(TeamInfo.class, "belongOrgId=:orgId","orgId" ,request.getOrgId());
+        if(loadBusinessObjects !=null &&loadBusinessObjects .size()>0) {
+            for(BusinessObject bs :loadBusinessObjects ) {
+                //根据bs查询员工信息
+                String sql  = "select count(*) as count , TI.teamName as teamName,TI.teamLeader as teamLeader ,TI.teamId as teamId from UserTeam UT,"
+                    + "TeamInfo TI where TI.teamId = UT.teamId and  UT.teamId=:teamId";
+            String search = "";
+            BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(sql, "teamId",bs.getString("teamId"));
+              if(!StringUtils.isEmpty(request.getTeamName())) { 
+              search = request.getTeamName();
+          
+            selectBusinessObjectsBySql= bomanager.selectBusinessObjectsBySql("select count(*) as count ,TI.belongOrgId as belongOrgId, TI.teamName as teamName,TI.teamLeader as teamLeader ,TI.teamId as teamId from UserTeam UT,"
+                    + "TeamInfo TI where TI.teamId = UT.teamId and  UT.teamId=:teamId and TI.teamName like: teamName ","teamId",bs.getString("teamId"),"search","%"+search+"%"); 
+             }else if(!StringUtils.isEmpty(request.getGetRoleA())) { 
+                  search =request.getGetRoleA(); 
+                
+             selectBusinessObjectsBySql= bomanager.selectBusinessObjectsBySql("select count(*) as count ,TI.belongOrgId as belongOrgId, TI.teamName as teamName,TI.teamLeader as teamLeader ,TI.teamId as teamId from UserTeam UT,"
+                    + "TeamInfo TI where TI.teamId = UT.teamId and  UT.teamId=:teamId and TI.roleA like: roleA ","teamId",bs.getString("teamId"),"search","%"+search+"%"); 
+                    
+            }
+                
+            List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
+            if(businessObjects!=null&&businessObjects.size()>0) {
+                for(BusinessObject bos : businessObjects) {
+                    TeamListDto tl=new TeamListDto();
+                    tl.setTeamName(bos.getString("teamName"));
+                    tl.setTeamId(bos.getString("teamId"));
+                    tl.setRoleA(bos.getString("teamLeader"));
+                    tl.setCount(bos.getInt("count"));
+                    teamListDtos.add(tl);
+                }
+                rsp.setTeamListDtos(teamListDtos);
+            }
+        }
+            
+        }
+        return rsp;
     }
+    /**
+     * 删除团队信息
+     * @param request
+     * @return
+     */
+    @Transactional
+    @Override
+    public TeamListDtoDeleteRsp teamListDtoDelete(@Valid TeamListDtoDeleteReq teamListDtoDeleteReq) {
+        // TODO Auto-generated method stub
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager(); 
+        TeamInfo  teamInfo=bomanager.keyLoadBusinessObject(TeamInfo.class, teamListDtoDeleteReq.getTeamId());
+            TeamListDtoDeleteRsp rsp=new TeamListDtoDeleteRsp(); 
+            if(teamInfo==null){
+                    throw new ALSException("901007");
+            } 
+            ChangeEvent ch =new ChangeEvent ();
+            
+            //填写变更理由
+            ch.generateKey();
+            ch.setObjectNo(teamListDtoDeleteReq.getTeamId() );
+            ch.setObjectType("DELETE");
+            ch.setChangeContext("删除团队信息:" +teamListDtoDeleteReq.getObjectNo());
+            ch.setInputDate(LocalDateTime.now());
+            ch.setOccurDate(LocalDateTime.now()); 
+            BusinessObjectAggregate<BusinessObject> userTeamBo=bomanager. selectBusinessObjectsBySql("select UT.userId as userId,TI.status as status from TeamInfo TI,UserTeam UT where"
+            + " TI.teamId=UT.teamId and UT.teamId =:teamId", "teamId", teamInfo.getTeamId());
+            
+            List<BusinessObject> businessObjects = userTeamBo.getBusinessObjects(); 
+             if(businessObjects!=null &&businessObjects .size()>0) { 
+                 throw new ALSException("901007"); }
+             if(teamInfo.getRoleA()!=null&&teamInfo.getStatus().equals(OrgStatus.Disabled.id)) { 
+                 throw new ALSException("EMS6008");
+             } 
+             bomanager.updateBusinessObject(ch);
+             bomanager.deleteBusinessObject(teamInfo);
+             bomanager.updateDB();  
+           
+        return rsp;
+    }
+    /**
+     * 团队角色信息
+     * @param request
+     * @return
+     */
+   
+    @Override
+    @Transactional
+    public TeamListDtoQueryRoleRsp teamListDtoRole(TeamListDtoQueryReq request) {
+        // TODO Auto-generated method stub
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager(); 
+        TeamListDtoQueryRoleRsp rsp =new TeamListDtoQueryRoleRsp();
+     
+        List<String>   list =new ArrayList<> ();
+        List<BusinessObject>  roleA = bomanager .selectBusinessObjectsBySql("select distinct  TI.RoleA from TeamInfo").getBusinessObjects();
+        if( roleA!=null && roleA.size()>0) {
+            for(BusinessObject bos: roleA) {
+                list.add(bos.getString("roleA"));
+                
+            }
+            rsp.setTeamListRoleA(list);
+        }
+        List<BusinessObject>  roleB= bomanager .selectBusinessObjectsBySql("select distinct  TI.RoleB from TeamInfo").getBusinessObjects();
+        if( roleB!=null && roleB.size()>0) {
+            for(BusinessObject bos: roleB) {
+                list.add(bos.getString("roleA"));   
+            }
+            rsp.setTeamListRoleB(list);
+        }
+        List<BusinessObject>  roleC= bomanager .selectBusinessObjectsBySql("select distinct  TI.RoleC from TeamInfo").getBusinessObjects();
+        if( roleC!=null && roleC.size()>0) {
+            for(BusinessObject bos: roleC) {
+                list.add(bos.getString("roleC"));
+                
+            }
+            rsp.setTeamListRoleC(list);
+        }
+        return rsp ;
+    }
+     
 }

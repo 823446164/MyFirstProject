@@ -42,6 +42,7 @@ public class TeamListDtoQueryRoleRsp {
     @Description("角色C")
     @NotEmpty
     private List<String> teamListRoleC;
+    
 
 
 }

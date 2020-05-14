@@ -469,14 +469,7 @@ public class TeamServiceImpl implements TeamService {
         return deleteTeamRsp;
     }
 
-    @Override
-    public GetTeamIdRsp getTeamId() {
-        GetTeamIdRsp rsp = new GetTeamIdRsp();
-        TeamInfo team = new TeamInfo();
-        team.generateKey();
-        rsp.setTeamId(team.getKeyString());
-        return rsp;
-    }
+  
     
     /**
      * Description:根据部门编号查询团队信息 <br>
@@ -617,24 +610,5 @@ public class TeamServiceImpl implements TeamService {
        
     }
 
-	 /**
-     * Description: 根据用户查找对应的团队<br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    public UserTeamQueryRsp userTeamQuery(@RequestBody @Valid UserTeamQueryReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        UserTeamQueryRsp rsp = new UserTeamQueryRsp();
-        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql("select TI.teamId as TeamId,TI.teamName as TeamName from UserTeam UT,TeamInfo TI where UT.teamId=TI.teamId and UT.userId=:userId", "userId",req.getUserId()).getBusinessObjects();
-        String teamId = "";
-        String teamName = "";
-        if (!StringUtils.isEmpty(businessObjects)) {
-           teamId = businessObjects.get(0).getString("TeamId");
-           teamName = businessObjects.get(0).getString("TeamName");
-        }
-        rsp.setTeamId(teamId);
-        rsp.setTeamName(teamName);
-        return rsp;
-    }
+	
 }

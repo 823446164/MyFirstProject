@@ -402,29 +402,7 @@ public class TeamControllerImpl implements TeamController {
     }
      
    
-    /**
-     * Description:获取团队失败<br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    @Transactional
-    public ResponseEntity<ResponseMessage<GetTeamIdRsp>> getTeamId( @RequestBody @Valid RequestMessage<GetTeamIdReq> reqMsg) {
-        // TODO Auto-generated method stub
-        ResponseMessage<TeamQueryRsp> rspMsg = null;
-        try {
-             GetTeamIdRsp rsp = teamService.getTeamId(reqMsg.getMessage());
-             return new  ResponseEntity<ResponseMessage<GetTeamIdRsp>>(new ResponseMessage<GetTeamIdRsp>(rsp),HttpStatus.OK);
-             } catch (Exception e) { 
-                 if(log.isErrorEnabled()) {
-                     log.error("获取团队编号出错："+ reqMsg.toString(), e); 
-                
-                 } 
-                 rspMsg = ResponseMessage.getResponseMessageFromException(e, "901013",e.getMessage());
-                 return new ResponseEntity<ResponseMessage<GetTeamIdRsp>>(HttpStatus.INTERNAL_SERVER_ERROR);
-             }
-       
-    }
+  
     /**
      * Description: 根据部门编号查询团队<br>
      * ${tags}
@@ -511,6 +489,14 @@ public class TeamControllerImpl implements TeamController {
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "901022",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    /* (non-Javadoc)
+     * @see com.amarsoft.app.ems.system.controller.TeamController#getTeamId(com.amarsoft.amps.acsc.rpc.RequestMessage)
+     */
+    @Override
+    public ResponseEntity<ResponseMessage<GetTeamIdRsp>> getTeamId(@Valid RequestMessage<GetTeamIdReq> reqMsg) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
     

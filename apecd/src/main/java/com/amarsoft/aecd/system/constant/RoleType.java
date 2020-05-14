@@ -55,6 +55,7 @@ public enum RoleType {
                 return roleType.name;
             }
         }
+        
         return "";
     }
 
