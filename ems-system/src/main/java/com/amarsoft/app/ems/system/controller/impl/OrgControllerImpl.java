@@ -395,7 +395,7 @@ public class OrgControllerImpl implements OrgController {
     }
 
     /**
-     * Description: 一二级部门树图展示
+     * Description: 部门树图展示
      * @param reqMsg
      * @return  rsp
      * @see

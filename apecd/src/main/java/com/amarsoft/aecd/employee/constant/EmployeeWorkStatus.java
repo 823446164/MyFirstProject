@@ -1,4 +1,6 @@
 package com.amarsoft.aecd.employee.constant;
+
+
 /**
  * 员工工作状态
  * @author zcluo
@@ -29,5 +31,20 @@ public enum EmployeeWorkStatus {
                 ||_03.id.equals(id)
                 ||_04.id.equals(id)
                 ||_05.id.equals(id);
+    }
+    
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
+        for (EmployeeWorkStatus employeeWorkStatus : EmployeeWorkStatus.values()) {
+            if (employeeWorkStatus.id.equalsIgnoreCase(id)) {
+                return employeeWorkStatus.name;
+            }
+        }
+        return "";
     }
 }

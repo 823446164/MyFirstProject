@@ -28,4 +28,19 @@ public enum EmployeeStatus {
                 ||Official.id.equals(id)
                 ||Resignation.id.equals(id);
     }
+    
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
+        for (EmployeeStatus employeeStatus : EmployeeStatus.values()) {
+            if (employeeStatus.id.equalsIgnoreCase(id)) {
+                return employeeStatus.name;
+            }
+        }
+        return "";
+    }
 }

@@ -26,4 +26,19 @@ public enum TraceStatus {
                 ||FollowUp.id.equals(id)
                 ||Closed.id.equals(id);
     }
+    
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
+        for (TraceStatus traceStatus : TraceStatus.values()) {
+            if (traceStatus.id.equalsIgnoreCase(id)) {
+                return traceStatus.name;
+            }
+        }
+        return "";
+    }
 }

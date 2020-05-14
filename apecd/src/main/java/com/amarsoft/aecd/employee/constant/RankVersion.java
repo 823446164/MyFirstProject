@@ -1,4 +1,6 @@
 package com.amarsoft.aecd.employee.constant;
+
+
 /**
  * 职级版本
  * @author zcluo
@@ -25,5 +27,20 @@ public enum RankVersion {
         return History.id.equals(id)
                 ||Current.id.equals(id)
                 ||Target.id.equals(id);
+    }
+    
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
+        for (RankVersion rankVersion : RankVersion.values()) {
+            if (rankVersion.id.equalsIgnoreCase(id)) {
+                return rankVersion.name;
+            }
+        }
+        return "";
     }
 }
