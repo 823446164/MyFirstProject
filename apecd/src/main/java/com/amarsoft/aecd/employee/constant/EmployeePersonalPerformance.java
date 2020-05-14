@@ -1,4 +1,7 @@
 package com.amarsoft.aecd.employee.constant;
+
+import com.amarsoft.aecd.parameter.constant.LabelType;
+
 /**
  * 工作岗位
  * @author dxiao
@@ -42,5 +45,19 @@ public enum EmployeePersonalPerformance {
                 ||_10.id.equals(id)
                 ||_11.id.equals(id);
    
+    }
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
+        for (EmployeePersonalPerformance employeePersonalPerformance : EmployeePersonalPerformance.values()) {
+            if (employeePersonalPerformance.id.equalsIgnoreCase(id)) {
+                return employeePersonalPerformance.name;
+            }
+        }
+        return "";
     }
 }
