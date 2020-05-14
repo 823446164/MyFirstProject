@@ -2,8 +2,9 @@ package com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser;
 
 import java.io.Serializable;
 import java.util.List;
+
 import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,6 @@ public class EmployeeListByUserQueryRsp implements Serializable{
     private Integer totalCount = 0;
 
     @Description("员工信息List")
-    private List<EmployeeInfoListDto> employeeList;
+    private List<EmployeeInfoDto> employeeList;
     
 }
