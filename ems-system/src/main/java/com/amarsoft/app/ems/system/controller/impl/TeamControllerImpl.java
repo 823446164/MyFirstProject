@@ -425,6 +425,7 @@ public class TeamControllerImpl implements TeamController {
      * @see
      */
 	@Override
+	@Transactional
 	public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@RequestBody @Valid RequestMessage<UpdateUserTeamReq> reqMsg) {
 		ResponseMessage<Object> rspMsg = null;
         try {
