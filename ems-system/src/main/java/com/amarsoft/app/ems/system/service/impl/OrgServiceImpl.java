@@ -18,6 +18,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.acsc.rpc.RequestMessage;
+import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.ArchitectureType;
 import com.amarsoft.aecd.system.constant.CompanyType;
@@ -31,6 +33,8 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoDtoClient;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
+import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
+import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.coperateorganizationquery.CoperateOrg;
@@ -52,6 +56,7 @@ import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.entity.ChangeEvent;
 import com.amarsoft.app.ems.system.entity.Department;
 import com.amarsoft.app.ems.system.entity.OrgInfo;
@@ -944,7 +949,6 @@ public class OrgServiceImpl implements OrgService {
     @Override
     public Map<String, String> oneLevelDeptDtoSave(OneLevelDeptDtoSaveReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-
         OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
         Department department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
         if (orgInfo != null) {
@@ -1151,8 +1155,11 @@ public class OrgServiceImpl implements OrgService {
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",orgInfo.getOrgId()+"%");  
             secondLevelDeptListDto.setDeptUserNumber(String.valueOf(ubs.size()));
             secondLevelDeptListDto.setOrgId(dt.getDeptId());
+
             secondLevelDeptListDtos.add(secondLevelDeptListDto);
+           
         }
+        rsp.setTotalCount(secondLevelDeptListDtos.size());
         rsp.setSecondLevelDeptListDtos(secondLevelDeptListDtos);
         return rsp;
     }
@@ -1277,7 +1284,30 @@ public class OrgServiceImpl implements OrgService {
         //给id的list，返回员工对象List
         List<EmployeeInfoListDto> list = new ArrayList<EmployeeInfoListDto>();
         //根据返回list循环 新建dto对象　赋值
-        EmployeeInfoDto employeeInfoDto = new EmployeeInfoDto();
+        EmployeeListByEmplNoReq  elbNoReq = new EmployeeListByEmplNoReq();
+        ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
+        List<EmployeeInfoListDto> employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
+        List<EmployeeInfoDto> employeeInfoDtos = response.getMessage().getEmployeeInfoList();
+        for (EmployeeInfoDto employeeInfoDto : employeeInfoDtos) {
+            EmployeeInfoListDto employeeInfoListDto = new EmployeeInfoListDto();
+            employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
+            employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
+            employeeInfoListDto.setEmployeeNo(employeeInfoDto.getEmployeeNo());
+            employeeInfoListDto.setEmployeeRank(employeeInfoDto.getNowRank());
+            employeeInfoListDto.setRntryTime(employeeInfoDto.getRntryTime());
+            //employeeInfoListDto.setSex(employeeInfoDto.get);
+
+            //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
+            UserTeam userTeam = bomanager.keyLoadBusinessObject(OrgInfo.class, employeeInfoDto.getEmployeeNo());//获取团队id
+            List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",employeeInfoDto.getEmployeeNo());//获取部门id
+            OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, userBelongs.get(0).getOrgId());
+            TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
+            employeeInfoListDto.setTeamName(teamInfo.getTeamName());
+            employeeInfoListDto.setOrgName(oInfo.getOrgName());
+            employeeInfoListDtos.add(employeeInfoListDto);
+        }
+        rsp.setTotalCount(employeeInfoDtos.size());
+        rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
         //TODO zcluo
         rsp.setEmployeeInfoListDtos(list);
         return rsp;
@@ -1300,8 +1330,29 @@ public class OrgServiceImpl implements OrgService {
             ids.add(userInfo.getUserId());
         }
         //根据ids调用获取员工List
-        
-        //TODO zcluo
+        EmployeeListByEmplNoReq  elbNoReq = new EmployeeListByEmplNoReq();
+        ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
+        List<EmployeeInfoListDto> employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
+        List<EmployeeInfoDto> list = response.getMessage().getEmployeeInfoList();
+        for (EmployeeInfoDto employeeInfoDto : list) {
+            EmployeeInfoListDto employeeInfoListDto = new EmployeeInfoListDto();
+            employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
+            employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
+            employeeInfoListDto.setEmployeeNo(employeeInfoDto.getEmployeeNo());
+            employeeInfoListDto.setEmployeeRank(employeeInfoDto.getNowRank());
+            employeeInfoListDto.setRntryTime(employeeInfoDto.getRntryTime());
+            //employeeInfoListDto.setSex(employeeInfoDto.get);
+            //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
+            UserTeam userTeam = bomanager.keyLoadBusinessObject(OrgInfo.class, employeeInfoDto.getEmployeeNo());//获取团队id
+            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",employeeInfoDto.getEmployeeNo());//获取部门id
+            OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, ubs.get(0).getOrgId());
+            TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
+            employeeInfoListDto.setTeamName(teamInfo.getTeamName());
+            employeeInfoListDto.setOrgName(oInfo.getOrgName());
+            employeeInfoListDtos.add(employeeInfoListDto);
+        }
+        rsp.setTotalCount(list.size());
+        rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
         return rsp;
     }
 }

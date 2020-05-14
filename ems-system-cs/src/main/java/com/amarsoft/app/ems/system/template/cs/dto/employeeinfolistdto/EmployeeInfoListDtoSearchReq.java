@@ -24,12 +24,12 @@ import com.amarsoft.amps.acsc.query.annotation.QueryOrderBy;
 public class EmployeeInfoListDtoSearchReq implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("起始条数")
-    @QueryBegin
+    //@QueryBegin
     private Integer begin;
 
     @Description("查询笔数")
-    @Range(min=1,max=10)
-    @QueryPageSize
+    //@Range(min=1,max=10)
+    //@QueryPageSize
     private Integer pageSize;
 
     @Description("排序数组")
