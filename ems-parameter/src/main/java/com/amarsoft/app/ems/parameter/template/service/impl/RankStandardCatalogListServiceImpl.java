@@ -95,7 +95,6 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             temp.setRankStandard(bo.getString("RankStandard"));
             temp.setRankName(bo.getString("RankName"));
             temp.setParentRankNo(bo.getString("ParentRankNo"));
-            // temp.setAbility(bo.getString("Ability"));
             temp.setRankDescribe(bo.getString("RankDescribe"));
             temp.setResponeDescribe(bo.getString("ResponeDescribe"));
             temp.setAbilityDescribe(bo.getString("AbilityDescribe"));
@@ -159,17 +158,8 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     @Transactional
     public RankStandardCatalogListQueryRsp ranStandardCatalogManagerQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        // BusinessObjectAggregate<RankStandardCatalog> EventCalendarObjects = null;
-        // int firstIndex = rankStandardCatalogListQueryReq.getBegin();
-        // int pageSize = rankStandardCatalogListQueryReq.getPageSize();
-        // EventCalendarObjects=bomanager.loadBusinessObjects(RankStandardCatalog.class,firstIndex,pageSize,
-        // "belongTeam=:belongTeam and rankType=2 group by rankStandard",
-        // "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
-        // List<RankStandardCatalog> ranCatalogs=EventCalendarObjects.getBusinessObjects();
         List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
-            "belongTeam=:belongTeam and rankType=2 group by rankStandard", "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
-        // Integer totalCount = EventCalendarObjects.getAggregate("count(*) as cnt
-        // ").getInt("cnt");
+            "belongTeam=:belongTeam and rankType='2'  group by rankStandard", "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam());
         RankStandardCatalogListQueryRsp response = new RankStandardCatalogListQueryRsp();
         List<RankStandardCatalogList> ranCatalogLists = null;
         if (!CollectionUtils.isEmpty(ranCatalogs)) {
@@ -179,7 +169,6 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
                 rankresponse.setSerialNo(rank.getSerialNo());
                 rankresponse.setRankStandard(rank.getRankStandard());
                 rankresponse.setRankName(rank.getRankName());
-                // rankresponse.setParentRankNo(rank.getParentRankNo());
                 rankresponse.setAbility(rank.getAbility());
                 rankresponse.setRankDescribe(rank.getRankDescribe());
                 rankresponse.setResponeDescribe(rank.getResponeDescribe());
@@ -196,8 +185,6 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
                 ranCatalogLists.add(rankresponse);
             }
         }
-
-        // response.setTotalCount(totalCount);
         response.setRankStandardCatalogLists(ranCatalogLists);
         response.setTotalCount(response.getRankStandardCatalogLists().size());
         return response;

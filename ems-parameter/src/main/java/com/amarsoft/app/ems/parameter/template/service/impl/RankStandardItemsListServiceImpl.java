@@ -26,18 +26,15 @@ import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.parameter.template.service.RankStandardItemsListService;
 import com.amarsoft.app.ems.parameter.entity.RankStandardItems;
-import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogList;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabel;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelSaveReq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogList;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsList;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListSaveReq;
 import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
-import com.amarsoft.app.ems.parameter.entity.RankStandardCatalog;;
 
 /**
  * 〈技能详情Service实现类〉
@@ -73,6 +70,8 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
             ranStandardItemsLists= new ArrayList<RankStandardItemsList>();
             for(RankStandardItems ranItems : rankStandardItems) {
                 RankStandardItemsList rankresponse=new RankStandardItemsList();
+                rankresponse.setBelongCatalog(ranItems.getBelongCatalog());
+                rankresponse.setRankNo(ranItems.getRankNo());
                 rankresponse.setLabelName(ranItems.getLabelName());
                 rankresponse.setLabelLevel(ranItems.getLabelLevel());
                 ranStandardItemsLists.add(rankresponse);

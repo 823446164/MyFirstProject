@@ -21,27 +21,27 @@ package com.amarsoft.aecd.parameter.constant;
  */
 
 public enum ChildRankNo {
-    _1("1","T1-1最低"),
-    _2("2","T1-2"),
-    _3("3","T1-3"),
-    _4("4","T2-1"),
-    _5("5","T2-2"),
-    _6("6","T2-3"),
-    _7("7","T3-1"),
-    _8("8","T3-2"),
-    _9("9","T3-3"),
-    _10("10","T4-1"),
-    _11("11","T4-2"),
-    _12("12","T4-3"),
-    _13("13","T5-1"),
-    _14("14","T5-2"),
-    _15("15","T5-3"),
-    _16("16","T6-1"),
-    _17("17","T6-2"),
-    _18("18","T6-3最高"),
-    _19("19","M6-1"),
-    _20("20","M6-2"),
-    _21("21","M6-3最高"),
+    B1_1("11","T1-1最低"),
+    B1_2("12","T1-2"),
+    B1_3("13","T1-3"),
+    B2_1("21","T2-1"),
+    B2_2("22","T2-2"),
+    B2_3("23","T2-3"),
+    B3_1("31","T3-1"),
+    B3_2("32","T3-2"),
+    B3_3("33","T3-3"),
+    B4_1("41","T4-1"),
+    B4_2("42","T4-2"),
+    B4_3("43","T4-3"),
+    B5_1("51","T5-1"),
+    B5_2("52","T5-2"),
+    B5_3("53","T5-3"),
+    B6_1("61","T6-1"),
+    B6_2("62","T6-2"),
+    B6_3("63","T6-3最高"),
+    B7_1("71","M6-1"),
+    B7_2("72","M6-2"),
+    B7_3("73","M6-3最高"),
     ;
     
     public final String id;
@@ -59,27 +59,27 @@ public enum ChildRankNo {
      * @return
      */
     public static boolean isExist(String id) {
-        return _1.id.equals(id) 
-            || _2.id.equals(id) 
-            || _3.id.equals(id)
-            || _4.id.equals(id)
-            || _5.id.equals(id) 
-            || _6.id.equals(id)
-            || _7.id.equals(id)
-            || _8.id.equals(id) 
-            || _9.id.equals(id)
-            || _10.id.equals(id)
-            || _11.id.equals(id) 
-            || _12.id.equals(id)
-            || _13.id.equals(id)
-            || _14.id.equals(id) 
-            || _15.id.equals(id)
-            || _16.id.equals(id)
-            || _17.id.equals(id) 
-            || _18.id.equals(id)
-            || _19.id.equals(id)
-            || _20.id.equals(id)
-            || _21.id.equals(id);
+        return B1_1.id.equals(id) 
+            || B1_2.id.equals(id) 
+            || B1_3.id.equals(id)
+            || B2_1.id.equals(id)
+            || B2_2.id.equals(id) 
+            || B2_3.id.equals(id)
+            || B3_1.id.equals(id)
+            || B3_2.id.equals(id) 
+            || B3_3.id.equals(id)
+            || B4_1.id.equals(id)
+            || B4_2.id.equals(id) 
+            || B4_3.id.equals(id)
+            || B5_1.id.equals(id)
+            || B5_2.id.equals(id) 
+            || B5_3.id.equals(id)
+            || B6_1.id.equals(id)
+            || B6_2.id.equals(id) 
+            || B6_3.id.equals(id)
+            || B7_1.id.equals(id)
+            || B7_2.id.equals(id)
+            || B7_3.id.equals(id);
     }
 
     /**
