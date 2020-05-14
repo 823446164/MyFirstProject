@@ -233,7 +233,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+        
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
             return new ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -292,7 +292,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+     
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
             return new ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -390,7 +390,7 @@ public class TeamControllerImpl implements TeamController {
     @Transactional
     public ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>> teamQueryById(
         @RequestBody    @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
-        // TODO Auto-generated method stub
+
         
          ResponseMessage<TeamListDtoQueryRsp> rspMsg = null;
             try {
@@ -420,7 +420,7 @@ public class TeamControllerImpl implements TeamController {
     @Transactional
     public ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>> updateStatus(
             @RequestBody @Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg) {
-        // TODO Auto-generated method stub
+      
           ResponseMessage<TeamInfoDtoQueryRsp> rspMsg = null;
             try {
                 TeamInfoDtoQueryReq request = reqMsg.getMessage();
@@ -448,7 +448,7 @@ public class TeamControllerImpl implements TeamController {
     @Override
     @Transactional
     public ResponseEntity<ResponseMessage<Object>> teamRoleSave( @RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
-        // TODO Auto-generated method stub
+
         ResponseMessage<Object> rspMsg = null;
         try {
             TeamListDtoQueryReq request = reqMsg.getMessage();

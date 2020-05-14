@@ -151,7 +151,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     @Override
     @Transactional
     public TeamListDtoQueryRsp teamQueryById(TeamListDtoQueryReq request) {
-        // TODO Auto-generated method stub
+        
 
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         TeamListDtoQueryRsp rsp = new TeamListDtoQueryRsp();
@@ -211,7 +211,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     @Transactional
     @Override
     public TeamListDtoDeleteRsp teamListDtoDelete(@Valid TeamListDtoDeleteReq teamListDtoDeleteReq) {
-        // TODO Auto-generated method stub
+       
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamListDtoDeleteReq.getTeamId());
         TeamListDtoDeleteRsp rsp = new TeamListDtoDeleteRsp();
@@ -255,7 +255,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     @Override
     @Transactional
     public TeamListDtoQueryRoleRsp teamListDtoRole(TeamListDtoQueryReq request) {
-        // TODO Auto-generated method stub
+     
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         TeamListDtoQueryRoleRsp rsp = new TeamListDtoQueryRoleRsp();
 

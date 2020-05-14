@@ -109,7 +109,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
     @Transactional
     public void teamInfoDtoSaveAction(TeamInfoDto teamInfoDto) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        // AddTeamRsp addTeamRsP=new AddTeamRsp();
+      
         if (teamInfoDto == null) {
             throw new ALSException("901009");
         }
@@ -148,7 +148,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
     @Override
     @Transactional
     public TeamInfoDtoQueryRsp updateStatus(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq) {
-        // TODO Auto-generated method stub
+        
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         // 根据部门编号查询团队状态
         TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamInfoDtoQueryReq.getTeamId());

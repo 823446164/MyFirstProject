@@ -425,7 +425,7 @@ public class TeamServiceImpl implements TeamService {
      */
     @Override
     public TeamQueryRsp teamQueryById(TeamQueryReq req) {
-        // TODO Auto-generated method stub
+      
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         //根据部门编号查询团队信息
         bomanager.clear();
@@ -526,7 +526,7 @@ public class TeamServiceImpl implements TeamService {
 	
     @Override
     public TeamQueryRsp teamSearch(TeamQueryReq req) {
-        // TODO Auto-generated method stub
+      
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager(); 
         BusinessObjectAggregate<TeamInfo> teamAggregate = null;
         List<TeamInfo> teamInfos = new ArrayList<TeamInfo>();
