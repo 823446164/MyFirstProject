@@ -20,4 +20,5 @@ public class EmployeeListByUserQueryRsp implements Serializable{
 
     @Description("员工信息List")
     private List<EmployeeInfoListDto> employeeList;
+    
 }
