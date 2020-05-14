@@ -35,7 +35,6 @@ import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
-import com.amarsoft.app.ems.employee.cs.dto.employeebelongupdate.EmployeeBelongUpdateReq;
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoDtoClient;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamRsp;
@@ -63,7 +62,6 @@ import com.amarsoft.app.ems.system.cs.dto.userquery.User;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
 import com.amarsoft.app.ems.system.entity.Department;
-import com.amarsoft.app.ems.system.entity.OrgInfo;
 import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.entity.UserBelong;
@@ -544,6 +542,7 @@ public class TeamServiceImpl implements TeamService {
 			userBelong.setOrgId(teamInfo.getBelongOrgId()); 
 			bomanager.updateBusinessObject(userTeam);    //  更新user_team中间表中的所属部门
 			bomanager.updateBusinessObject(userBelong);  //  更新user_belong表中的所属部门
+			
 			bomanager.clear();
 			bomanager.updateDB();
 		}
