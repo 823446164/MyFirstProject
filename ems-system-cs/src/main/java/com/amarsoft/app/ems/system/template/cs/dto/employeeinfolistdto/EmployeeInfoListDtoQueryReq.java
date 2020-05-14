@@ -28,7 +28,7 @@ public class EmployeeInfoListDtoQueryReq implements Serializable {
     private Integer begin;
 
     @Description("查询笔数")
-    @Range(min=1,max=10)
+    //@Range(min=1,max=10)
     @QueryPageSize
     private Integer pageSize;
 

@@ -19,11 +19,4 @@ import lombok.ToString;
 public class SecondLevelDeptInfoDtoQueryRsp extends SecondLevelDeptInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @Description("上级部门名称")
-    @Length(max=80)
-    private String parentOrgName;
-    
-    @Description("部门人数")
-    @Length(max=40)
-    private String deptUserNumber;
 }

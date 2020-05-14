@@ -23,7 +23,6 @@ public class SecondLevelDeptInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("部门编号")
     @Length(max=40)
-    @NotEmpty
     @ActualColumn("OI.orgId")
     @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String orgId;
@@ -31,7 +30,7 @@ public class SecondLevelDeptInfoDto implements Serializable {
     @Description("所属上级")
     @Length(max=40)
     @ActualColumn("OI.parentOrgId")
-    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 10, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String parentOrgId;
 
     @Description("部门名称")
@@ -50,7 +49,7 @@ public class SecondLevelDeptInfoDto implements Serializable {
     @Description("部门经理")
     @Length(max=40)
     @ActualColumn("DT.deptManager")
-    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String deptManager;
 
     @Description("部门办公位置")
@@ -70,4 +69,14 @@ public class SecondLevelDeptInfoDto implements Serializable {
     @ActualColumn("DT.deptEquipment")
     @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String deptEquipment;
+    
+    @Description("所属上级")
+    @Length(max=80)
+    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    private String parentOrgName;
+    
+    @Description("部门人数")
+    @Length(max=40)
+    @TemplateBody(sortNo = 5, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    private String deptUserNumber;
 }
