@@ -145,17 +145,17 @@ public class TeamListDtoServiceImpl implements TeamListDtoService{
      * @return
      */
     @Transactional
-	@Override
-	public TeamListDtoQueryRsp teamUserQuery(@Valid TeamListDtoQueryReq teamListDtoQueryReq) {
-    	TeamListDtoQueryRsp   teamListDtoQueryRsp=new 	TeamListDtoQueryRsp ();
-		// TODO Auto-generated method stub
-    	BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-    	//查询员工信息
+    @Override
+    public TeamListDtoQueryRsp teamUserQuery(@Valid TeamListDtoQueryReq teamListDtoQueryReq) {
+        TeamListDtoQueryRsp   teamListDtoQueryRsp=new   TeamListDtoQueryRsp ();
+        // TODO Auto-generated method stub
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        //查询员工信息
         BusinessObjectAggregate<BusinessObject> TeamUser = bomanager.selectBusinessObjectsBySql(" select EI.employeeNo as employeeNo, "
-        		+ "EI.employeeName as employeeName,EI.sex as sex,EI.employeeAcct as employeeAcct,EI. nowRank as  nowRank,EI.rntryTime as rntryTime,"
-        		+ "TI belongOrgId as  belongOrgId ,TI. teamName as  teamName"
-        		+ " from   sys_team_info TI,sys_team_user  TU,employee_info EI where \n" + 
-        		"	 EI.employeeNo=TU.USERID and  TI.TEAMID =TU.TEAMID   and TI.TEAMID=: teamId", "teamId" ,teamListDtoQueryReq.getQuery_teamId());
+                + "EI.employeeName as employeeName,EI.sex as sex,EI.employeeAcct as employeeAcct,EI. nowRank as  nowRank,EI.rntryTime as rntryTime,"
+                + "TI belongOrgId as  belongOrgId ,TI. teamName as  teamName"
+                + " from   sys_team_info TI,sys_team_user  TU,employee_info EI where \n" + 
+                "    EI.employeeNo=TU.USERID and  TI.TEAMID =TU.TEAMID   and TI.TEAMID=: teamId", "teamId" ,teamListDtoQueryReq.getQuery_teamId());
         List<BusinessObject> userTeam = TeamUser.getBusinessObjects();
         BusinessObject employeeList  = userTeam .get(0);
         teamListDtoQueryRsp.setBelongOrgId(employeeList.getString("BelongOrgId"));
@@ -163,7 +163,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService{
         teamListDtoQueryRsp.setEmployeeId(employeeList.getString("EmployeeId"));
         teamListDtoQueryRsp.setEmployeeName(employeeList.getString("EmployeeName"));
         teamListDtoQueryRsp.setNowRank(employeeList.getString("NowRank"));
-    	 
-    	return teamListDtoQueryRsp;
-	}
+         
+        return teamListDtoQueryRsp;
+    }
 }

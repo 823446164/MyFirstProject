@@ -39,6 +39,7 @@ public class TeamListDtoQueryRsp implements Serializable {
     private String belongOrgId;
     @Description("团队名称")
     private String teamName;
+    
   
   
     

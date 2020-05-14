@@ -27,4 +27,14 @@ public class TeamInfoDtoQueryReq implements Serializable {
     @NotEmpty
     @ActualColumn("TINFO.teamId")
     private String teamId;
+    /**
+     * Description:执行状态 <br>
+     * @return
+     * @see
+     */
+    @Description("执行状态")
+    public boolean getStringflag ;
+    
+ 
+    
 }

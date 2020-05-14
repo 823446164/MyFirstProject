@@ -32,6 +32,10 @@ public class TeamListDtoQueryReq implements Serializable {
     @Description("员工编号")
     @Length(max=40)
     private String UserId;
+    @Description("部门编号")
+    @Length(max=40)
+    private String orgId;
+    
     @Description("起始条数")
     @NotEmpty
     @QueryBegin
@@ -46,6 +50,14 @@ public class TeamListDtoQueryReq implements Serializable {
     @Description("排序数组")
     @QueryOrderBy
     private String[] orderBy;
+
+  
+    @Description("团队名称")
+    public String TeamName;
+
+  
+    @Description("团队负责人")
+    public String getRoleA;
     
     
     
