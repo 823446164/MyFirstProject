@@ -1,7 +1,12 @@
-/**
- * 机构树图展示
- * @Author hzhang23
- * 根据接口定义的excel文档自动生成实体，由AutoCreateCoder.class的test方法批量生成。
+/*
+ * 文件名：LabelCatalogTreeQueryRsp.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：标签目录树图模板请求体
+ * 修改人：yrong
+ * 修改时间：2020年5月14日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新生成
  */
 package com.amarsoft.app.ems.parameter.template.cs.dto.labelcatalogtreequery;
 

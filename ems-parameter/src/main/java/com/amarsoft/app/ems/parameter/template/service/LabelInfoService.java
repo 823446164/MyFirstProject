@@ -33,14 +33,7 @@ public interface LabelInfoService {
      * @return
      */
     public void labelInfoSave(@Valid LabelInfoSaveReq labelInfoSaveReq);
-    
-//    /**
-//     * 标签Info修改
-//     * @param request
-//     * @return
-//     */
-//    public void labelInfoUpdate(@Valid LabelInfoSaveReq labelInfoSaveReq);
-    
+        
     /**
      * 标签生效 
      * 

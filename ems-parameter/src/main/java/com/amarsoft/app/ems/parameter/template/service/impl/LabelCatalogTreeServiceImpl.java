@@ -1,12 +1,6 @@
 /*
- * 文件名：LabelCatalogTreeServiceImpl.java 
- * 版权：Copyright by www.amarsoft.com 
- * 描述： 
- * 修改人：yrong
- * 修改时间：2020年5月12日 
- * 跟踪单号： 
- * 修改单号： 
- * 修改内容：
+ * 文件名：LabelCatalogTreeServiceImpl.java 版权：Copyright by www.amarsoft.com 描述： 修改人：yrong
+ * 修改时间：2020年5月12日 跟踪单号： 修改单号： 修改内容：
  */
 
 package com.amarsoft.app.ems.parameter.template.service.impl;
@@ -50,8 +44,8 @@ public class LabelCatalogTreeServiceImpl implements LabelCatalogTreeService {
     public List<LabelCatalog> queryChildrenCatalog(BusinessObjectManager bomanager, String serialNo) {
         // 存放查询到的目录
         List<LabelCatalog> LabelCatalogs = new ArrayList<>();
-        List<LabelCatalog> childrenLabelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:serialNo and labelType=:labelType order by serialNo",
-            "labelType",LabelType._1.id,"serialNo", serialNo);
+        List<LabelCatalog> childrenLabelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class,
+            "parentNo=:serialNo and labelType=:labelType order by serialNo", "labelType", LabelType._1.id, "serialNo", serialNo);
         childrenLabelCatalogs.forEach(childrenLabelCatalog -> {
             LabelCatalogs.add(childrenLabelCatalog);
             LabelCatalogs.addAll(queryChildrenCatalog(bomanager, childrenLabelCatalog.getSerialNo()));
@@ -126,21 +120,5 @@ public class LabelCatalogTreeServiceImpl implements LabelCatalogTreeService {
         }
         return rsp;
     }
-    /**
-     * 为查询标到的签目录树图排序
-     */
-//    private void sortTreeNode(Tree node) {
-//        Collections.sort(node.getChildren(), new Comparator<Tree>() {
-//            @Override
-//            public int compare(Tree o1, Tree o2) {
-//                int levelDifference = o2.getLabelType().compareTo(o1.getLabelType());
-//                if (levelDifference == 0) {
-//                    return o1.getSortNo().compareTo(o2.getSortNo());
-//                } else {
-//                    return levelDifference;
-//                }
-//            }
-//        });
-//    }
 
 }

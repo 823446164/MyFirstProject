@@ -1,6 +1,12 @@
 /*
- * 文件名：LableCatalogInfoServiceImpl 版权：Copyright by www.amarsoft.com 描述：为LableCatalogInfo模板提供方法
- * 修改人：yrong 修改时间：2020年5月11日 跟踪单号： 修改单号： 修改内容：新增标签目录详情查询，选中目录查询标签，标签目录保存
+ * 文件名：LableCatalogInfoServiceImpl 
+ * 版权：Copyright by www.amarsoft.com 
+ * 描述：为LableCatalogInfo模板提供方法
+ * 修改人：yrong 
+ * 修改时间：2020年5月11日 
+ * 跟踪单号： 
+ * 修改单号： 
+ * 修改内容：新增标签目录详情查询，选中目录查询标签，标签目录保存
  */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
@@ -114,7 +120,6 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
      */
     @Override
     @Transactional
-    // LabelByLabelCatalogQueryReq labelByLabelCatalogQueryReq
     public LabelByLabelCatalogQueryRsp labelBelongCatalogQuery(@Valid LabelByLabelCatalogQueryReq labelByLabelCatalogQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         LabelByLabelCatalogQueryRsp lableCatalogInfoQueryRsp = new LabelByLabelCatalogQueryRsp();
