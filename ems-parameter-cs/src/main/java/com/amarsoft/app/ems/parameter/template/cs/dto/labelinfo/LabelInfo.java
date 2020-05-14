@@ -11,8 +11,6 @@
 package com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import com.amarsoft.amps.acsc.annotation.Enum;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +18,6 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.aecd.system.constant.ApplyType;
 import com.amarsoft.aecd.system.constant.LabelStatus;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
@@ -83,7 +80,7 @@ public class LabelInfo implements Serializable {
     @Description("标签说明")
     @Length(max=2000)
     @ActualColumn("LC.labelDescribe")
-    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String labelDescribe;
 
     @Description("版本")
