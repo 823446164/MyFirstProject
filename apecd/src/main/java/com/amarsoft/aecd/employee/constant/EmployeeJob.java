@@ -34,4 +34,19 @@ public enum EmployeeJob {
                 ||_06.id.equals(id)
                 ||_07.id.equals(id);
     }
+    
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
+        for (EmployeeJob employeeJob : EmployeeJob.values()) {
+            if (employeeJob.id.equalsIgnoreCase(id)) {
+                return employeeJob.name;
+            }
+        }
+        return "";
+    }
 }

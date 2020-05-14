@@ -1,4 +1,6 @@
 package com.amarsoft.aecd.train.constant;
+
+
 /**
  * 严重级别
  * @author zcluo
@@ -27,5 +29,20 @@ public enum TraceSeriousLevel {
                 ||Suggestion.id.equals(id)
                 ||Supervision.id.equals(id)
                 ||Reservation.id.equals(id);
+    }
+    
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
+        for (TraceSeriousLevel traceSeriousLevel : TraceSeriousLevel.values()) {
+            if (traceSeriousLevel.id.equalsIgnoreCase(id)) {
+                return traceSeriousLevel.name;
+            }
+        }
+        return "";
     }
 }

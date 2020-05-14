@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
+import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoDtoClient;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryRsp;
@@ -83,6 +85,9 @@ import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.Second
 @RefreshScope
 public class OrgServiceImpl implements OrgService {
 
+    @Autowired
+    EmployeeInfoDtoClient employeeInfoDtoClient;
+    
     @Value("${global.business.org.default-length}")
     private int orgDefaultLength;
     
@@ -511,12 +516,12 @@ public class OrgServiceImpl implements OrgService {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         OrgUserQueryRsp rsp = new OrgUserQueryRsp();
         List<UserTeamOrgInfo> userTeamOrgInfos = new ArrayList<UserTeamOrgInfo>();
-        if (ArchitectureType.DEPARTMENT.id.equals(req.getRoleId())) {//部门
+        if (ArchitectureType.Department.id.equals(req.getRoleId())) {//部门
             String orgId = req.getId();//orgId
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, 
                 "orgId like :orgId", "orgId",orgId+"%"); 
             for (UserBelong userBelong : ubs) {
-                UserTeam userTeam = bomanager.keyLoadBusinessObject(UserTeam.class, userBelong.getUserId());
+                UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class,"userId", userBelong.getUserId());
                 UserTeamOrgInfo userTeamOrgInfo = new UserTeamOrgInfo();
                 userTeamOrgInfo.setUserId(userBelong.getUserId());
                 userTeamOrgInfo.setOrgId(orgId);
@@ -528,12 +533,12 @@ public class OrgServiceImpl implements OrgService {
                 userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
                 userTeamOrgInfos.add(userTeamOrgInfo);
             }
-        }else if (ArchitectureType.TEAM.id.equals(req.getRoleId())) {//团队
+        }else if (ArchitectureType.Team.id.equals(req.getRoleId())) {//团队
             String userId = req.getId();//userId
             UserTeamOrgInfo userTeamOrgInfo = new UserTeamOrgInfo();
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",userId);
             //因数据问题，返回第一条数据
-            UserTeam userTeam = bomanager.keyLoadBusinessObject(UserTeam.class,userId);
+            UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class,"userId", userId);
             userTeamOrgInfo.setUserId(userId);
             userTeamOrgInfo.setOrgId(ubs.get(0).getOrgId());
             userTeamOrgInfo.setTeamId(userTeam.getTeamId());
@@ -1220,11 +1225,11 @@ public class OrgServiceImpl implements OrgService {
         rsp.setTrees(new ArrayList<com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree>());
         List<OrgInfo> allOrgs = new ArrayList<>();
         int param = (req.getParam()) == null?2:Integer.valueOf(req.getParam());
-        //int param = 3;
         allOrgs = bomanager.loadBusinessObjects(OrgInfo.class, 0, Integer.MAX_VALUE,
             "orglevel between 1 and :param order by sortNo,orgType desc","param",param).getBusinessObjects();
 
         for (OrgInfo orgInfo : allOrgs) {
+            if (OrgLevel.LEVEL_1.id.equals(orgInfo.getOrgLevel())) {//将一级部门作为根节点
                 com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree rootNode = new com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree();
                 rootNode.setChildren(new ArrayList<com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree>());
                 rootNode.setTitle(orgInfo.getOrgName());
@@ -1244,6 +1249,7 @@ public class OrgServiceImpl implements OrgService {
                     continue;
                 }
                 rsp.getTrees().add(rootNode);
+            }
         }
         return rsp;
     }
@@ -1294,6 +1300,7 @@ public class OrgServiceImpl implements OrgService {
             ids.add(userInfo.getUserId());
         }
         //根据ids调用获取员工List
+        
         //TODO zcluo
         return rsp;
     }
