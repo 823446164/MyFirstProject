@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
+import com.amarsoft.aecd.system.constant.OrgStatus;
+import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.amps.acsc.annotation.Length;
 
 @Getter
@@ -25,6 +27,7 @@ public class OrgInfoUpdateReq implements Serializable{
     private String orgId;
     @Description("变更状态编号")
     @NotEmpty
+    @Enum(OrgStatus.class)
     @Length(max=1)
     private String changeId;
 }
