@@ -525,8 +525,14 @@ public class OrgServiceImpl implements OrgService {
             String orgId = req.getId();//orgId
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, 
                 "orgId like :orgId", "orgId",orgId+"%"); 
+            if(ubs.size() == 0) {
+                throw new ALSException("900307");
+            }
             for (UserBelong userBelong : ubs) {
                 UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class,"userId", userBelong.getUserId());
+                if (userTeam == null) {
+                    throw new ALSException("900201");
+                }
                 UserTeamOrgInfo userTeamOrgInfo = new UserTeamOrgInfo();
                 userTeamOrgInfo.setUserId(userBelong.getUserId());
                 userTeamOrgInfo.setOrgId(orgId);
@@ -534,6 +540,9 @@ public class OrgServiceImpl implements OrgService {
                 //查询对应的部门名称和团队名称
                 OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, orgId);
                 TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
+                if (oInfo == null || teamInfo == null) {
+                    throw new ALSException("900201");
+                }
                 userTeamOrgInfo.setOrgName(oInfo.getOrgName());
                 userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
                 userTeamOrgInfos.add(userTeamOrgInfo);
@@ -542,6 +551,9 @@ public class OrgServiceImpl implements OrgService {
             String userId = req.getId();//userId
             UserTeamOrgInfo userTeamOrgInfo = new UserTeamOrgInfo();
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",userId);
+            if(ubs.size() == 0) {
+                throw new ALSException("900201");
+            }
             //因数据问题，返回第一条数据
             UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class,"userId", userId);
             userTeamOrgInfo.setUserId(userId);
@@ -549,6 +561,9 @@ public class OrgServiceImpl implements OrgService {
             userTeamOrgInfo.setTeamId(userTeam.getTeamId());
             OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, ubs.get(0).getOrgId());
             TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
+            if (oInfo == null || teamInfo == null) {
+                throw new ALSException("900201");
+            }
             userTeamOrgInfo.setOrgName(oInfo.getOrgName());
             userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
             userTeamOrgInfos.add(userTeamOrgInfo);
@@ -1275,7 +1290,10 @@ public class OrgServiceImpl implements OrgService {
         OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
         //查询部门员工
         List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",
-            orgInfo.getOrgId()+"%");    
+            orgInfo.getOrgId()+"%");  
+        if (ubs.size() == 0) {
+            throw new ALSException("900307");
+        }
         //新建员工id的list
         List<String> ids = new ArrayList<String>();
         for(UserBelong oi : ubs) {
@@ -1285,6 +1303,7 @@ public class OrgServiceImpl implements OrgService {
         List<EmployeeInfoListDto> list = new ArrayList<EmployeeInfoListDto>();
         //根据返回list循环 新建dto对象　赋值
         EmployeeListByEmplNoReq  elbNoReq = new EmployeeListByEmplNoReq();
+        elbNoReq.setEmployeeNoList(ids);
         ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
         List<EmployeeInfoListDto> employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
         List<EmployeeInfoDto> employeeInfoDtos = response.getMessage().getEmployeeInfoList();
@@ -1300,15 +1319,20 @@ public class OrgServiceImpl implements OrgService {
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             UserTeam userTeam = bomanager.keyLoadBusinessObject(OrgInfo.class, employeeInfoDto.getEmployeeNo());//获取团队id
             List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",employeeInfoDto.getEmployeeNo());//获取部门id
+            if (userTeam == null || userBelongs.size() == 0) {
+                throw new ALSException("900201");
+            }
             OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, userBelongs.get(0).getOrgId());
             TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
+            if (oInfo == null || teamInfo == null) {
+                throw new ALSException("900201");
+            }
             employeeInfoListDto.setTeamName(teamInfo.getTeamName());
             employeeInfoListDto.setOrgName(oInfo.getOrgName());
             employeeInfoListDtos.add(employeeInfoListDto);
         }
         rsp.setTotalCount(employeeInfoDtos.size());
         rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
-        //TODO zcluo
         rsp.setEmployeeInfoListDtos(list);
         return rsp;
     }
@@ -1345,8 +1369,14 @@ public class OrgServiceImpl implements OrgService {
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             UserTeam userTeam = bomanager.keyLoadBusinessObject(OrgInfo.class, employeeInfoDto.getEmployeeNo());//获取团队id
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",employeeInfoDto.getEmployeeNo());//获取部门id
+            if (ubs.size() == 0) {
+                throw new ALSException("900307");
+            }
             OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, ubs.get(0).getOrgId());
             TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
+            if (oInfo == null || teamInfo == null) {
+                throw new ALSException("900201");
+            }
             employeeInfoListDto.setTeamName(teamInfo.getTeamName());
             employeeInfoListDto.setOrgName(oInfo.getOrgName());
             employeeInfoListDtos.add(employeeInfoListDto);
