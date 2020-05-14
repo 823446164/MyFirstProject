@@ -22,6 +22,7 @@ import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.aecd.system.constant.ApplyType;
+import com.amarsoft.aecd.system.constant.LabelStatus;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 
@@ -53,6 +54,7 @@ public class LabelInfo implements Serializable {
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String codeNo;
 
+    @Enum(LabelStatus.class)
     @Description("标签状态")
     @Length(max=10)
     @ActualColumn("LC.labelStatus")
@@ -75,7 +77,7 @@ public class LabelInfo implements Serializable {
     @Description("适用要求类别")
     @Length(max=10)
     @ActualColumn("LC.abilityType")
-    @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Radio, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String abilityType;
 
     @Description("标签说明")
