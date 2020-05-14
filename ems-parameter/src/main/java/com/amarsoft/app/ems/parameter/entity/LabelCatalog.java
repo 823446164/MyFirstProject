@@ -62,7 +62,7 @@ public class LabelCatalog extends BusinessObject {
     private String abilityType;
       
     @Description("标签说明") 
-    @Column(name = "labelDescribe", nullable=false,length=2000) 
+    @Column(name = "labelDescribe",length=2000) 
     private String labelDescribe;
       
     @Description("目录备注") 

@@ -3,28 +3,24 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
+import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
-import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogInfoService;
 import com.amarsoft.app.ems.parameter.entity.RankStandardCatalog;
 import com.amarsoft.app.ems.parameter.entity.RankStandardItems;
-import com.amarsoft.app.ems.employee.entity.EmployeeTargetRank;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoSaveReq;
@@ -57,7 +53,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
 
         RankStandardCatalog rankStandardCatalog = bomanager.loadBusinessObject(RankStandardCatalog.class, "serialNo",
             rankStandardCatalogInfoQueryReq.getSerialNo());
-        if (rankStandardCatalog != null) {
+        if (null!=rankStandardCatalog ) {
             RankStandardCatalogInfoQueryRsp rankStandardCatalogInfo = new RankStandardCatalogInfoQueryRsp();
             rankStandardCatalogInfo.setRankStandard(rankStandardCatalog.getRankStandard());
             rankStandardCatalogInfo.setRankName(rankStandardCatalog.getRankName());
@@ -110,9 +106,9 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 // 根据主键获取实体类信息
                 RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
                     rankStandardCatalogInfo.getSerialNo());
-                if (rankStandardCatalog == null) {
+                if (rankStandardCatalog == null ) {
                     rankStandardCatalog = new RankStandardCatalog();
-                    if (rankStandardCatalogInfo.getSerialNo() == null) {
+                    if (StringUtils.isEmpty(rankStandardCatalogInfo.getSerialNo()) ) {
                         rankStandardCatalog.generateKey();
                     }
                     else {
@@ -190,13 +186,28 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         }
     }
 
-    // 删除校验,待做
-    public boolean checkRandStand(String rankName) {
+ // 删除校验,待做
+    // TODO xphe 删除校验－－－输入：所属团队 当前时间（本月内）团队的职级体系是否有人在申请（目标申请表，状态审批中，待处理）
+    public boolean checkDeleteRandStand(String belongTeam,String type) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        List<EmployeeTargetRank> employeeTargetRanks = bomanager.loadBusinessObjects(EmployeeTargetRank.class, "targetRank=:targetRank",
-            "targetRank", rankName);
-
-        return false;
+        //TeamInfo teaminfo = bomanager.keyLoadBusinessObject(TeamInfo.class, belongTeam);
+       // String teamManager = teaminfo.getRoleA();
+        BusinessObjectAggregate<BusinessObject> flowCount = bomanager.selectBusinessObjectsBySql(
+            "select count(1) as cnt from EmployeeTargetRank er,FlowObject fo where" +
+        " (er.teamManager=:teamManager and date_format(er.inputTime,'%Y%m')=date_format(NOW(),'%Y%m') and er.rankSerialNo=fo.objectNo and fo.phaseName in ('审批中','待处理'))");
+        // List<EmployeeTargetRank> employeeTargetRanks =
+        // bomanager.loadBusinessObjects(EmployeeTargetRank.class,
+        // "teamManager=:teamManager and date_format(inputTime,'%Y%m')=date_format(NOW(),'%Y%m')",
+        // "teamManager", teamManager);
+        BusinessObjectAggregate<BusinessObject> addCount=bomanager.selectBusinessObjectsBySql("select count(1) as cnt from ");
+        int count = flowCount.getBusinessObjects().get(0).getInt("cnt");
+        int addcount=addCount.getBusinessObjects().get(0).getInt("cnt");
+        if (count == 0 || addcount==0) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -311,8 +322,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
                     rankStandardCatalogSonInfoSaveReq.getSerialNo());
                 String parentNo= rankStandardCatalog.getParentRankNo();
-                
-                if (parentNo==null || parentNo=="") {
+                if (StringUtils.isEmpty(parentNo)) {
                     log.info("执行至新增");
                     RankStandardCatalog   newrankStandardCatalog = new RankStandardCatalog();
                     newrankStandardCatalog.generateKey();
