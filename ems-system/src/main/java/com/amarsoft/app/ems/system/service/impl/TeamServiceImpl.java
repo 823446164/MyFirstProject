@@ -21,16 +21,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.amarsoft.app.ems.system.cs.dto.teamorgquery.OrgAndTeam;
-import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
-import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.DataAuth;
 import com.amarsoft.aecd.system.constant.OrgLevel;
-import com.amarsoft.aecd.system.constant.OrgStatus;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
@@ -44,19 +42,17 @@ import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQu
 import com.amarsoft.app.ems.system.cs.dto.deleteteam.DeleteTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.deleteteam.DeleteTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.deleteteamuser.DeleteTeamUserReq;
-import com.amarsoft.app.ems.system.cs.dto.getteamid.GetTeamIdRsp;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.CooperateTeam;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teamorgquery.OrgAndTeam;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
-import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
-import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userquery.User;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
@@ -474,7 +470,10 @@ public class TeamServiceImpl implements TeamService {
 		    UserBelong userBelong = bomanager.loadBusinessObject(UserBelong.class, "userId",req.getEmployeeNo());
 			userTeam.setTeamId(req.getTeamId());
 			userBelong.setOrgId(teamInfo.getBelongOrgId()); 
+			//先删除，再插入信息
+			bomanager.deleteObjectBySql(UserTeam.class, "userId", req.getEmployeeNo());
 			bomanager.updateBusinessObject(userTeam);    //  更新user_team中间表中的所属部门
+			
 			bomanager.updateBusinessObject(userBelong);  //  更新user_belong表中的所属部门
 			
 			bomanager.clear();
@@ -485,7 +484,8 @@ public class TeamServiceImpl implements TeamService {
 
     /**
      * Description: 部门团队列表展示<br>
-     *部门团队列表展示<br>
+     *@param TeamOrgQueryReq
+     *@return TeamOrgQueryRsp(OrgAndTeam)
      * ${tags}
      * @see
      */
@@ -495,15 +495,16 @@ public class TeamServiceImpl implements TeamService {
 		TeamOrgQueryRsp rsp = new TeamOrgQueryRsp();
 		List<OrgAndTeam> orgTeams = new ArrayList<OrgAndTeam>();
 		OrgAndTeam orgTeam = null;
+		//根据部门ＩＤ将获取的部门团队信息排序
 		List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
 				"select OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.roleA as RoleA "
 				+ "from OrgTeam OT,TeamInfo TI,OrgInfo OI where OT.teamId = TI.teamId and OT.orgId = OI.orgId order by OT.orgId").getBusinessObjects();
-		if (!StringUtils.isEmpty(orgTeamLists)) {
+		if (!StringUtils.isEmpty(orgTeamLists)) {//如果部门团队信息不为空，则遍历循环
 			for (BusinessObject businessObject : orgTeamLists) {
 				orgTeam = new OrgAndTeam();
 				//获取当前部门的附属信息表中的部门管理员
 				Department dept = bomanager.loadBusinessObject(Department.class,"deptId",businessObject.getString("OrgId"));
-                if (!StringUtils.isEmpty(dept)) {
+                if (!ObjectUtils.isEmpty(dept)) {//如果部门附属信息不为空
                     orgTeam.setOrgId(businessObject.getString("OrgId"));
                     orgTeam.setOrgName(businessObject.getString("OrgName"));
                     orgTeam.setTeamId(businessObject.getString("TeamId"));
@@ -518,6 +519,7 @@ public class TeamServiceImpl implements TeamService {
 		rsp.setOrgTeams(orgTeams);
 		return rsp;
 	}
+	
 	 /**
      * Description: 根据条件查询团队信息<br>
      * ${tags}
@@ -549,6 +551,31 @@ public class TeamServiceImpl implements TeamService {
        return rsp;
       
        
+    }
+    
+    /**
+     * Description: 根据用户查找对应的团队<br>
+     * @param  UserTeamQueryReq(userId)
+     * @return UserTeamQueryRsp(teamId,teamName)
+     * @see
+     */
+    @Override
+    public UserTeamQueryRsp userTeamQuery(@RequestBody @Valid UserTeamQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        UserTeamQueryRsp rsp = new UserTeamQueryRsp();
+        //查询用户对应的团队信息
+        List<BusinessObject> businessObjects = bomanager
+            .selectBusinessObjectsBySql("select TI.teamId as TeamId,TI.teamName as TeamName from UserTeam UT,TeamInfo TI "
+                + "where UT.teamId=TI.teamId and UT.userId=:userId", "userId",req.getUserId()).getBusinessObjects();
+        String teamId = "";
+        String teamName = "";
+        if (!CollectionUtils.isEmpty(businessObjects)) {//如果获取的团队信息不为空则将信息返回
+           teamId = businessObjects.get(0).getString("TeamId");
+           teamName = businessObjects.get(0).getString("TeamName");
+        }
+        rsp.setTeamId(teamId);
+        rsp.setTeamName(teamName);
+        return rsp;
     }
 
 	
