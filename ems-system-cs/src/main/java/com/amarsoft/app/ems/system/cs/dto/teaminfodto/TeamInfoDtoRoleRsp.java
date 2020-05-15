@@ -1,5 +1,5 @@
 /*
- * 文件名：TeamInfoDtoQueryRoleRep.java
+ * 文件名： 团队角色负责人
  * 版权：Copyright by www.amarsoft.com
  * 描述： 团队角色负责人
  * 修改人：hpli
@@ -13,7 +13,9 @@ package com.amarsoft.app.ems.system.cs.dto.teaminfodto;
 import java.io.Serializable;
 import java.util.List;
 
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
+import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +34,8 @@ import lombok.ToString;
 public class TeamInfoDtoRoleRsp  extends TeamInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
    
-    private String employeeName;
+    private  List<EmployeeInfoDto> list;
+    
+    
      
 }

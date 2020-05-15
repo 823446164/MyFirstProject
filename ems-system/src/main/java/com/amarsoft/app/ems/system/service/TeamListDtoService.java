@@ -1,16 +1,11 @@
 package com.amarsoft.app.ems.system.service;
 
-
 import javax.validation.Valid;
-
-import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteReq;
-import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
-import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRoleRsp;
+
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoSaveReq;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
-
 
 /**
  * 团队信息Service接口
@@ -19,11 +14,12 @@ import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQu
  */
 public interface TeamListDtoService {
 
+
     /**
      * 团队信息查询
      * 
      * @param request
-     * @return
+     * @return rsp
      */
     public TeamListDtoQueryRsp teamListDtoQuery(@Valid TeamListDtoQueryReq teamListDtoQueryReq);
 
@@ -39,7 +35,7 @@ public interface TeamListDtoService {
      * 团队信息删除
      * 
      * @param request
-     * @return
+     * @return 
      */
     public void  teamListDtoDelete(@Valid DeleteInfoDtoQueryReq req);
 
@@ -47,16 +43,9 @@ public interface TeamListDtoService {
      * 根据部门查询团队信息
      * 
      * @param request
-     * @return
+     * @return rsp
      */
     TeamListDtoQueryRsp teamQueryById(TeamListDtoQueryReq request);
 
-    /**
-     * Description:团队角色 <br>
-     * 
-     * @param request
-     * @see
-     */
-    public TeamListDtoQueryRoleRsp teamListDtoRole(TeamListDtoQueryReq request);
 
 }
