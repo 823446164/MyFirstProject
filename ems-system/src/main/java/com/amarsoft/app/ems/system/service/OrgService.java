@@ -176,14 +176,6 @@ public interface OrgService {
     SecondLevelDeptListDtoQueryRsp secondLevelDeptListDtoQuery(SecondLevelDeptListDtoQueryReq req);
 
     /**
-     * Description: 新增二级机构的信息
-     * @param request
-     * @return Map
-     * @see
-     */
-    Map<String, String> secondLevelDeptInfoDtoSave(SecondLevelDeptInfoDtoSaveReq request);
-
-    /**
      * 查询机构树图
      * @param bomanger
      * @return OrgTreeQueryRsp
