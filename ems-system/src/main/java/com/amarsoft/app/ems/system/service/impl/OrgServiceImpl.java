@@ -1328,19 +1328,9 @@ public class OrgServiceImpl implements OrgService {
             employeeInfoListDto.setRntryTime(employeeInfoDto.getRntryTime());
             //employeeInfoListDto.setSex(employeeInfoDto.get);
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
-            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-                "select TI.teamName as teamName,OI.orgName as orgName from UserTeam UT,OrgInfo OI,TeamInfo TI,OrgTeam OT where OI.orgId = OT.orgId"
-                + "and TI.teamId = UT.teamId and UT.teamId = OT.teamId and UT.userId :userId","userId",employeeInfoDto.getEmployeeNo()
-                ).getBusinessObjects();
-            if (CollectionUtils.isEmpty(businessObjects)) {
-                throw new ALSException("EMS6014");
-            }
-            String teamName = null;
-            String orgName = null;
-            for (BusinessObject businessObject : businessObjects) {
-                teamName = businessObject.getString("teamName");//员工的团队名称
-                orgName = businessObject.getString("orgName");//员工的部门名称
-            }
+            Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
+            String teamName = map.get("teamName");
+            String orgName = map.get("orgName");
             employeeInfoListDto.setTeamName(teamName);
             employeeInfoListDto.setOrgName(orgName);
             employeeInfoListDtos.add(employeeInfoListDto);
@@ -1361,7 +1351,7 @@ public class OrgServiceImpl implements OrgService {
         //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
             "select TI.teamName as teamName,OI.orgName as orgName from UserTeam UT,OrgInfo OI,TeamInfo TI,OrgTeam OT where OI.orgId = OT.orgId"
-            + "and TI.teamId = UT.teamId and UT.teamId = OT.teamId and UT.userId :userId","userId",employeeNo
+            + " and TI.teamId = UT.teamId and UT.teamId = OT.teamId and UT.userId= :userId","userId",employeeNo
             ).getBusinessObjects();
         if (CollectionUtils.isEmpty(businessObjects)) {
             throw new ALSException("EMS6014");
