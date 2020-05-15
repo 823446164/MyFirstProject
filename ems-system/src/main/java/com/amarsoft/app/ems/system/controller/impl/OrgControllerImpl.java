@@ -398,6 +398,7 @@ public class OrgControllerImpl implements OrgController {
      * @see
      */
     @Override
+    @Transactional
     public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> employeeInfoListDtoQuery(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg) {
         ResponseMessage<EmployeeInfoListDtoQueryRsp> rspMsg = null;
         try {
@@ -424,6 +425,7 @@ public class OrgControllerImpl implements OrgController {
      */
     @Override
     @CodeQuery
+    @Transactional
     public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> employeeInfoListDtoSearch(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoSearchReq> reqMsg) {
         ResponseMessage<EmployeeInfoListDtoQueryRsp> rspMsg = null;
         try {
