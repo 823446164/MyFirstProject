@@ -6,8 +6,15 @@ import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.amps.arem.annotation.Description;
@@ -20,6 +27,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Description("追踪记录表")
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(
     name="EMPLOYEE_TRACE_RECORD")
@@ -56,28 +64,32 @@ public class EmployeeTraceRecord extends BusinessObject {
     @Column(name = "teamLeader",length=40) 
     private String teamLeader;
       
-    @Description("登记人") 
-    @Column(name = "inputUserId",length=32) 
+    @Description("登记人")
+    @CreatedBy
+    @Column(name = "inputUserId", length = 32)
     private String inputUserId;
-      
-    @Description("登记机构") 
-    @Column(name = "inputOrgId",length=32) 
+
+    @Description("登记机构")
+    @Column(name = "inputOrgId", length = 32)
     private String inputOrgId;
-      
-    @Description("登记日期") 
-    @Column(name = "inputDate",length=20) 
+
+    @Description("登记日期")
+    @CreatedDate
+    @Column(name = "inputDate", length = 20)
     private LocalDateTime inputDate;
-      
-    @Description("更新人") 
-    @Column(name = "updateUserId",length=32) 
+
+    @Description("更新人")
+    @LastModifiedBy
+    @Column(name = "updateUserId", length = 32)
     private String updateUserId;
-      
-    @Description("更新机构") 
-    @Column(name = "updateOrgId",length=32) 
+
+    @Description("更新机构")
+    @Column(name = "updateOrgId", length = 32)
     private String updateOrgId;
-      
-    @Description("更新时间") 
-    @Column(name = "updateDate",length=20) 
+
+    @Description("更新时间")
+    @LastModifiedDate
+    @Column(name = "updateDate", length = 20)
     private LocalDateTime updateDate;
     
     public String getInputDate() {

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -19,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.ArchitectureType;
+import com.amarsoft.aecd.system.constant.ChangeEventType;
 import com.amarsoft.aecd.system.constant.CompanyType;
 import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.aecd.system.constant.OrgStatus;
@@ -1110,7 +1112,7 @@ public class OrgServiceImpl implements OrgService {
         changeEvent.setObjectNo(req.getObjectNo());
         changeEvent.setRemark(req.getRemark());
         changeEvent.setChangeContext("删除部门信息:"+orgInfo.getOrgId());
-        changeEvent.setObjectType("DELETE");
+        changeEvent.setObjectType(ChangeEventType.Delete.id);
         changeEvent.setInputDate(LocalDateTime.now());
         changeEvent.setInputUserId(GlobalShareContextHolder.getUserId());
         changeEvent.setOccurDate(LocalDateTime.now());
@@ -1286,15 +1288,17 @@ public class OrgServiceImpl implements OrgService {
             //employeeInfoListDto.setSex(employeeInfoDto.get);
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
+            if (MapUtils.isEmpty(map)) {
+                throw new ALSException("EMS6014");
+            }
             String teamName = map.get("teamName");
             String orgName = map.get("orgName");
             employeeInfoListDto.setTeamName(teamName);
             employeeInfoListDto.setOrgName(orgName);
             employeeInfoListDtos.add(employeeInfoListDto);
         }
-        rsp.setTotalCount(employeeInfoDtos.size());
+        rsp.setTotalCount(employeeInfoListDtos.size());
         rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
-        rsp.setEmployeeInfoListDtos(list);
         return rsp;
     }
 
@@ -1319,8 +1323,9 @@ public class OrgServiceImpl implements OrgService {
         ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
         List<EmployeeInfoListDto> employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
         List<EmployeeInfoDto> list = response.getMessage().getEmployeeInfoList();
+        EmployeeInfoListDto employeeInfoListDto = null;
         for (EmployeeInfoDto employeeInfoDto : list) {
-            EmployeeInfoListDto employeeInfoListDto = new EmployeeInfoListDto();
+            employeeInfoListDto = new EmployeeInfoListDto();
             employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
             employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
             employeeInfoListDto.setEmployeeNo(employeeInfoDto.getEmployeeNo());
@@ -1329,13 +1334,16 @@ public class OrgServiceImpl implements OrgService {
             //employeeInfoListDto.setSex(employeeInfoDto.get);
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
+            if (MapUtils.isEmpty(map)) {
+                throw new ALSException("EMS6014");
+            }
             String teamName = map.get("teamName");
             String orgName = map.get("orgName");
             employeeInfoListDto.setTeamName(teamName);
             employeeInfoListDto.setOrgName(orgName);
             employeeInfoListDtos.add(employeeInfoListDto);
         }
-        rsp.setTotalCount(list.size());
+        rsp.setTotalCount(employeeInfoListDtos.size());
         rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
         return rsp;
     }
