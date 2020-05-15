@@ -12,25 +12,26 @@
 package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist;
 
 import java.io.Serializable;
+
+import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.NotEmpty;
+import com.amarsoft.amps.acsc.annotation.Range;
+import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
+import com.amarsoft.amps.acsc.query.annotation.QueryOrderBy;
+import com.amarsoft.amps.acsc.query.annotation.QueryPageSize;
+import com.amarsoft.amps.acsc.query.annotation.QueryRule;
+import com.amarsoft.amps.arem.annotation.Description;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.amarsoft.amps.acsc.query.annotation.QueryRule;
-import com.amarsoft.amps.acsc.query.QueryParameter;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.acsc.annotation.ActualColumn;
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
-import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
-import com.amarsoft.amps.acsc.annotation.Range;
-import com.amarsoft.amps.acsc.query.annotation.QueryPageSize;
-import com.amarsoft.amps.acsc.query.annotation.QueryOrderBy;
 
 /**
  * 〈职级标准列表查询请求实体类〉
  * 
  * @author xphe
  * @version 2020年5月8日
- * @see RankStandardCatalogSonQueryReq
+ * @see RankStandardCatalogChildQueryReq
  * @since
  */
 @Getter
@@ -42,6 +43,10 @@ public class RankStandardCatalogListQueryReq implements Serializable {
     @Description("所属团队")
     @ActualColumn("RSC.belongTeam")
     private String belongTeam;
+    
+    @Description("职级类型")
+    @ActualColumn("RSC.rankType")
+    private String rankType;
 
     @Description("起始条数")
     @NotEmpty
