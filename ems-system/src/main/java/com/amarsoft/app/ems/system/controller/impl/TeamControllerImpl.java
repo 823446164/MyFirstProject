@@ -150,7 +150,7 @@ public class TeamControllerImpl implements TeamController {
 
     @Override
     @Transactional
-   
+    @CodeQuery
     public ResponseEntity<ResponseMessage<TeamQueryRsp>> teamQuery(@RequestBody @Valid RequestMessage<TeamQueryReq> reqMsg){
         ResponseMessage<TeamQueryRsp> rspMsg = null;
         try {
@@ -162,7 +162,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "9001001",e.getMessage());
             return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -434,7 +434,7 @@ public class TeamControllerImpl implements TeamController {
                 //事务回滚
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             
-                rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+                rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
                 return new ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
             }
     }

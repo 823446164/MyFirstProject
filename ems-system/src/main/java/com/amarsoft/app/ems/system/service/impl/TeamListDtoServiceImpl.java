@@ -179,6 +179,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
 
                 }
 
+                
                 List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
                 if (businessObjects != null && businessObjects.size() > 0) {
                     for (BusinessObject bos : businessObjects) {

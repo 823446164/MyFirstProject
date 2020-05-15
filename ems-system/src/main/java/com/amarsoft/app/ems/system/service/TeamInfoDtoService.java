@@ -36,7 +36,6 @@ public interface TeamInfoDtoService {
      */
     public TeamInfoDtoQueryRsp updateStatus(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq);
 
-
     /**
      * 团队负责人
      * @param request
