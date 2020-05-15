@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.hibernate.hql.internal.CollectionSubqueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -17,9 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
-import com.amarsoft.amps.acsc.rpc.RequestMessage;
-import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.ArchitectureType;
 import com.amarsoft.aecd.system.constant.CompanyType;
@@ -27,6 +25,9 @@ import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.aecd.system.constant.OrgType;
 import com.amarsoft.aecd.system.constant.SystemStatus;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.acsc.rpc.RequestMessage;
+import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
@@ -56,10 +57,10 @@ import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
-import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.entity.ChangeEvent;
 import com.amarsoft.app.ems.system.entity.Department;
 import com.amarsoft.app.ems.system.entity.OrgInfo;
+import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.entity.UserBelong;
 import com.amarsoft.app.ems.system.entity.UserTeam;
@@ -77,10 +78,10 @@ import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.
 import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoQueryRsp;
-import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoSaveReq;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDto;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryRsp;
+import com.ibm.db2.jcc.am.n;
 
 /**
  * 机构服务的接口实现类
@@ -188,33 +189,33 @@ public class OrgServiceImpl implements OrgService {
         String orgId = req.getOrgId();
         OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, orgId);
         if (orgInfo == null) {
-            throw new ALSException("900210");
+            throw new ALSException("EMS6012");
         }
 
-        //判断完成　还是　停用　　0:完成;1:停用;
-        if("0".equals(req.getChangeId())) {//完成功能
+        //判断完成　还是　停用　　1:完成;2:停用;
+        if(OrgStatus.Completed.id.equals(req.getChangeId())) {//完成功能
             if(OrgStatus.Disabled.id.equals(orgInfo.getStatus()) || OrgStatus.New.id.equals(orgInfo.getStatus())) {
                 orgInfo.setStatus(OrgStatus.Completed.id);
             }else {
                 throw new ALSException("EMS6007");
             }
-        }else if("1".equals(req.getChangeId()))  {//停用功能
+        }else if(OrgStatus.Disabled.id.equals(req.getChangeId()))  {//停用功能
             if(!OrgStatus.Completed.id.equals(orgInfo.getStatus())){
                 throw new ALSException("EMS6001");
                 }
             Department department = bomanager.keyLoadBusinessObject(Department.class, orgId);
             if(department == null){ //部门附属表不存在
                 throw new ALSException("900201");
-            }else if(!StringUtils.isEmpty(department.getDeptManager())) {
+            }else if(!StringUtils.isEmpty(department.getDeptManager())) {//未获取到部门经理
                 throw new ALSException("EMS6002");              
             }
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",orgId+"%");
-            if(ubs.size() != 0) {
+            if(ubs.size() != 0) {//部门下存在员工
                 throw new ALSException("EMS6006");
             }
             orgInfo.setStatus(OrgStatus.Disabled.id);
         }else {
-            throw new ALSException("传入变更编号不正确!");
+            throw new ALSException("EMS6013",req.getChangeId());
         }
 
         // 更新到数据库
@@ -520,53 +521,46 @@ public class OrgServiceImpl implements OrgService {
     public OrgUserQueryRsp orgUserQuery(OrgUserQueryReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         OrgUserQueryRsp rsp = new OrgUserQueryRsp();
-        List<UserTeamOrgInfo> userTeamOrgInfos = new ArrayList<UserTeamOrgInfo>();
+        List<UserTeamOrgInfo> userTeamOrgInfos = new ArrayList<UserTeamOrgInfo>();//新建返回list
         if (ArchitectureType.Department.id.equals(req.getRoleId())) {//部门
             String orgId = req.getId();//orgId
-            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, 
-                "orgId like :orgId", "orgId",orgId+"%"); 
-            if(ubs.size() == 0) {
-                throw new ALSException("900307");
+            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+                "select UB.userId as userId,UB.orgId as orgId,OI.orgName as orgName,TI.teamId as teamId,"
+                + "TI.teamName as teamName from UserBelong UB,UserTeam UT,OrgInfo OI,TeamInfo TI where "
+                + "UB.userId = UT.userId and UB.orgId = :orgId and UT.teamId = TI.teamId and OI.orgId = UB.orgId","orgId",orgId
+                ).getBusinessObjects();
+            if (businessObjects.size() == 0) {
+                throw new ALSException("EMS6014");
             }
-            for (UserBelong userBelong : ubs) {
-                UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class,"userId", userBelong.getUserId());
-                if (userTeam == null) {
-                    throw new ALSException("900201");
-                }
-                UserTeamOrgInfo userTeamOrgInfo = new UserTeamOrgInfo();
-                userTeamOrgInfo.setUserId(userBelong.getUserId());
-                userTeamOrgInfo.setOrgId(orgId);
-                userTeamOrgInfo.setTeamId(userTeam.getTeamId());
-                //查询对应的部门名称和团队名称
-                OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, orgId);
-                TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
-                if (oInfo == null || teamInfo == null) {
-                    throw new ALSException("900201");
-                }
-                userTeamOrgInfo.setOrgName(oInfo.getOrgName());
-                userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
+            UserTeamOrgInfo userTeamOrgInfo = null;
+            for (BusinessObject businessObject : businessObjects) {
+                userTeamOrgInfo =new UserTeamOrgInfo();
+                userTeamOrgInfo.setOrgId(businessObject.getString("orgId"));
+                userTeamOrgInfo.setOrgName(businessObject.getString("orgName"));
+                userTeamOrgInfo.setTeamId(businessObject.getString("teamId"));
+                userTeamOrgInfo.setTeamName(businessObject.getString("teamName"));
+                userTeamOrgInfo.setUserId(businessObject.getString("userId"));
                 userTeamOrgInfos.add(userTeamOrgInfo);
             }
         }else if (ArchitectureType.Team.id.equals(req.getRoleId())) {//团队
-            String userId = req.getId();//userId
-            UserTeamOrgInfo userTeamOrgInfo = new UserTeamOrgInfo();
-            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",userId);
-            if(ubs.size() == 0) {
-                throw new ALSException("900201");
+            String userId = req.getId();//部门负责人的userId
+            //查询对应的团队所有员工的团队，部门信息（唯一）
+            UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class,"userId", userId);//根据部门负责人查询团队
+            String teamId = userTeam.getTeamId();
+            OrgTeam orgTeam = bomanager.loadBusinessObject(OrgTeam.class,"teamId", teamId);//查询所属部门
+            TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamId);//查询团队名称
+            OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, orgTeam.getOrgId());//查询部门名称
+            List<UserTeam> userTeams = bomanager.loadBusinessObjects(UserTeam.class,"teamId= :teamId","teamId",teamId);
+            UserTeamOrgInfo userTeamOrgInfo = null;
+            for (UserTeam ut : userTeams) {
+                userTeamOrgInfo =new UserTeamOrgInfo();
+                userTeamOrgInfo.setOrgId(orgTeam.getOrgId());
+                userTeamOrgInfo.setOrgName(orgInfo.getOrgName());
+                userTeamOrgInfo.setTeamId(teamId);
+                userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
+                userTeamOrgInfo.setUserId(ut.getUserId());
+                userTeamOrgInfos.add(userTeamOrgInfo);
             }
-            //因数据问题，返回第一条数据
-            UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class,"userId", userId);
-            userTeamOrgInfo.setUserId(userId);
-            userTeamOrgInfo.setOrgId(ubs.get(0).getOrgId());
-            userTeamOrgInfo.setTeamId(userTeam.getTeamId());
-            OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, ubs.get(0).getOrgId());
-            TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
-            if (oInfo == null || teamInfo == null) {
-                throw new ALSException("900201");
-            }
-            userTeamOrgInfo.setOrgName(oInfo.getOrgName());
-            userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
-            userTeamOrgInfos.add(userTeamOrgInfo);
         }
         rsp.setUserTeamOrgInfos(userTeamOrgInfos);
         return rsp;
@@ -942,7 +936,7 @@ public class OrgServiceImpl implements OrgService {
         Department department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
         
         if(orgInfo == null || department == null) {
-            throw new ALSException("900201");     
+            throw new ALSException("EMS6012");     
         }
         rsp.setOrgId(orgInfo.getOrgId());
         rsp.setParentOrgId(orgInfo.getParentOrgId());
@@ -956,7 +950,7 @@ public class OrgServiceImpl implements OrgService {
     }
 
     /**
-     * Description: 新增、保存一级机构的信息
+     * Description: 新增、保存一级部门的信息
      * @param req
      * @return 
      * @see
@@ -964,29 +958,45 @@ public class OrgServiceImpl implements OrgService {
     @Override
     public Map<String, String> oneLevelDeptDtoSave(OneLevelDeptDtoSaveReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
-        Department department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
-        if (orgInfo != null) {
-            department.setDeptId(req.getOrgId());
-            department.setDeptName(req.getOrgName());
-            department.setDeptManager(req.getDeptManager());
-            department.setDeptEquipment(req.getDeptEquipment());
-            department.setDeptAddress(req.getDeptAddress());
-            department.setRemark(req.getRemark());
-            department.setInputUserId(GlobalShareContextHolder.getOrgId());
-            
-            orgInfo.setParentOrgId(req.getParentOrgId());
-            orgInfo.setOrgId(req.getOrgId());
-            orgInfo.setSortNo(req.getOrgId());
-            orgInfo.setOrgName(req.getOrgName());
-        }else {
-            //根据名称查询部门，判断是否有重名的部门名称
+        OrgInfo orgInfo = null;
+        Department department = null;
+        if (req.getOrgId() == null) {//新增
+          //根据名称查询部门，判断是否有重名的部门名称
             OrgInfo OI = bomanager.loadBusinessObject(OrgInfo.class,"orgName",req.getOrgName());
             if(OI != null) {
-                throw new ALSException("该部门名称已存在，请核实后再操作！");
+                throw new ALSException("EMS6015",req.getOrgName());
+            }
+            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+                "select orgId as orgId from OrgInfo where orgId like :orgId and orgId <> :orgId and "
+                + "orgLevel = :orgLevel order by orgId desc","orgId",req.getParentOrgId()+"%","orgLevel",req.getOrgLevel()
+                ).getBusinessObjects();
+            OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class,req.getParentOrgId());//查询父部门的部门等级
+            int ruleLength = Integer.parseInt(req.getRuleLength());//部门编号长度
+            String orgId = null;
+            if (!CollectionUtils.isEmpty(businessObjects)) {//当前部门级别存在子部门
+                String temp = businessObjects.get(0).getString("orgId");//获取最大子部门编号
+                //分成前后两部门，对后半部分＋１后与前面合并
+                String orgId1 = temp.substring(0,temp.length()-ruleLength);
+                int orgId2 = Integer.parseInt(temp.substring(temp.length()-ruleLength, temp.length()))+1;
+                StringBuilder sBuilder = new StringBuilder();
+                for(int i=0; i<ruleLength;i++) {
+                    sBuilder.append("0");
+                }
+                DecimalFormat decimalFormat = new DecimalFormat(sBuilder.toString());
+                String format = decimalFormat.format(orgId2);
+                orgId = orgId1 + format;
+            }else {
+                int lengthString = ruleLength*(Integer.parseInt(req.getOrgLevel())-Integer.parseInt(oInfo.getOrgLevel()));//新增部门编号长度×等级差距，判断需要加入的０的个数
+                StringBuilder sBuilder = new StringBuilder();
+                for(int i=0; i<lengthString;i++) {
+                    sBuilder.append("0");
+                }
+                DecimalFormat decimalFormat = new DecimalFormat(sBuilder.toString());
+                String format = decimalFormat.format(1);
+                orgId =req.getParentOrgId()+format;
             }
             department = new Department();
-            department.setDeptId(req.getOrgId());
+            department.setDeptId(orgId);
             department.setDeptName(req.getOrgName());
             department.setDeptManager(req.getDeptManager());
             department.setDeptEquipment(req.getDeptEquipment());
@@ -997,8 +1007,8 @@ public class OrgServiceImpl implements OrgService {
             orgInfo = new OrgInfo();
             //设置部门所属上级
             orgInfo.setParentOrgId(req.getParentOrgId());
-            orgInfo.setOrgId(req.getOrgId());
-            orgInfo.setSortNo(req.getOrgId());
+            orgInfo.setOrgId(orgId);
+            orgInfo.setSortNo(orgId);
             orgInfo.setOrgName(req.getOrgName());
             orgInfo.setStatus(OrgStatus.New.id);
             //设置部门等级，可修改  2为一级部门  3为二级部门
@@ -1007,10 +1017,25 @@ public class OrgServiceImpl implements OrgService {
             }else if(OrgLevel.LEVEL_3.id.equals(req.getParam())){//二级部门
                 orgInfo.setOrgLevel(OrgLevel.LEVEL_3.id); 
             }else {
-                throw new ALSException("获取部门参数错误！");
+                throw new ALSException("EMS6016",req.getParam());
             }
+        }else {//保存功能
+            orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
+            department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
+            department.setDeptId(req.getOrgId());
+            department.setDeptName(req.getOrgName());
+            department.setDeptManager(req.getDeptManager());
+            department.setDeptEquipment(req.getDeptEquipment());
+            department.setDeptAddress(req.getDeptAddress());
+            department.setRemark(req.getRemark());
+            department.setInputUserId(GlobalShareContextHolder.getOrgId());
+
+            orgInfo.setParentOrgId(req.getParentOrgId());
+            orgInfo.setOrgId(req.getOrgId());
+            orgInfo.setSortNo(req.getOrgId());
+            orgInfo.setOrgName(req.getOrgName());
         }
-        
+
         // 更新到数据库
         bomanager.updateBusinessObject(department);
         bomanager.updateBusinessObject(orgInfo);
@@ -1033,7 +1058,7 @@ public class OrgServiceImpl implements OrgService {
         
       List<Department> dts = bomanager.loadBusinessObjects(Department.class, "deptName like :deptName","deptName","%"+req.getOrgName()+"%");  
         if(dts.size() == 0) {
-            throw new ALSException("900201");           
+            throw new ALSException("EMS6012");           
         }
         List<SearchSecondLevelDeptListDto> ssds = new ArrayList<SearchSecondLevelDeptListDto>();
         for(Department dt : dts) {
@@ -1068,7 +1093,7 @@ public class OrgServiceImpl implements OrgService {
             if (department.getDeptManager()!=null &&department.getDeptManager().trim().length()>0) {
                 throw new ALSException("EMS6002");           
             }
-            //上海安硕信息股份有限公司未固定节点，此为固定节点，不予删除
+            //上海安硕信息股份有限公司为固定节点，此为固定节点，不予删除
             if (("上海安硕信息股份有限公司").equals(orgInfo.getOrgName())) {
                 throw new ALSException("EMS6003");          
             }
@@ -1078,12 +1103,12 @@ public class OrgServiceImpl implements OrgService {
             if (!CollectionUtils.isEmpty(ois)) {
                 throw new ALSException("EMS6004");
             }
-        }else if(orgInfo.getOrgLevel().equals(OrgLevel.LEVEL_3.id)) {//二级部门
-            if(orgInfo.getStatus().equals(OrgStatus.Completed.id)) {//未停用
+        }else if(OrgLevel.LEVEL_3.id.equals(orgInfo.getOrgLevel())) {//二级部门
+            if(OrgStatus.Completed.id.equals(orgInfo.getStatus())) {//未停用
                 throw new ALSException("EMS6005");
             }
         }
-        
+        //在changeEvent表插入数据
         changeEvent.setObjectNo(req.getObjectNo());
         changeEvent.setRemark(req.getRemark());
         changeEvent.setChangeContext("删除部门信息:"+orgInfo.getOrgId());
@@ -1118,13 +1143,13 @@ public class OrgServiceImpl implements OrgService {
         Department department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
         
         if(orgInfo == null || department == null) {
-            throw new ALSException("900201");         
+            throw new ALSException("EMS6012");         
         }
         rsp.setOrgId(orgInfo.getOrgId());
         rsp.setParentOrgId(orgInfo.getParentOrgId());
         OrgInfo orgInfoParent = bomanager.keyLoadBusinessObject(OrgInfo.class, orgInfo.getParentOrgId());
         if(orgInfoParent == null) {
-            throw new ALSException("900201");      
+            throw new ALSException("EMS6012");      
         }
         rsp.setParentOrgName(orgInfoParent.getOrgName());
         rsp.setOrgName(orgInfo.getOrgName());
@@ -1151,7 +1176,7 @@ public class OrgServiceImpl implements OrgService {
         //输入一级部门的id，获取二级部门的list
         OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
         if(orgInfo == null) {
-            throw new ALSException("900201");         
+            throw new ALSException("EMS6012");         
         }
         
         //查询二级部门list
@@ -1163,7 +1188,7 @@ public class OrgServiceImpl implements OrgService {
             //获取每个下级部门的部门经理
             Department dt = bomanager.keyLoadBusinessObject(Department.class, oi.getOrgId());
             if(dt == null) {
-                throw new ALSException("900201");         
+                throw new ALSException("EMS6012");         
             }
             secondLevelDeptListDto.setDeptManager(dt.getDeptManager());
             secondLevelDeptListDto.setDeptName(dt.getDeptName());
@@ -1177,61 +1202,6 @@ public class OrgServiceImpl implements OrgService {
         rsp.setTotalCount(secondLevelDeptListDtos.size());
         rsp.setSecondLevelDeptListDtos(secondLevelDeptListDtos);
         return rsp;
-    }
-
-    /**
-     * Description: 新增、保存二级机构的信息
-     * @param req
-     * @return 
-     * @see
-     */
-    @Override
-    public Map<String, String> secondLevelDeptInfoDtoSave(SecondLevelDeptInfoDtoSaveReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-
-        OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
-        Department department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
-        if (orgInfo != null) {
-            department.setDeptId(req.getOrgId());
-            department.setDeptName(req.getOrgName());
-            department.setDeptManager(req.getDeptManager());
-            department.setDeptEquipment(req.getDeptEquipment());
-            department.setDeptAddress(req.getDeptAddress());
-            department.setRemark(req.getRemark());
-            department.setInputUserId(GlobalShareContextHolder.getOrgId());
-            
-            orgInfo.setParentOrgId(req.getParentOrgId());
-            orgInfo.setOrgId(req.getOrgId());
-            orgInfo.setSortNo(req.getOrgId());
-            orgInfo.setOrgName(req.getOrgName());
-        }else {
-            department = new Department();
-            department.setDeptId(req.getOrgId());
-            department.setDeptName(req.getOrgName());
-            department.setDeptManager(req.getDeptManager());
-            department.setDeptEquipment(req.getDeptEquipment());
-            department.setDeptAddress(req.getDeptAddress());
-            department.setRemark(req.getRemark());
-            department.setInputUserId(GlobalShareContextHolder.getOrgId());
-            
-            orgInfo = new OrgInfo();
-            //设置部门所属上级
-            orgInfo.setParentOrgId(req.getParentOrgId());
-            orgInfo.setOrgId(req.getOrgId());
-            orgInfo.setSortNo(req.getOrgId());
-            orgInfo.setOrgName(req.getOrgName());
-            orgInfo.setStatus(OrgStatus.New.id);
-            //设置部门等级，可修改  3为二级部门
-            orgInfo.setOrgLevel(OrgLevel.LEVEL_3.id); 
-        }
-        
-        // 更新到数据库
-        bomanager.updateBusinessObject(department);
-        bomanager.updateBusinessObject(orgInfo);
-        bomanager.updateDB();
-        Map<String, String> map=new HashMap<String, String>();
-        map.put("status","Y");
-        return map;
     }
 
     /**
@@ -1291,8 +1261,8 @@ public class OrgServiceImpl implements OrgService {
         //查询部门员工
         List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",
             orgInfo.getOrgId()+"%");  
-        if (ubs.size() == 0) {
-            throw new ALSException("900307");
+        if (ubs.size() == 0) {//未查询到员工
+            throw new ALSException("EMS6014");
         }
         //新建员工id的list
         List<String> ids = new ArrayList<String>();
@@ -1320,12 +1290,12 @@ public class OrgServiceImpl implements OrgService {
             UserTeam userTeam = bomanager.keyLoadBusinessObject(OrgInfo.class, employeeInfoDto.getEmployeeNo());//获取团队id
             List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",employeeInfoDto.getEmployeeNo());//获取部门id
             if (userTeam == null || userBelongs.size() == 0) {
-                throw new ALSException("900201");
+                throw new ALSException("EMS6012");
             }
             OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, userBelongs.get(0).getOrgId());
             TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
             if (oInfo == null || teamInfo == null) {
-                throw new ALSException("900201");
+                throw new ALSException("EMS6012");
             }
             employeeInfoListDto.setTeamName(teamInfo.getTeamName());
             employeeInfoListDto.setOrgName(oInfo.getOrgName());
@@ -1370,12 +1340,12 @@ public class OrgServiceImpl implements OrgService {
             UserTeam userTeam = bomanager.keyLoadBusinessObject(OrgInfo.class, employeeInfoDto.getEmployeeNo());//获取团队id
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",employeeInfoDto.getEmployeeNo());//获取部门id
             if (ubs.size() == 0) {
-                throw new ALSException("900307");
+                throw new ALSException("EMS6014");
             }
             OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, ubs.get(0).getOrgId());
             TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
             if (oInfo == null || teamInfo == null) {
-                throw new ALSException("900201");
+                throw new ALSException("EMS6012");
             }
             employeeInfoListDto.setTeamName(teamInfo.getTeamName());
             employeeInfoListDto.setOrgName(oInfo.getOrgName());

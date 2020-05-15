@@ -350,28 +350,6 @@ public class OrgControllerImpl implements OrgController {
     }
 
     /**
-     * Description: 新增、保存二级部门
-     * @param reqMsg
-     * @return  Map
-     * @see
-     */
-    @Override
-    public ResponseEntity<ResponseMessage<Object>> secondLevelDeptInfoDtoSave(@RequestBody @Valid RequestMessage<SecondLevelDeptInfoDtoSaveReq> reqMsg) {
-        try {
-            Map<String, String> map =  orgService.secondLevelDeptInfoDtoSave(reqMsg.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(map), HttpStatus.OK);
-        } catch(Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("[请求报文：" + reqMsg.toString() + "]", e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            ResponseMessage<Object> hrb = ResponseMessage.getResponseMessageFromException(e, "900203", e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
      * Description: 查询二级部门list
      * @param reqMsg
      * @return  ResponseEntity
