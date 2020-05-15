@@ -68,7 +68,6 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
         List<LabelCatalog> LabelCatalogs = new ArrayList<>();
         List<LabelCatalog> childrenLabelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:serialNo and (labelType=:labelType2 or labelType=:labelType3) order by serialNo",
             "labelType2",LabelType._3.id, "labelType3",LabelType._2.id,"serialNo", serialNo);
-//        bomanager.selectBusinessObjectsBySql("select * from LabelCatalog where parentNo=:serialNo and (labelType=2 or labelType=3)", parameters)
         childrenLabelCatalogs.forEach(childrenLabelCatalog -> {
             LabelCatalogs.add(childrenLabelCatalog);
             LabelCatalogs.addAll(queryChildrenCatalog(bomanager, childrenLabelCatalog.getSerialNo()));
