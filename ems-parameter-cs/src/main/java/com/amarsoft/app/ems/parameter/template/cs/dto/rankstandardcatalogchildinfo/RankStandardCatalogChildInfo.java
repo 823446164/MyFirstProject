@@ -9,7 +9,7 @@
  * 修改内容：
  */
 
-package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogsoninfo;
+package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo;
 
 import java.io.Serializable;
 
@@ -26,14 +26,14 @@ import lombok.ToString;
 /**
  * @author xphe
  * @version 2020年5月9日
- * @see RankStandardCatalogSonInfo
+ * @see RankStandardCatalogChildInfo
  * @since
  */
 @Getter
 @Setter
 @ToString
 @TemplateHeader(id = "RankStandardCatalogSonInfo", name = "子职级标准详情", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 1)
-public class RankStandardCatalogSonInfo implements Serializable{
+public class RankStandardCatalogChildInfo implements Serializable{
     private static final long serialVersionUID = 1L;
     
     @Description("职级编号")
@@ -89,4 +89,16 @@ public class RankStandardCatalogSonInfo implements Serializable{
     @ActualColumn("RSC.parentRankNo")
     @TemplateBody(sortNo = 16, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, isSorted = false, groupIndex = -1)
     private String parentRankNo;
+    
+    @Description("所属团队")
+    @Length(max=40)
+    @ActualColumn("RSC.belongTeam")
+    @TemplateBody(sortNo = 17, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
+    private String belongTeam;
+
+    @Description("指标类型")
+    @Length(max=40)
+    @ActualColumn("RSC.rankType")
+    @TemplateBody(sortNo = 18, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
+    private String rankType;
 }

@@ -14,13 +14,10 @@ package com.amarsoft.app.ems.parameter.template.service;
 import java.util.Map;
 
 import javax.validation.Valid;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryReq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoQueryRsp;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoSaveReq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo.RankStandardCatalogInfoSaveRsq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogsoninfo.RankStandardCatalogSonInfoQueryReq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogsoninfo.RankStandardCatalogSonInfoQueryRsq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogsoninfo.RankStandardCatalogSonInfoSaveReq;
+
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoQueryReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoQueryRsq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoSaveReq;
 
 /**
  * 〈职级标准详情Service接口〉
@@ -34,50 +31,25 @@ public interface RankStandardCatalogInfoService {
 
     /**
      * 
-     * Description: 职级标准详情查询
-     *
-     * @param rankStandardCatalogInfoQueryReq
-     */
-    public RankStandardCatalogInfoQueryRsp rankStandardCatalogInfoQuery(@Valid RankStandardCatalogInfoQueryReq rankStandardCatalogInfoQueryReq);
-
-
-    /**
-     * 
-     * Description: 职级标准详情保存
-     *
-     * @param rankStandardCatalogInfoSaveReq
-     */
-    public RankStandardCatalogInfoSaveRsq rankStandardCatalogInfoSave(@Valid RankStandardCatalogInfoSaveReq rankStandardCatalogInfoSaveReq);
-
-    /**
-     * 
      * Description: 职级标准详情删除
      *
-     * @param rankStandardCatalogInfoSaveReq
+     * @param rankStandardCatalogChildInfoQueryReq
      */
-    public void rankStandardCatalogInfoDelete(@Valid RankStandardCatalogInfoQueryReq rankStandardCatalogInfoQueryReq);
-    
-    /**
-     * 
-     * Description: 子职级标准详情删除
-     *
-     * @param rankStandardCatalogInfoSaveReq
-     */
-    public void rankStandardCatalogSonInfoDelete(@Valid RankStandardCatalogInfoQueryReq rankStandardCatalogInfoQueryReq);    
+    public void rankStandardCatalogInfoDelete(@Valid RankStandardCatalogChildInfoQueryReq rankStandardCatalogChildInfoQueryReq);
     
     /**
      * 
      * Description: 子职级标准详情保存
      *
-     * @param rankStandardCatalogInfoSaveReq
+     * @param rankStandardCatalogChildInfoSaveReq
      */
-    public  Map<String,String> rankStandardCatalogSonInfoSave(@Valid RankStandardCatalogSonInfoSaveReq rankStandardCatalogSonInfoSaveReq);
+    public  Map<String,String> rankStandardCatalogChildInfoSave(@Valid RankStandardCatalogChildInfoSaveReq rankStandardCatalogChildInfoSaveReq);
     
     /**
      * 
      * Description: 子职级标准详情查询
      *
-     * @param rankStandardCatalogInfoSaveReq
+     * @param rankStandardCatalogChildInfoQueryReq
      */
-    public RankStandardCatalogSonInfoQueryRsq rankStandardCatalogSonInfoQuery(@Valid RankStandardCatalogSonInfoQueryReq rankStandardCatalogSonInfoQueryReq);
+    public RankStandardCatalogChildInfoQueryRsq rankStandardCatalogChildInfoQuery(@Valid RankStandardCatalogChildInfoQueryReq rankStandardCatalogChildInfoQueryReq);
 }
