@@ -1284,21 +1284,10 @@ public class OrgServiceImpl implements OrgService {
             employeeInfoListDto.setEmployeeRank(employeeInfoDto.getNowRank());
             employeeInfoListDto.setRntryTime(employeeInfoDto.getRntryTime());
             //employeeInfoListDto.setSex(employeeInfoDto.get);
-
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
-            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-                "select TI.teamName as teamName,OI.orgName as orgName from UserTeam UT,OrgInfo OI,TeamInfo TI,OrgTeam OT where OI.orgId = OT.orgId"
-                + "and TI.teamId = UT.teamId and UT.teamId = OT.teamId and UT.userId :userId","userId",employeeInfoDto.getEmployeeNo()
-                ).getBusinessObjects();
-            String teamName = null;
-            String orgName = null;
-            for (BusinessObject businessObject : businessObjects) {
-                teamName = businessObject.getString("teamName");//员工的团队名称
-                orgName = businessObject.getString("orgName");//员工的部门名称
-            }
-            if (CollectionUtils.isEmpty(businessObjects)) {
-                throw new ALSException("EMS6014");
-            }
+            Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
+            String teamName = map.get("teamName");
+            String orgName = map.get("orgName");
             employeeInfoListDto.setTeamName(teamName);
             employeeInfoListDto.setOrgName(orgName);
             employeeInfoListDtos.add(employeeInfoListDto);
@@ -1339,22 +1328,53 @@ public class OrgServiceImpl implements OrgService {
             employeeInfoListDto.setRntryTime(employeeInfoDto.getRntryTime());
             //employeeInfoListDto.setSex(employeeInfoDto.get);
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
-            UserTeam userTeam = bomanager.keyLoadBusinessObject(OrgInfo.class, employeeInfoDto.getEmployeeNo());//获取团队id
-            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",employeeInfoDto.getEmployeeNo());//获取部门id
-            if (CollectionUtils.isEmpty(ubs)) {
+            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+                "select TI.teamName as teamName,OI.orgName as orgName from UserTeam UT,OrgInfo OI,TeamInfo TI,OrgTeam OT where OI.orgId = OT.orgId"
+                + "and TI.teamId = UT.teamId and UT.teamId = OT.teamId and UT.userId :userId","userId",employeeInfoDto.getEmployeeNo()
+                ).getBusinessObjects();
+            if (CollectionUtils.isEmpty(businessObjects)) {
                 throw new ALSException("EMS6014");
             }
-            OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, ubs.get(0).getOrgId());
-            TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
-            if (oInfo == null || teamInfo == null) {
-                throw new ALSException("EMS6012");
+            String teamName = null;
+            String orgName = null;
+            for (BusinessObject businessObject : businessObjects) {
+                teamName = businessObject.getString("teamName");//员工的团队名称
+                orgName = businessObject.getString("orgName");//员工的部门名称
             }
-            employeeInfoListDto.setTeamName(teamInfo.getTeamName());
-            employeeInfoListDto.setOrgName(oInfo.getOrgName());
+            employeeInfoListDto.setTeamName(teamName);
+            employeeInfoListDto.setOrgName(orgName);
             employeeInfoListDtos.add(employeeInfoListDto);
         }
         rsp.setTotalCount(list.size());
         rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
         return rsp;
+    }
+    
+    /**
+     * Description: 传入员工编号，获取部门、团队名称
+     * @param 员工编号employeeNo
+     * @return  map
+     * @see
+     */
+    public Map<String, String> getEmployeeMap(String employeeNo){
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
+        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+            "select TI.teamName as teamName,OI.orgName as orgName from UserTeam UT,OrgInfo OI,TeamInfo TI,OrgTeam OT where OI.orgId = OT.orgId"
+            + "and TI.teamId = UT.teamId and UT.teamId = OT.teamId and UT.userId :userId","userId",employeeNo
+            ).getBusinessObjects();
+        if (CollectionUtils.isEmpty(businessObjects)) {
+            throw new ALSException("EMS6014");
+        }
+        String teamName = null;
+        String orgName = null;
+        for (BusinessObject businessObject : businessObjects) {
+            teamName = businessObject.getString("teamName");//员工的团队名称
+            orgName = businessObject.getString("orgName");//员工的部门名称
+        }
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("teamName", teamName);
+        map.put("orgName", orgName);
+        return map;
     }
 }
