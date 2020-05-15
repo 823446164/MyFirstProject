@@ -23,12 +23,9 @@ public enum ChangeEventType {
      * @return
      */
     public static boolean isExist(String id) {
-        for(ChangeEventType changeEventType : ChangeEventType.values()) {
-            if(changeEventType.id.equals(id)) {
-                return true;
-            }
-        }
-        return false;
+        return Add.id.equals(id)
+                ||Delete.id.equals(id)
+                ||Update.id.equals(id);
     }
     
     /**
