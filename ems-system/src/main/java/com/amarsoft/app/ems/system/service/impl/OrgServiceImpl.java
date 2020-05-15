@@ -1286,6 +1286,9 @@ public class OrgServiceImpl implements OrgService {
             //employeeInfoListDto.setSex(employeeInfoDto.get);
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
+            if (CollectionUtils.isEmpty(map)) {
+                throw new ALSException("EMS6014");
+            }
             String teamName = map.get("teamName");
             String orgName = map.get("orgName");
             employeeInfoListDto.setTeamName(teamName);
@@ -1319,8 +1322,9 @@ public class OrgServiceImpl implements OrgService {
         ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
         List<EmployeeInfoListDto> employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
         List<EmployeeInfoDto> list = response.getMessage().getEmployeeInfoList();
+        EmployeeInfoListDto employeeInfoListDto = null;
         for (EmployeeInfoDto employeeInfoDto : list) {
-            EmployeeInfoListDto employeeInfoListDto = new EmployeeInfoListDto();
+            employeeInfoListDto = new EmployeeInfoListDto();
             employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
             employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
             employeeInfoListDto.setEmployeeNo(employeeInfoDto.getEmployeeNo());
@@ -1329,6 +1333,9 @@ public class OrgServiceImpl implements OrgService {
             //employeeInfoListDto.setSex(employeeInfoDto.get);
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
+            if (CollectionUtils.isEmpty(map)) {
+                throw new ALSException("EMS6014");
+            }
             String teamName = map.get("teamName");
             String orgName = map.get("orgName");
             employeeInfoListDto.setTeamName(teamName);
