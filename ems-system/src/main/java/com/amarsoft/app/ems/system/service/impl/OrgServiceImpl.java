@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.hibernate.hql.internal.CollectionSubqueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -81,7 +80,6 @@ import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.Second
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDto;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryRsp;
-import com.ibm.db2.jcc.am.n;
 
 /**
  * 机构服务的接口实现类
@@ -960,7 +958,7 @@ public class OrgServiceImpl implements OrgService {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         OrgInfo orgInfo = null;
         Department department = null;
-        if (req.getOrgId() == null) {//新增
+        if (StringUtils.isEmpty(req.getOrgId())) {//新增
           //根据名称查询部门，判断是否有重名的部门名称
             OrgInfo OI = bomanager.loadBusinessObject(OrgInfo.class,"orgName",req.getOrgName());
             if(OI != null) {
@@ -1277,8 +1275,9 @@ public class OrgServiceImpl implements OrgService {
         ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
         List<EmployeeInfoListDto> employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
         List<EmployeeInfoDto> employeeInfoDtos = response.getMessage().getEmployeeInfoList();
+        EmployeeInfoListDto employeeInfoListDto = null;
         for (EmployeeInfoDto employeeInfoDto : employeeInfoDtos) {
-            EmployeeInfoListDto employeeInfoListDto = new EmployeeInfoListDto();
+            employeeInfoListDto = new EmployeeInfoListDto();
             employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
             employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
             employeeInfoListDto.setEmployeeNo(employeeInfoDto.getEmployeeNo());
@@ -1287,18 +1286,21 @@ public class OrgServiceImpl implements OrgService {
             //employeeInfoListDto.setSex(employeeInfoDto.get);
 
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
-            UserTeam userTeam = bomanager.keyLoadBusinessObject(OrgInfo.class, employeeInfoDto.getEmployeeNo());//获取团队id
-            List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",employeeInfoDto.getEmployeeNo());//获取部门id
-            if (userTeam == null || CollectionUtils.isEmpty(userBelongs)) {
-                throw new ALSException("EMS6012");
+            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+                "select TI.teamName as teamName,OI.orgName as orgName from UserTeam UT,OrgInfo OI,TeamInfo TI,OrgTeam OT where OI.orgId = OT.orgId"
+                + "and TI.teamId = UT.teamId and UT.teamId = OT.teamId and UT.userId :userId","userId",employeeInfoDto.getEmployeeNo()
+                ).getBusinessObjects();
+            String teamName = null;
+            String orgName = null;
+            for (BusinessObject businessObject : businessObjects) {
+                teamName = businessObject.getString("teamName");//员工的团队名称
+                orgName = businessObject.getString("orgName");//员工的部门名称
             }
-            OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, userBelongs.get(0).getOrgId());
-            TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, userTeam.getTeamId());
-            if (oInfo == null || teamInfo == null) {
-                throw new ALSException("EMS6012");
+            if (CollectionUtils.isEmpty(businessObjects)) {
+                throw new ALSException("EMS6014");
             }
-            employeeInfoListDto.setTeamName(teamInfo.getTeamName());
-            employeeInfoListDto.setOrgName(oInfo.getOrgName());
+            employeeInfoListDto.setTeamName(teamName);
+            employeeInfoListDto.setOrgName(orgName);
             employeeInfoListDtos.add(employeeInfoListDto);
         }
         rsp.setTotalCount(employeeInfoDtos.size());
