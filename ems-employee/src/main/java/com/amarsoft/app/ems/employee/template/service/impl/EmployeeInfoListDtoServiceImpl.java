@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.amarsoft.aecd.system.constant.ArchitectureType;
+import com.amarsoft.aecd.system.constant.UserRoles;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
@@ -64,9 +64,10 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
 	    @Autowired
 	    OrgClient orgClient;
 	    
-    /**
-                   * 查询结果集
-     */
+	    /**
+	     * Description:查询结果集<br>
+	     * @see
+	     */
     public static class EmployeeInfoListDtoReqQuery implements RequestQuery<EmployeeInfoListDtoQueryReq> {
         @Override
         public Query apply(EmployeeInfoListDtoQueryReq employeeInfoListDtoQueryReq) {
@@ -81,7 +82,10 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     }
 
     /**
-                  * 查询到的数据转换为响应实体
+     * Description:查询到的数据转换为响应实体<br>
+     * @param request
+     * @return 
+     * @see
      */
     public static class EmployeeInfoListDtoRspConvert implements Convert<EmployeeInfoListDto> {
         @Override
@@ -148,35 +152,12 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         return employeeInfoListDtoQueryRsp;
     }
 
-    /**
-     * 员工信息List多记录保存
-     * @param request
-     * @return
-     */
-    @Override
-    public void employeeInfoListDtoSave(@Valid EmployeeInfoListDtoSaveReq employeeInfoListDtoSaveReq) {
-        employeeInfoListDtoSaveAction(employeeInfoListDtoSaveReq.getEmployeeInfoListDtos());
-    }
-    /**
-     * 员工信息List多记录保存
-     * @param
-     * @return
-     */
-    @Transactional
-    public void employeeInfoListDtoSaveAction(List<EmployeeInfoListDto> employeeInfoListDtos){
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if(employeeInfoListDtos!=null){
-            for(EmployeeInfoListDto employeeInfoListDtoTmp :employeeInfoListDtos){
-            }
-        }
-        bomanager.updateDB();
-    }
-
 
     /**
-     * 员工信息List删除
+     * Description:员工信息List删除<br>
      * @param request
-     * @return
+     * @return 
+     * @see
      */
     @Override
     @Transactional
@@ -190,66 +171,66 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     
     /**
      * Description:根据用户权限的员工查询<br>
-     * ${tags}
+     * @param EmployeeListByUserQueryReq()
+     * @return EmployeeListByUserQueryRsp(List<EmployeeInfoDto>)
      * @see
      */
     @Override
     public EmployeeListByUserQueryRsp employeeListByUserQuery(@Valid @RequestBody EmployeeListByUserQueryReq req) {
-        //后端自动获取用户ＩＤ和部门ＩＤ
+        //1.后端自动获取用户ＩＤ和部门ＩＤ
         String userId = GlobalShareContextHolder.getUserId();
         String orgId = GlobalShareContextHolder.getOrgId();
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeListByUserQueryRsp rsp = null;
-        //查询用户角色的信息
+        //2.查询用户角色的信息
         RequestMessage<UserRoleQueryReq> reqMsg = new RequestMessage<UserRoleQueryReq>();
         UserRoleQueryReq userRoleQueryReq = new UserRoleQueryReq();
         userRoleQueryReq.setUserId(userId);
         reqMsg.setMessage(userRoleQueryReq);
-        //获取用户角色
+        //3.获取用户角色
         ResponseEntity<ResponseMessage<UserRoleQueryRsp>> userRoleQuery = roleClient.userRoleQuery(reqMsg);
         List<UserAndRole> userRoles = userRoleQuery.getBody().getMessage().getUserRoles();
 
-        if (StringUtils.isEmpty(userRoles)) {//为空则说明没有权限
+        if (StringUtils.isEmpty(userRoles)) {//4.为空则说明没有权限
             throw new ALSException("EMS1008");
         }
-        UserAndRole userAndRole = userRoles.get(0); //获取用户的最高权限（099、110、210）
-        if ("099".equals(userAndRole.getRoleId())) {//如果用户为系统管理员，展示所有员工
+        UserAndRole userAndRole = userRoles.get(0); //5.获取用户的最高权限（099、110、210）
+        if (UserRoles.Admin.id.equals(userAndRole.getRoleId())) {//6.如果用户为系统管理员，展示所有员工
             String id = "";
             rsp = showList(userAndRole.getRoleId(), id);
-         }else if ("110".equals(userAndRole.getRoleId())) {//如果用户为部门管理员，展示所在部门所有员工
+         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员，展示所在部门所有员工
              rsp = showList(userAndRole.getRoleId(), orgId);
-         }else if("210".equals(userAndRole.getRoleId())){//如果用户为团队负责人，展示所在团队所有员工
+         }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
              rsp = showList(userAndRole.getRoleId(), userId);
          }
-        
         return rsp; 
     }
    
     /**
      * Description: 根据条件获取员工列表公共部分<br>
-     * ${tags}
+     * @param roleId,id
+     * @return EmployeeListByUserQueryRsp(List<EmployeeInfoDto>)
      * @see
      */
-    public EmployeeListByUserQueryRsp showList(String roleId,String Id) {
-        EmployeeListByUserQueryRsp rsp = null;
+    public EmployeeListByUserQueryRsp showList(String roleId,String id) {
+        EmployeeListByUserQueryRsp rsp = new EmployeeListByUserQueryRsp();
         RequestMessage<OrgUserQueryReq> reqMessage = new RequestMessage<OrgUserQueryReq>();
         OrgUserQueryReq orgUserQueryReq = new OrgUserQueryReq();
         orgUserQueryReq.setRoleId(roleId);
-        orgUserQueryReq.setId(Id);
+        orgUserQueryReq.setId(id);
         reqMessage.setMessage(orgUserQueryReq);
-        //获取员工其他信息
+        //1.获取员工其他信息
         ResponseEntity<ResponseMessage<OrgUserQueryRsp>> orgUserQuery = orgClient.orgUserQuery(reqMessage);
         List<UserTeamOrgInfo> utois = orgUserQuery.getBody().getMessage().getUserTeamOrgInfos();
-        //获取所有的员工ＩＤ
+        //2.获取所有的员工ＩＤ
         List<String> userIdList = new ArrayList<String>();
         for (UserTeamOrgInfo userTeamOrgInfo : utois) {
            userIdList.add(userTeamOrgInfo.getUserId()); 
         }
-        //调用employeeListByEmployeeNo方法
+        //3.调用employeeListByEmployeeNo方法
         EmployeeListByEmplNoReq emplNoReq = new EmployeeListByEmplNoReq();
         emplNoReq.setEmployeeNoList(userIdList);
         EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq);
-        //将用户ＩＤ一致的团队部门信息添加到员工详情信息上
+        //4.将用户ＩＤ一致的团队部门信息添加到员工详情信息上
         for(EmployeeInfoDto eiDto:emplNoRsp.getEmployeeInfoList()) {
             for(UserTeamOrgInfo utoi:utois) {
                 if(eiDto.getEmployeeNo().equals(utoi.getUserId())){
@@ -266,7 +247,8 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     
     /**
      * Description: 根据条件获取员工列表<br>
-     * ${tags}
+     * @param EmployeeListByEmplNoReq(List(String))
+     * @return EmployeeListByEmplNoRsp(List<EmployeeInfoDto>)  
      * @see
      */
     @Override
@@ -276,22 +258,30 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         List<String> employeeNoList = req.getEmployeeNoList();
         List<EmployeeInfoDto> employeeDtoList = new ArrayList<EmployeeInfoDto>();
         String userList = "";
-        //拼接员工查询参数
+        //1.拼接员工查询参数
         for(String employeeNo:employeeNoList) {
             userList += "'"+employeeNo+"',";
         }
         if(!StringUtils.isEmpty(userList)) {
             userList = userList.substring(0, userList.length()-1);
         }
+        //２．查询所需员工们的信息
         List<EmployeeInfo> employeeList = bomanager.loadBusinessObjects(EmployeeInfo.class , "employeeNo in (" + userList+")");
         for(EmployeeInfo ei:employeeList) {
             EmployeeInfoDto eIDto = new EmployeeInfoDto();
-            //复制信息（当两者属性大致相同）
+            //３.复制信息（当两者属性大致相同）
             BeanUtils.copyProperties(ei, eIDto);
             employeeDtoList.add(eIDto);
         }
         rsp.setTotalCount(employeeList.size());
         rsp.setEmployeeInfoList(employeeDtoList);
         return rsp;
+    }
+
+
+    @Override
+    public void employeeInfoListDtoSave(@Valid EmployeeInfoListDtoSaveReq employeeInfoListDtoSaveReq) {
+        // TODO Auto-generated method stub
+        
     }
 }
