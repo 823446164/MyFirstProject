@@ -43,59 +43,6 @@ public class LabelListControllerImpl implements LabelListController {
     
     @Override
     @Transactional
-    @TemplateExport(name="标签List", query = LabelListServiceImpl.LabelListReqQuery.class, convert=LabelListServiceImpl.LabelListRspConvert.class)
-    /**
-     * Description: 标签List查询
-     */
-    public ResponseEntity<ResponseMessage<LabelListQueryRsp>> labelListQuery(@RequestBody @Valid RequestMessage<LabelListQueryReq> reqMsg){
-        ResponseMessage<LabelListQueryRsp> rspMsg = null;
-        try {
-            LabelListQueryReq request = reqMsg.getMessage();
-            
-            LabelListQueryRsp response = labelListServiceImpl.labelListQuery(request);
-            rspMsg = new ResponseMessage<LabelListQueryRsp>(response);
-
-            return new ResponseEntity<ResponseMessage<LabelListQueryRsp>>(rspMsg , HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("标签List查询："+ reqMsg.toString(), e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
-            return new ResponseEntity<ResponseMessage<LabelListQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    @Transactional
-    /**
-     * Description: 标签List保存
-     */
-    public ResponseEntity<ResponseMessage<Object>> labelListSave(@RequestBody @Valid RequestMessage<LabelListSaveReq> reqMsg){
-        ResponseMessage<Object> rspMsg = null;
-        try {
-            LabelListSaveReq request = reqMsg.getMessage();
-            
-            labelListServiceImpl.labelListSave(request);
-            rspMsg = new ResponseMessage<Object>();
-
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("标签List保存："+ reqMsg.toString(), e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    @Transactional
     /**
      * Description: 标签List删除
      */
