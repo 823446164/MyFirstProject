@@ -10,23 +10,21 @@
  */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.parameter.template.service.LabelCatalogInfoService;
+import lombok.extern.slf4j.Slf4j;
 import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfoQueryReq;
@@ -47,8 +45,8 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     /**
      * 标签目录详情单记录查询
      * 
-     * @param request
-     * @return
+     * @param labelCatalogInfoQueryReq
+     * @return LabelCatalogInfoQueryRsp
      */
     @Override
     @Transactional
@@ -61,7 +59,6 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             labelCatalogInfo.setLabelName(labelCatalog.getLabelName());
             labelCatalogInfo.setParentNo(labelCatalog.getParentNo());
             labelCatalogInfo.setCatalogRemark(labelCatalog.getCatalogRemark());
-            labelCatalogInfo.setAuthor(labelCatalog.getAuthor());
             labelCatalogInfo.setLabelVersion(labelCatalog.getLabelVersion());
             labelCatalogInfo.setInputUserId(labelCatalog.getInputUserId());
             labelCatalogInfo.setInputTime(labelCatalog.getInputTime());
@@ -69,6 +66,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             labelCatalogInfo.setUpdateUserId(labelCatalog.getUpdateUserId());
             labelCatalogInfo.setUpdateTime(labelCatalog.getUpdateTime());
             labelCatalogInfo.setUpdateOrgId(labelCatalog.getUpdateOrgId());
+            labelCatalogInfo.setRootNo(labelCatalog.getRootNo());
             return labelCatalogInfo;
         }
         return null;
@@ -77,8 +75,8 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     /**
      * 标签目录详情单记录保存
      * 
-     * @param request
-     * @return
+     * @param labelCatalogInfoSaveReq
+     * @return void
      */
     @Override
     public void labelCatalogInfoSave(@Valid LabelCatalogInfoSaveReq labelCatalogInfoSaveReq) {
@@ -88,8 +86,8 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     /**
      * 标签目录详情单记录保存
      * 
-     * @param
-     * @return
+     * @param labelCatalogInfo
+     * @return void
      */
     @Transactional
     public void labelCatalogInfoSaveAction(LabelCatalogInfo labelCatalogInfo) {
@@ -107,16 +105,17 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             lc.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
             lc.setUpdateTime(LocalDateTime.now());
             lc.setUpdateUserId(GlobalShareContextHolder.getUserId());
+            //TODO 放入父目录parentNo           
             bomanager.updateBusinessObject(lc);
         }
         bomanager.updateDB();
     }
 
     /**
-     * 选中目录查询标签
+     * 根据当前目录，展示所有属于该目录的标签
      * 
-     * @param request
-     * @return
+     * @param labelByLabelCatalogQueryReq
+     * @return LabelByLabelCatalogQueryRsp
      */
     @Override
     @Transactional
@@ -127,7 +126,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             "select LC.serialNo as serialNo,LC.labelName as labelName,LC.belongCataLog as belongCataLog from LabelCatalog LC where LC.belongCataLog =:serialNo",
             "serialNo", labelByLabelCatalogQueryReq.getSerialNo());
         List<BusinessObject> labelBelongCatalogQueryRspBoList = labelBelongCatalogQueryRspBoa.getBusinessObjects();
-        if (labelBelongCatalogQueryRspBoList != null) {
+        if (!CollectionUtils.isEmpty(labelBelongCatalogQueryRspBoList)) {
             List<LabelCatalogInfo> lableCatalogInfoLists = new ArrayList<LabelCatalogInfo>();
             for (int i = 0; i < labelBelongCatalogQueryRspBoList.size(); i++ ) {
                 BusinessObject labelBelongCatalogQueryRspBo = labelBelongCatalogQueryRspBoList.get(i);
@@ -139,5 +138,5 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             lableCatalogInfoQueryRsp.setLableCatalogInfos(lableCatalogInfoLists);
         }
         return lableCatalogInfoQueryRsp;
-    }
+    }   
 }
