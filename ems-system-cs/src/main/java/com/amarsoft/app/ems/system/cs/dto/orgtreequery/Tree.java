@@ -25,26 +25,34 @@ public class Tree implements Serializable{
     @NotEmpty
     @Length(max=40)
     private String title;
+    
     @Description("存储值")
     @NotEmpty
     @Length(max=40)
     private String key;
+    
     @Description("是否展开")
     @NotEmpty
     private boolean expanded;
+    
     @Description("图标")
     @Length(max=40)
     private String icon;
+    
     @Description("是否子节点")
     private boolean leaf;
+    
     @Description("是否禁用")
     private boolean disable;
+    
     @Description("排序编号")
     @Length(max=40)
     private String sortNo;
+    
     @Description("机构类型")
     @Length(max=1)
     private String orgType;
+    
     @Description("子机构信息组")
     @Valid
     @NotEmpty

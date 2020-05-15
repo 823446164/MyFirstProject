@@ -36,7 +36,7 @@ public class LabelInfo implements Serializable {
     @Description("标签编号")
     @Length(max=40)
     @ActualColumn("LC.serialNo")
-    @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String serialNo;
 
     @Description("标签名称")
@@ -74,7 +74,7 @@ public class LabelInfo implements Serializable {
     @Description("适用要求类别")
     @Length(max=10)
     @ActualColumn("LC.abilityType")
-    @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Radio, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String abilityType;
 
     @Description("标签说明")
@@ -141,7 +141,7 @@ public class LabelInfo implements Serializable {
     @Length(max=40)
     @ActualColumn("LC.labelType")
     @TemplateBody(sortNo = 16, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
-    private String LC_labelType;
+    private String labelType;
     
     @Description("登记人")
     @Length(max=40)
@@ -213,5 +213,10 @@ public class LabelInfo implements Serializable {
     @Length(max=2000)
     @TemplateBody(sortNo = 29, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String commonlyDescribe;
+    
+    @Description("按钮类型")
+    @Length(max=40)
+    @TemplateBody(sortNo = 29, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
+    private String buttonType;
     
 }

@@ -27,12 +27,6 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCata
  * @author yrong
  */
 public interface LabelCatalogListController {
-    @PostMapping(value = "/labelcataloglist/query", name="标签目录树图查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<LabelCatalogListQueryRsp>> labelCatalogListQuery(@RequestBody @Valid RequestMessage<LabelCatalogListQueryReq> reqMsg);
-
-    @PostMapping(value = "/labelcataloglist/save", name="标签目录树图保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> labelCatalogListSave(@RequestBody @Valid RequestMessage<LabelCatalogListSaveReq> reqMsg);
-
     @PostMapping(value = "/labelcataloglist/delete", name="标签目录树图删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> labelCatalogListDelete(@RequestBody @Valid RequestMessage<LabelCatalogListDeleteReq> reqMsg);
 }

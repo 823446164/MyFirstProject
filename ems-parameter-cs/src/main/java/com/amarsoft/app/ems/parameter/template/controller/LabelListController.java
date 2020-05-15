@@ -27,12 +27,6 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labellist.LabelListDeleteR
  * @author yrong
  */
 public interface LabelListController {
-    @PostMapping(value = "/labellist/query", name="标签List查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<LabelListQueryRsp>> labelListQuery(@RequestBody @Valid RequestMessage<LabelListQueryReq> reqMsg);
-
-    @PostMapping(value = "/labellist/save", name="标签List保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> labelListSave(@RequestBody @Valid RequestMessage<LabelListSaveReq> reqMsg);
-
     @PostMapping(value = "/labellist/delete", name="标签List删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> labelListDelete(@RequestBody @Valid RequestMessage<LabelListDeleteReq> reqMsg);
 }
