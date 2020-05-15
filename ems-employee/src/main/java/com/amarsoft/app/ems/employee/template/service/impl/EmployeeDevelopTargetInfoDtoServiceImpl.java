@@ -115,18 +115,15 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
                 if (StringUtils.isEmpty(employeeDevelopTargetInfoDto.getSerialNo())) {
                     employeeDevelopTarget.generateKey();
                 }
-                //TODO dxiao - 新增添加登记人,登记时间,后续可能去掉
-                employeeDevelopTarget.setInputTime(inputDate);
-                employeeDevelopTarget.setInputUserId(GlobalShareContextHolder.getUserId());
+                //TODO dxiao - 新增添加登记机构,后续可能去掉
                 employeeDevelopTarget.setInputOrgId(GlobalShareContextHolder.getOrgId());
             }
             // 主键不为空,判断是否有权限修改
             else {
                 if (!userId.equals(employeeDevelopTarget.getInputUserId())) { // 当前用户和制定目标不一致则不能更新
                     throw new ALSException("EMS1004");
-                }else {//可以更新-更新人,更新机构,更新机构id
-                    employeeDevelopTarget.setUpdateTime(inputDate);
-                    employeeDevelopTarget.setUpdateUserId(GlobalShareContextHolder.getUserId());
+                }else {//更新机构id
+                    //TODO dxiao - 新增添加登记机构,后续可能去掉
                     employeeDevelopTarget.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
                 }
             }
