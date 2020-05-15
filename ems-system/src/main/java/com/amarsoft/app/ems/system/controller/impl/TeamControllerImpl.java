@@ -23,6 +23,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.amarsoft.amps.acsc.annotation.CodeQuery;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
@@ -32,8 +33,6 @@ import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.addteamuser.AddTeamUserReq;
 import com.amarsoft.app.ems.system.cs.dto.deleteteam.DeleteTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.deleteteamuser.DeleteTeamUserReq;
-import com.amarsoft.app.ems.system.cs.dto.getteamid.GetTeamIdReq;
-import com.amarsoft.app.ems.system.cs.dto.getteamid.GetTeamIdRsp;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
@@ -46,11 +45,9 @@ import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoSaveReq;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
-
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
-import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
@@ -59,7 +56,6 @@ import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
 import com.amarsoft.app.ems.system.service.TeamListDtoService;
 import com.amarsoft.app.ems.system.service.TeamService;
 import com.amarsoft.app.ems.system.service.impl.TeamListDtoServiceImpl;
-import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -68,7 +64,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TeamControllerImpl implements TeamController {
 
     @Autowired
-    TeamService teamService;
+    TeamService teamServiceImpl;
     @Autowired
     TeamInfoDtoService teamInfoDtoServiceImpl;
     @Autowired
@@ -82,7 +78,7 @@ public class TeamControllerImpl implements TeamController {
     public ResponseEntity<ResponseMessage<Object>> addTeam(@RequestBody @Valid RequestMessage<AddTeamReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
-            teamService.addTeam(reqMsg.getMessage());
+            teamServiceImpl.addTeam(reqMsg.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -99,7 +95,7 @@ public class TeamControllerImpl implements TeamController {
     public ResponseEntity<ResponseMessage<Object>> addTeamUser(@RequestBody @Valid RequestMessage<AddTeamUserReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
-            teamService.addTeamUser(reqMsg.getMessage());
+            teamServiceImpl.addTeamUser(reqMsg.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -117,7 +113,7 @@ public class TeamControllerImpl implements TeamController {
     public ResponseEntity<ResponseMessage<Object>> deleteTeamUser(@RequestBody @Valid RequestMessage<DeleteTeamUserReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
-            teamService.deleteTeamUser(reqMsg.getMessage());
+            teamServiceImpl.deleteTeamUser(reqMsg.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -135,7 +131,7 @@ public class TeamControllerImpl implements TeamController {
     public ResponseEntity<ResponseMessage<Object>> transferTeam(@RequestHeader() HttpHeaders header,@RequestBody @Valid RequestMessage<TransferTeamReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
-            teamService.transferTeam(header,reqMsg.getMessage());
+            teamServiceImpl.transferTeam(header,reqMsg.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -155,7 +151,7 @@ public class TeamControllerImpl implements TeamController {
     public ResponseEntity<ResponseMessage<TeamQueryRsp>> teamQuery(@RequestBody @Valid RequestMessage<TeamQueryReq> reqMsg){
         ResponseMessage<TeamQueryRsp> rspMsg = null;
         try {
-            TeamQueryRsp rsp = teamService.teamQuery(reqMsg.getMessage());
+            TeamQueryRsp rsp = teamServiceImpl.teamQuery(reqMsg.getMessage());
             return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(new ResponseMessage<TeamQueryRsp>(rsp), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -173,7 +169,7 @@ public class TeamControllerImpl implements TeamController {
     public ResponseEntity<ResponseMessage<LevelTeamQueryRsp>> levelTeamQuery(@RequestBody @Valid RequestMessage<LevelTeamQueryReq> reqMsg){
         ResponseMessage<LevelTeamQueryRsp> rspMsg = null;
         try {
-            LevelTeamQueryRsp rsp = teamService.levelTeamQuery(reqMsg.getMessage(),teamService,orgService);
+            LevelTeamQueryRsp rsp = teamServiceImpl.levelTeamQuery(reqMsg.getMessage(),teamServiceImpl,orgService);
             return new ResponseEntity<ResponseMessage<LevelTeamQueryRsp>>(new ResponseMessage<LevelTeamQueryRsp>(rsp), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -197,7 +193,7 @@ public class TeamControllerImpl implements TeamController {
     public ResponseEntity<ResponseMessage<Object>> deleteTeam(@RequestBody @Valid RequestMessage<DeleteTeamReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
-            teamService.deleteTeam(reqMsg.getMessage());
+            teamServiceImpl.deleteTeam(reqMsg.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
@@ -335,12 +331,12 @@ public class TeamControllerImpl implements TeamController {
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq > reqMsg){
+    public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<TeamListDtoDeleteReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
-            DeleteInfoDtoQueryReq request = reqMsg.getMessage();
+            TeamListDtoDeleteReq request = reqMsg.getMessage();
             
-            teamListDtoServiceImpl.teamListDtoDelete(request);;
+            teamListDtoServiceImpl.teamListDtoDelete(request);
             rspMsg = new ResponseMessage<Object>();
 
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
@@ -367,7 +363,7 @@ public class TeamControllerImpl implements TeamController {
         ResponseMessage<TeamOrgQueryRsp> rspMsg = null;
         try {
             TeamOrgQueryReq req = reqMsg.getMessage();
-            TeamOrgQueryRsp rsp = teamService.orgTeamListQuery(req);
+            TeamOrgQueryRsp rsp = teamServiceImpl.orgTeamListQuery(req);
             rspMsg = new ResponseMessage<TeamOrgQueryRsp>(rsp);
             return new ResponseEntity<ResponseMessage<TeamOrgQueryRsp>>(rspMsg, HttpStatus.OK);
         } catch (Exception e) {
@@ -481,43 +477,74 @@ public class TeamControllerImpl implements TeamController {
     @Transactional
     public ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>> queryRoele(@Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg) {
         // TODO 未完成
-        ResponseMessage<TeamInfoDtoRoleRsp>  rspMsg = null;
         
+        return null;
+    }
+
+
+ 
+    /**
+     * Description: 更新用户团队<br>
+     * @param UpdateUserTeamReq
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@Valid RequestMessage<UpdateUserTeamReq> reqMsg) {
+        ResponseMessage<Object> rspMsg = null;
         try {
-            TeamInfoDtoQueryReq request = reqMsg.getMessage();
+            UpdateUserTeamReq request = reqMsg.getMessage();
             
-            TeamInfoDtoRoleRsp response = teamInfoDtoServiceImpl.queryRole(request);
-            rspMsg = new ResponseMessage<TeamInfoDtoRoleRsp>(response );
-            return new ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>>(rspMsg , HttpStatus.OK);
+            teamServiceImpl.updateUserTeam(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
-                log.error("团队信息查询："+ reqMsg.toString(), e);
+                log.error("更新用户团队请求："+ reqMsg.toString(), e);
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-        
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
-            return new ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    /* (non-Javadoc)
-     * @see com.amarsoft.app.ems.system.controller.TeamController#userTeamQuery(com.amarsoft.amps.acsc.rpc.RequestMessage)
+    /**
+     * Description: 按用户查询团队<br>
+     * @param UserTeamQueryReq
+     * @return UserTeamQueryRsp
+     * @see
      */
     @Override
+    @Transactional
     public ResponseEntity<ResponseMessage<UserTeamQueryRsp>> userTeamQuery(@Valid RequestMessage<UserTeamQueryReq> reqMsg) {
-        // TODO Auto-generated method stub
-        return null;
+        ResponseMessage<UserTeamQueryRsp> rspMsg = null;
+        try {
+            UserTeamQueryReq req = reqMsg.getMessage();
+            UserTeamQueryRsp rsp = teamServiceImpl.userTeamQuery(req);
+            return new ResponseEntity<ResponseMessage<UserTeamQueryRsp>>(new ResponseMessage<UserTeamQueryRsp>(rsp), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("按照员工查询团队请求报文："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<UserTeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /* (non-Javadoc)
-     * @see com.amarsoft.app.ems.system.controller.TeamController#updateUserTeam(com.amarsoft.amps.acsc.rpc.RequestMessage)
-     */
-    @Override
-    public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@Valid RequestMessage<UpdateUserTeamReq> reqMsg) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+   
+   
 
+   
+  
+    
+    
+
+  
+    
      
 }
