@@ -1,5 +1,5 @@
 /*
- * 文件名：TeamInfoDtoQueryRoleRep.java
+ * 文件名： 团队角色负责人
  * 版权：Copyright by www.amarsoft.com
  * 描述： 团队角色负责人
  * 修改人：hpli

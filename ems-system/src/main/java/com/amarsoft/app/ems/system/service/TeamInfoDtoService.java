@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
 
@@ -41,7 +42,7 @@ public interface TeamInfoDtoService {
      * @param request
      * @return
      */
-    public TeamInfoDtoRoleRsp queryRole( @Valid TeamInfoDtoQueryReq request);
+    public TeamInfoDtoRoleRsp queryRole( @Valid TeamInfoDtoRoleReq request);
 
     
    
