@@ -1,3 +1,12 @@
+/* 文件名：EmployeeDevelopTargetListDtoService
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：dxiao
+ * 修改时间：2020/05/14
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容:
+ */
 package com.amarsoft.app.ems.employee.template.service;
 
 import java.util.Map;
@@ -21,16 +30,9 @@ public interface EmployeeDevelopTargetListDtoService {
     public EmployeeDevelopTargetListDtoQueryRsp employeeDevelopTargetListDtoQuery(@Valid EmployeeDevelopTargetListDtoQueryReq employeeDevelopTargetListDtoQueryReq);
 
     /**
-     * 员工成长目标跟踪List保存
-     * @param request
-     * @return
-     */
-    public void employeeDevelopTargetListDtoSave(@Valid EmployeeDevelopTargetListDtoSaveReq employeeDevelopTargetListDtoSaveReq);
-
-    /**
      * 员工成长目标跟踪List删除
-     * @param request
-     * @return
+     * @param EDT.serialNo
+     * @return Y
      */
     public Map<String, String> employeeDevelopTargetListDtoDelete(@Valid EmployeeDevelopTargetListDtoDeleteReq employeeDevelopTargetListDtoDeleteReq);
 }

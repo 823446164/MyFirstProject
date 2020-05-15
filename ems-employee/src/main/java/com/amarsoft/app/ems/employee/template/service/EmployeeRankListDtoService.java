@@ -1,3 +1,12 @@
+/* 文件名：EmployeePersonalPerformanceListDtoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：dxiao
+ * 修改时间：2020/05/14
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容:
+ */
 package com.amarsoft.app.ems.employee.template.service;
 
 import java.util.Map;
@@ -27,10 +36,4 @@ public interface EmployeeRankListDtoService {
      */
     public Map<String, String> employeeRankListDtoSave(@Valid EmployeeRankListDtoSaveReq employeeRankListDtoSaveReq);
 
-    /**
-     * 员工职级List删除
-     * @param request
-     * @return
-     */
-    public void employeeRankListDtoDelete(@Valid EmployeeRankListDtoDeleteReq employeeRankListDtoDeleteReq);
 }

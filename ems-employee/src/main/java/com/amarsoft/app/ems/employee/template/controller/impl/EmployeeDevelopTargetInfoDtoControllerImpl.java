@@ -1,3 +1,12 @@
+/* 文件名：EmployeePersonalPerformanceListDtoController
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：dxiao
+ * 修改时间：2020/05/14
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：添加异常信息
+ */
 package com.amarsoft.app.ems.employee.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +58,8 @@ public class EmployeeDevelopTargetInfoDtoControllerImpl implements EmployeeDevel
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1006",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeDevelopTargetInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -74,8 +83,8 @@ public class EmployeeDevelopTargetInfoDtoControllerImpl implements EmployeeDevel
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1007",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
