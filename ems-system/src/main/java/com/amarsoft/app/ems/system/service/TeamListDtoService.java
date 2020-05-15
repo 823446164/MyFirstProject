@@ -46,12 +46,5 @@ public interface TeamListDtoService {
      */
     TeamListDtoQueryRsp teamQueryById(TeamListDtoQueryReq request);
 
-    /**
-     * Description:团队角色 <br>
-     * 
-     * @param request
-     * @see rsp
-     */
-    public TeamListDtoQueryRoleRsp teamListDtoRole(TeamListDtoQueryReq request);
 
 }
