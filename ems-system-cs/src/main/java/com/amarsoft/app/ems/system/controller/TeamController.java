@@ -36,6 +36,7 @@ import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
 
 public interface TeamController {
     @PostMapping(value = "/team/addteam", name="新增团队信息", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -78,7 +79,7 @@ public interface TeamController {
     public ResponseEntity<ResponseMessage<Object>> teamRoleSave(@RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg);
    
     @PostMapping(value = "/teamlistdto/delete", name="团队信息删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<TeamListDtoDeleteReq> reqMsg);
+    public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg);
 
    
     @PostMapping(value = "/teamlistdto/teamquerybyid", name="根据部门查询团队信息接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
