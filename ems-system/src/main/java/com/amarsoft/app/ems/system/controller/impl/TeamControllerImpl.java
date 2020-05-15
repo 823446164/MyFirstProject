@@ -379,8 +379,6 @@ public class TeamControllerImpl implements TeamController {
         }
     }
      
-   
-  
     /**
      * Description: 根据部门编号查询团队<br>
      * ${tags}
@@ -391,8 +389,6 @@ public class TeamControllerImpl implements TeamController {
     @Transactional
     public ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>> teamQueryById(
         @RequestBody    @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
-
-        
          ResponseMessage<TeamListDtoQueryRsp> rspMsg = null;
             try {
                 TeamListDtoQueryReq request = reqMsg.getMessage();
@@ -441,40 +437,8 @@ public class TeamControllerImpl implements TeamController {
                 return new ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
             }
     }
-    /**
-     * Description: 角色添加br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    @Transactional
-    public ResponseEntity<ResponseMessage<Object>> teamRoleSave( @RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
-
-        ResponseMessage<Object> rspMsg = null;
-        try {
-            TeamListDtoQueryReq request = reqMsg.getMessage();
-            
-            teamListDtoServiceImpl.teamListDtoRole(request);
-            rspMsg = new ResponseMessage<Object>();
-
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("团队信息保存："+ reqMsg.toString(), e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901022",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
    
-  
 
-   
- 
     /**
      * Description: 更新用户团队<br>
      * @param UpdateUserTeamReq
@@ -528,5 +492,36 @@ public class TeamControllerImpl implements TeamController {
         }
     }
 
+    /**
+     * Description:团队角色
+     * ${tags}
+     * @see
+     */
+  
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>> teamRoleQuery(@Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg) {
+        // TODO Auto-generated method stub
+        ResponseMessage<TeamInfoDtoRoleRsp>  rsp=null;
+        try {
+            TeamInfoDtoQueryReq request = reqMsg.getMessage();
+            TeamInfoDtoRoleRsp response= teamInfoDtoServiceImpl.queryRole(request);
+            rsp= new ResponseMessage<TeamInfoDtoRoleRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>>(rsp , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("团队角色查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rsp = ResponseMessage.getResponseMessageFromException(e, "901022",e.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>>(rsp, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
+    }
+
+   
   
 }

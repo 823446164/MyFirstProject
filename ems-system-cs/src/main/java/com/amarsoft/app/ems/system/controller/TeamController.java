@@ -75,8 +75,8 @@ public interface TeamController {
     public ResponseEntity<ResponseMessage<Object>> teamListDtoSave(@RequestBody @Valid RequestMessage<TeamListDtoSaveReq> reqMsg);
     
     
-    @PostMapping(value = "/teamlistdto/teamrole", name="角色信息查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> teamRoleSave(@RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg);
+    @PostMapping(value = "/teaminfodto/teamrole", name="角色信息查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>> teamRoleQuery(@RequestBody @Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg);
    
     @PostMapping(value = "/teamlistdto/delete", name="团队信息删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg);
@@ -94,5 +94,7 @@ public interface TeamController {
     
     @PostMapping(value = "/team/updateteamuser", name="更新员工团队", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@RequestBody @Valid RequestMessage<UpdateUserTeamReq> reqMsg);
+   
+  
     
 }

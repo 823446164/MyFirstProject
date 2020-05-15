@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.aecd.system.constant.OrgStatus;
-import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.util.DTOHelper;
 import com.amarsoft.amps.arem.exception.ALSException;
@@ -22,16 +21,13 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjec
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
-import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDto;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDto;
-import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoSaveReq;
 import com.amarsoft.app.ems.system.entity.ChangeEvent;
-import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.service.TeamListDtoService;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
@@ -244,45 +240,5 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         bomanager.updateDB(); 
     }
 
-    /**
-     * 团队角色信息
-     * 
-     * @param request
-     * @return
-     */
-
-    @Override
-    @Transactional
-    public TeamListDtoQueryRoleRsp teamListDtoRole(TeamListDtoQueryReq request) {
-     
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamListDtoQueryRoleRsp rsp = new TeamListDtoQueryRoleRsp();
-
-        List<String> list = new ArrayList<>();
-        List<BusinessObject> roleA = bomanager.selectBusinessObjectsBySql("select distinct  TI.RoleA from TeamInfo").getBusinessObjects();
-        if (roleA != null && roleA.size() > 0) {
-            for (BusinessObject bos : roleA) {
-                list.add(bos.getString("roleA"));
-
-            }
-            rsp.setTeamListRoleA(list);
-        }
-        List<BusinessObject> roleB = bomanager.selectBusinessObjectsBySql("select distinct  TI.RoleB from TeamInfo").getBusinessObjects();
-        if (roleB != null && roleB.size() > 0) {
-            for (BusinessObject bos : roleB) {
-                list.add(bos.getString("roleA"));
-            }
-            rsp.setTeamListRoleB(list);
-        }
-        List<BusinessObject> roleC = bomanager.selectBusinessObjectsBySql("select distinct  TI.RoleC from TeamInfo").getBusinessObjects();
-        if (roleC != null && roleC.size() > 0) {
-            for (BusinessObject bos : roleC) {
-                list.add(bos.getString("roleC"));
-
-            }
-            rsp.setTeamListRoleC(list);
-        }
-        return rsp;
-    }
-
+  
 }

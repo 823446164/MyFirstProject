@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.avta.annotation.TemplateBody;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
@@ -25,6 +26,13 @@ public class TeamInfoDtoQueryReq implements Serializable {
     @NotEmpty
     @ActualColumn("TINFO.teamId")
     private String teamId;
+    @Description("所属部门")
+    @Length(max=40)
+    @ActualColumn("TINFO.belongOrgId")
+    @TemplateBody(sortNo = 5, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    private String belongOrgId;
+
+    
     /**
      * Description:执行状态 <br>
      * @return
