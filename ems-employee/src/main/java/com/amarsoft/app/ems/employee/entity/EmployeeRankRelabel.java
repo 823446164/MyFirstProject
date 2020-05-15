@@ -1,4 +1,3 @@
-
 package com.amarsoft.app.ems.employee.entity;
 
 import com.amarsoft.aecd.common.constant.FormatType;
@@ -44,6 +43,10 @@ public class EmployeeRankRelabel extends BusinessObject {
     @Description("掌握程度") 
     @Column(name = "level", nullable=false,length=40) 
     private String level;
+    
+    @Description("所属目录") 
+    @Column(name = "belongCatalog", nullable=false,length=40) 
+    private String belongCatalog;
       
     @Description("登记人") 
     @Column(name = "inputUserId",length=40) 

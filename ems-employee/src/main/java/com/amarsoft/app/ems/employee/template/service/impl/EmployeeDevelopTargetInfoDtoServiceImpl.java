@@ -1,9 +1,14 @@
+/* 文件名：EmployeeDevelopTargetInfoDtoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：dxiao
+ * 修改时间：2020/05/14
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：修改注释
+ */
 package com.amarsoft.app.ems.employee.template.service.impl;
 
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,20 +18,22 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
-import com.amarsoft.app.ems.employee.template.service.EmployeeDevelopTargetInfoDtoService;
 import com.amarsoft.app.ems.employee.entity.EmployeeDevelopTarget;
-import com.amarsoft.app.ems.employee.entity.EmployeeProjectExperience;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoQueryRsp;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoQueryReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDto;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoQueryReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoQueryRsp;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetinfodto.EmployeeDevelopTargetInfoDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.service.EmployeeDevelopTargetInfoDtoService;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -76,8 +83,8 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
     /**
      * 员工成长目标跟踪Info单记录保存
      * 
-     * @param request
-     * @return
+     * @param EmployeeDevelopTargetInfoDtoSaveReq
+     * @return map
      */
     @Override
     public Map<String, String> employeeDevelopTargetInfoDtoSave(@Valid EmployeeDevelopTargetInfoDtoSaveReq employeeDevelopTargetInfoDtoSaveReq) {
@@ -87,8 +94,8 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
     /**
      * 员工成长目标跟踪Info单记录保存
      * 
-     * @param
-     * @return
+     * @param EmployeeDevelopTargetInfoDto
+     * @return map
      */
     @Transactional
     public Map<String, String> employeeDevelopTargetInfoDtoSaveAction(EmployeeDevelopTargetInfoDto employeeDevelopTargetInfoDto) {
@@ -108,6 +115,7 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
                 if (StringUtils.isEmpty(employeeDevelopTargetInfoDto.getSerialNo())) {
                     employeeDevelopTarget.generateKey();
                 }
+                //TODO dxiao - 新增添加登记人,登记时间,后续可能去掉
                 employeeDevelopTarget.setInputTime(inputDate);
                 employeeDevelopTarget.setInputUserId(GlobalShareContextHolder.getUserId());
                 employeeDevelopTarget.setInputOrgId(GlobalShareContextHolder.getOrgId());
@@ -116,12 +124,13 @@ public class EmployeeDevelopTargetInfoDtoServiceImpl implements EmployeeDevelopT
             else {
                 if (!userId.equals(employeeDevelopTarget.getInputUserId())) { // 当前用户和制定目标不一致则不能更新
                     throw new ALSException("EMS1004");
+                }else {//可以更新-更新人,更新机构,更新机构id
+                    employeeDevelopTarget.setUpdateTime(inputDate);
+                    employeeDevelopTarget.setUpdateUserId(GlobalShareContextHolder.getUserId());
+                    employeeDevelopTarget.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
                 }
             }
             // 将页面属性封装进实体类
-            employeeDevelopTarget.setUpdateTime(inputDate);
-            employeeDevelopTarget.setUpdateUserId(GlobalShareContextHolder.getUserId());
-            employeeDevelopTarget.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
             employeeDevelopTarget.setEmployeeNo(employeeDevelopTargetInfoDto.getEmployeeNo());
             employeeDevelopTarget.setRankNo(employeeDevelopTargetInfoDto.getRankNo());
             // 日期格式化模板
