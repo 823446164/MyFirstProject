@@ -117,31 +117,4 @@ public class LabelInfoControllerImpl implements LabelInfoController {
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @Override
-    @Transactional
-    /**
-     * Description: 标签失效
-     */
-    public ResponseEntity<ResponseMessage<Object>> lableStatusNo(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg) {
-        ResponseMessage<Object> rspMsg = null;
-        try {
-            LabelInfoSaveReq request = reqMsg.getMessage();
-
-            labelInfoServiceImpl.lableStatusNo(request);
-            rspMsg = new ResponseMessage<Object>();
-
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.OK);
-        }
-        catch (Exception e) {
-            if (log.isErrorEnabled()) {
-                log.error("标签失效：" + reqMsg.toString(), e);
-            }
-            // 事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

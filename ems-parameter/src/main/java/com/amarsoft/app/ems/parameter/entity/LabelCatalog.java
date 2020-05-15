@@ -1,25 +1,30 @@
 
 package com.amarsoft.app.ems.parameter.entity;
 
-import com.amarsoft.aecd.common.constant.FormatType;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.arpe.annotation.EntityRelationShip;
-import com.amarsoft.amps.arpe.annotation.GeneratedKey;
-
-import javax.persistence.*;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.arpe.businessobject.BusinessObject;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.arpe.annotation.GeneratedKey;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 @Description("标签目录表")
 @Entity
 @Table(
@@ -68,19 +73,17 @@ public class LabelCatalog extends BusinessObject {
     @Description("目录备注") 
     @Column(name = "catalogRemark",length=2000) 
     private String catalogRemark;
-      
-    @Description("录入人") 
-    @Column(name = "author",length=40) 
-    private String author;
-      
+        
     @Description("版本") 
     @Column(name = "labelVersion",length=10) 
     private String labelVersion;
       
     @Description("登记人") 
+    @CreatedBy
     @Column(name = "inputUserId", nullable=false,length=40) 
     private String inputUserId;
       
+    @CreatedDate
     @Description("登记时间") 
     @Column(name = "inputTime",length=20) 
     private LocalDateTime inputTime;
@@ -90,10 +93,12 @@ public class LabelCatalog extends BusinessObject {
     private String inputOrgId;
       
     @Description("更新人") 
+    @LastModifiedBy
     @Column(name = "updateUserId",length=40) 
     private String updateUserId;
       
     @Description("更新时间") 
+    @LastModifiedDate
     @Column(name = "updateTime",length=20) 
     private LocalDateTime updateTime;
       

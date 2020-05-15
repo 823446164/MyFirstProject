@@ -17,11 +17,6 @@
         </dependency>
         <dependency>
             <groupId>com.amarsoft.app.ems</groupId>
-            <artifactId>ems-employee</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amarsoft.app.ems</groupId>
             <artifactId>ems-parameter-cs</artifactId>
             <version>${project.version}</version>
         </dependency>

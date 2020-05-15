@@ -39,14 +39,7 @@ public interface LabelInfoService {
      * 
      * @param request
      * @return
+     * @throws Exception 
      */
     public void lableStatusOk(@Valid LabelInfoSaveReq lableDescribeInfoSaveReq);
-
-    /**
-     * 标签失效
-     * 
-     * @param request
-     * @return
-     */
-    public void lableStatusNo(@Valid LabelInfoSaveReq lableDescribeInfoSaveReq);
 }

@@ -17,6 +17,7 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 
@@ -47,6 +48,13 @@ public class LabelCatalogList implements Serializable {
     @ActualColumn("LC.parentNo")
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String parentNo;
+    
+    @Description("所属大类")
+    @Length(max=40)
+    @NotEmpty
+    @ActualColumn("LC.rootNo")
+    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    private String rootNo;
 
     @Description("目录备注")
     @Length(max=2000)
