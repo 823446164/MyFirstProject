@@ -171,12 +171,10 @@ public class EmployeePersonalPerformanceListDtoServiceImpl implements EmployeePe
                     if (StringUtils.isEmpty(employeePersonalPerformance.getSerialNo())) {// 主键判空
                         employeePersonalPerformance.generateKey();
                     }
-                    employeePersonalPerformance.setInputTime(LocalDateTime.now());
-                    employeePersonalPerformance.setInputUserId(GlobalShareContextHolder.getUserId());
+                    //TODO dxiao 插入更新机构-后续可能去掉
                     employeePersonalPerformance.setInputOrgId(GlobalShareContextHolder.getOrgId());
                 }else {     
-                    employeePersonalPerformance.setUpdateTime(LocalDateTime.now());
-                    employeePersonalPerformance.setUpdateUserId(GlobalShareContextHolder.getUserId());
+                    //TODO dxiao 插入更新机构-后续可能去掉
                     employeePersonalPerformance.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
                 }
 

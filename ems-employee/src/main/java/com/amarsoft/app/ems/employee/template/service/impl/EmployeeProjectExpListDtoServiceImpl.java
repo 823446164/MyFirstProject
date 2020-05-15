@@ -17,6 +17,7 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.employee.template.service.EmployeeProjectExpListDtoService;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexplistdto.EmployeeProjectExpListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexplistdto.EmployeeProjectExpListDtoQueryRsp;
+import com.alibaba.druid.util.StringUtils;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.util.DTOHelper;
 import java.util.List;
@@ -38,18 +39,39 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexplistdto.E
 @Slf4j
 @Service
 public class EmployeeProjectExpListDtoServiceImpl implements EmployeeProjectExpListDtoService{
+
     /**
-                   * 查询员工对应的项目经历
+     *  * 查询员工对应的项目经历-提供模糊查询
+     * @param employeeNo
+     * @param projectName 模糊搜索
+     * @param employeeJob 模糊搜索
+     * @return
      */
     public static class EmployeeProjectExpListDtoReqQuery implements RequestQuery<EmployeeProjectExpListDtoQueryReq> {
         @Override
         public Query apply(EmployeeProjectExpListDtoQueryReq employeeProjectExpListDtoQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(employeeProjectExpListDtoQueryReq, EmployeeProjectExpListDto.class);
             
-            String sql = "select EPE.serialNo as serialNo,EPE.employeeNo as employeeNo,EPE.projectName as projectName,EPE.projectMangerId as projectMangerId,EPE.employeeJob as employeeJob,EPE.begainTime as begainTime,EPE.endTime as endTime,EPE.workDescribe as workDescribe,EPE.inputUserid as inputUserid,EPE.inputTime as inputTime,EPE.inputOrgId as inputOrgId,EPE.updateuserid as updateuserid,EPE.updatetime as updatetime,EPE.updateorgid as updateorgid"
+            String sql = "select EPE.serialNo as serialNo,EPE.employeeNo as employeeNo,EPE.projectName as projectName,EPE.projectMangerId as projectMangerId,"
+                + "EPE.employeeJob as employeeJob,EPE.begainTime as begainTime,EPE.endTime as endTime,EPE.workDescribe as workDescribe,EPE.inputUserid as inputUserid,"
+                + "EPE.inputTime as inputTime,EPE.inputOrgId as inputOrgId,EPE.updateuserid as updateuserid,EPE.updatetime as updatetime,EPE.updateorgid as updateorgid"
                 +" from EMPLOYEE_PROJECT_EXPERIENCE EPE"
-                +" where 1=1 and EPE.employeeNo = :employeeNo";
-            return queryProperties.assembleSql(sql,"employeeNo",employeeProjectExpListDtoQueryReq.getEmployeeNo());
+                +" where 1=1 and EPE.employeeNo = :employeeNo and EPE.projectName like :projectName and EPE.employeeJob like :employeeJob";
+            String projectName = null;
+            String employeeJob = null;
+            //模糊搜索判断
+            if(StringUtils.isEmpty(employeeProjectExpListDtoQueryReq.getProjectName())) {//如果项目名称参数为空.初始化 %            
+                projectName = "%";
+            }else {
+                projectName = employeeProjectExpListDtoQueryReq.getProjectName()+"%"; //初始化%    
+            }
+            if(StringUtils.isEmpty(employeeProjectExpListDtoQueryReq.getEmployeeJob())){     
+                employeeJob = "%";
+            }else {                                                     
+                employeeJob = employeeProjectExpListDtoQueryReq.getEmployeeJob()+"%";
+            }
+            return queryProperties.assembleSql(sql,"employeeNo",employeeProjectExpListDtoQueryReq.getEmployeeNo(),
+                "projectName",projectName,"employeeJob",employeeJob);
         }
     }
 
@@ -129,6 +151,7 @@ public class EmployeeProjectExpListDtoServiceImpl implements EmployeeProjectExpL
     @Transactional
     public void employeeProjectExpListDtoSaveAction(List<EmployeeProjectExpListDto> employeeProjectExpListDtos){
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        
         if(employeeProjectExpListDtos!=null){
             for(EmployeeProjectExpListDto employeeProjectExpListDtoTmp :employeeProjectExpListDtos){
             }

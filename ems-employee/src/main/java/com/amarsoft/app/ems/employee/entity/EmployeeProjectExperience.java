@@ -7,8 +7,15 @@ import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.amps.arem.annotation.Description;
@@ -20,6 +27,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 @Description("员工项目经历表")
 @Entity
 @Table(
@@ -62,10 +70,12 @@ public class EmployeeProjectExperience extends BusinessObject {
     private String workDescribe;
       
     @Description("登记人") 
+    @CreatedBy
     @Column(name = "inputUserid",length=40) 
     private String inputUserid;
-      
-    @Description("登记时间") 
+    
+    @CreatedDate  
+    @Description("登记时间")     
     @Column(name = "inputTime",length=20) 
     private LocalDateTime inputTime;
       
@@ -73,11 +83,13 @@ public class EmployeeProjectExperience extends BusinessObject {
     @Column(name = "inputOrgId",length=40) 
     private String inputOrgId;
       
-    @Description("更新人") 
+    @Description("更新人")
+    @LastModifiedBy
     @Column(name = "updateuserid",length=40) 
     private String updateuserid;
       
     @Description("更新时间") 
+    @LastModifiedDate
     @Column(name = "updatetime",length=20) 
     private LocalDateTime updatetime;
       

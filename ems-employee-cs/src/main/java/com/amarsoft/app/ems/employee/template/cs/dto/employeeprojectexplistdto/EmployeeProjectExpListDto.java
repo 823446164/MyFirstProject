@@ -1,14 +1,25 @@
+/* 文件名：EmployeeProjectExpListDto
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：dxiao
+ * 修改时间：2020/05/14
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：修改dto中字段显示信息
+ */
 package com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexplistdto;
 
 import java.io.Serializable;
+
+import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.avta.annotation.TemplateBody;
+import com.amarsoft.amps.avta.annotation.TemplateHeader;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.amarsoft.amps.avta.annotation.TemplateHeader;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.amps.acsc.annotation.ActualColumn;
-import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
  * 员工项目经历List
