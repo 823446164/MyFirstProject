@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -1286,7 +1287,7 @@ public class OrgServiceImpl implements OrgService {
             //employeeInfoListDto.setSex(employeeInfoDto.get);
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
-            if (CollectionUtils.isEmpty(map)) {
+            if (MapUtils.isEmpty(map)) {
                 throw new ALSException("EMS6014");
             }
             String teamName = map.get("teamName");
@@ -1333,7 +1334,7 @@ public class OrgServiceImpl implements OrgService {
             //employeeInfoListDto.setSex(employeeInfoDto.get);
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
-            if (CollectionUtils.isEmpty(map)) {
+            if (MapUtils.isEmpty(map)) {
                 throw new ALSException("EMS6014");
             }
             String teamName = map.get("teamName");
