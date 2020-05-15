@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.ArchitectureType;
+import com.amarsoft.aecd.system.constant.ChangeEventType;
 import com.amarsoft.aecd.system.constant.CompanyType;
 import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.aecd.system.constant.OrgStatus;
@@ -1111,7 +1112,7 @@ public class OrgServiceImpl implements OrgService {
         changeEvent.setObjectNo(req.getObjectNo());
         changeEvent.setRemark(req.getRemark());
         changeEvent.setChangeContext("删除部门信息:"+orgInfo.getOrgId());
-        changeEvent.setObjectType("DELETE");
+        changeEvent.setObjectType(ChangeEventType.Delete.id);
         changeEvent.setInputDate(LocalDateTime.now());
         changeEvent.setInputUserId(GlobalShareContextHolder.getUserId());
         changeEvent.setOccurDate(LocalDateTime.now());
