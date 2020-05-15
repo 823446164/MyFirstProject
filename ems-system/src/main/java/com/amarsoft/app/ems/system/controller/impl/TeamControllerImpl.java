@@ -1,5 +1,5 @@
 /*
- * 文件名：TeamController
+ * 文件名：团队管理控制层
  * 版权：Copyright by www.amarsoft.com
  * 描述：团队信息controller实现类
  * 修改人：hpli
@@ -37,9 +37,10 @@ import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
-import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoDeleteReq;
+
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoSaveReq;
@@ -48,7 +49,7 @@ import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
-import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
+
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
@@ -161,7 +162,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "9001001",e.getMessage());
             return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -263,7 +264,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+       
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "901022",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -321,7 +322,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+          
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "901022",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -348,7 +349,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+          
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "901007",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -379,8 +380,6 @@ public class TeamControllerImpl implements TeamController {
         }
     }
      
-   
-  
     /**
      * Description: 根据部门编号查询团队<br>
      * ${tags}
@@ -391,8 +390,6 @@ public class TeamControllerImpl implements TeamController {
     @Transactional
     public ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>> teamQueryById(
         @RequestBody    @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
-
-        
          ResponseMessage<TeamListDtoQueryRsp> rspMsg = null;
             try {
                 TeamListDtoQueryReq request = reqMsg.getMessage();
@@ -407,7 +404,7 @@ public class TeamControllerImpl implements TeamController {
                 }
                 //事务回滚
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                // TODO Auto-generated  //默认异常码未设置，请补充。
+             
                 rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
                 return new ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
             } 
@@ -436,45 +433,13 @@ public class TeamControllerImpl implements TeamController {
                 }
                 //事务回滚
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-                // TODO Auto-generated  //默认异常码未设置，请补充。
-                rspMsg = ResponseMessage.getResponseMessageFromException(e, "901001",e.getMessage());
+            
+                rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010",e.getMessage());
                 return new ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
             }
     }
-    /**
-     * Description: 角色添加br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    @Transactional
-    public ResponseEntity<ResponseMessage<Object>> teamRoleSave( @RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
-
-        ResponseMessage<Object> rspMsg = null;
-        try {
-            TeamListDtoQueryReq request = reqMsg.getMessage();
-            
-            teamListDtoServiceImpl.teamListDtoRole(request);
-            rspMsg = new ResponseMessage<Object>();
-
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("团队信息保存："+ reqMsg.toString(), e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "901022",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
    
-  
 
-   
- 
     /**
      * Description: 更新用户团队<br>
      * @param UpdateUserTeamReq
@@ -497,7 +462,7 @@ public class TeamControllerImpl implements TeamController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+        
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -528,5 +493,37 @@ public class TeamControllerImpl implements TeamController {
         }
     }
 
+    /**
+     * Description:团队角色
+     * ${tags}
+     * @see
+     */
+  
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>> teamRoleQuery(@Valid RequestMessage<TeamInfoDtoRoleReq > reqMsg) {
+       
+        ResponseMessage<TeamInfoDtoRoleRsp>  rsp=null;
+        try {
+            TeamInfoDtoRoleReq request = reqMsg.getMessage();
+            TeamInfoDtoRoleRsp response= teamInfoDtoServiceImpl.queryRole(request);
+            rsp= new ResponseMessage<TeamInfoDtoRoleRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>>(rsp , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("团队角色查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+       
+            rsp = ResponseMessage.getResponseMessageFromException(e, "901022",e.getMessage());
+            return new ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>>(rsp, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
+    }
+
+    
+   
   
 }

@@ -4,10 +4,10 @@ import javax.validation.Valid;
 
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
-import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
-import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
+
 
 /**
  * 团队信息Service接口
@@ -36,15 +36,12 @@ public interface TeamInfoDtoService {
      */
     public TeamInfoDtoQueryRsp updateStatus(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq);
 
-
     /**
      * 团队负责人
      * @param request
      * @return
      */
-    public TeamInfoDtoRoleRsp queryRole(TeamInfoDtoQueryReq request);
+    public TeamInfoDtoRoleRsp queryRole( @Valid TeamInfoDtoRoleReq request);
 
-    
-   
    
 }
