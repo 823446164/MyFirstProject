@@ -42,6 +42,7 @@ public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService{
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();        
         EmployeeInfo employeeInfo = bomanager.loadBusinessObject(EmployeeInfo.class,"employeeNo",employeeInfoDtoQueryReq.getEmployeeNo());        
         if(employeeInfo!=null){
+            //　add by xszhou 员工详情中添加所属团队信息 begin
             RequestMessage<UserTeamQueryReq> reqMsg = new RequestMessage<UserTeamQueryReq>();
             UserTeamQueryReq req = new UserTeamQueryReq();
             req.setUserId(employeeInfoDtoQueryReq.getEmployeeNo());
@@ -53,6 +54,7 @@ public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService{
                 teamId = userTeamQuery.getBody().getMessage().getTeamId(); 
                 teamName = userTeamQuery.getBody().getMessage().getTeamName();
             }
+            //　add by xszhou 员工详情中添加所属团队信息 end
             EmployeeInfoDtoQueryRsp employeeInfoDto = new EmployeeInfoDtoQueryRsp();
             employeeInfoDto.setEmployeeNo(employeeInfo.getEmployeeNo());
             employeeInfoDto.setEmployeeName(employeeInfo.getEmployeeName());
