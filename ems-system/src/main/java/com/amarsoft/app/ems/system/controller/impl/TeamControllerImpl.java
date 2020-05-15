@@ -447,7 +447,7 @@ public class TeamControllerImpl implements TeamController {
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@Valid RequestMessage<UpdateUserTeamReq> reqMsg) {
+    public ResponseEntity<ResponseMessage<Object>> updateUserTeam(@RequestBody @Valid RequestMessage<UpdateUserTeamReq> reqMsg) {
         ResponseMessage<Object> rspMsg = null;
         try {
             UpdateUserTeamReq request = reqMsg.getMessage();
@@ -476,7 +476,7 @@ public class TeamControllerImpl implements TeamController {
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<UserTeamQueryRsp>> userTeamQuery(@Valid RequestMessage<UserTeamQueryReq> reqMsg) {
+    public ResponseEntity<ResponseMessage<UserTeamQueryRsp>> userTeamQuery(@RequestBody @Valid RequestMessage<UserTeamQueryReq> reqMsg) {
         ResponseMessage<UserTeamQueryRsp> rspMsg = null;
         try {
             UserTeamQueryReq req = reqMsg.getMessage();

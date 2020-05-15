@@ -30,11 +30,14 @@ import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.DataAuth;
 import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
+import com.amarsoft.app.ems.employee.template.cs.client.EmployeeBelongChangeInfoDtoClient;
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoDtoClient;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoSaveReq;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.addteamuser.AddTeamUserReq;
@@ -77,6 +80,8 @@ import lombok.extern.slf4j.Slf4j;
 public class TeamServiceImpl implements TeamService {
     @Autowired
     EmployeeInfoDtoClient employeeInfoDtoClient;
+    @Autowired
+    EmployeeBelongChangeInfoDtoClient employeeBelongChangeInfoDtoClient ;
     /**
      * Description: <br>
      * 新增团队<br>
@@ -463,33 +468,51 @@ public class TeamServiceImpl implements TeamService {
         String userId = GlobalShareContextHolder.getUserId();
         UserTeam userTeam = bomanager.loadBusinessObject(UserTeam.class, "userId",req.getEmployeeNo());
         if (!ObjectUtils.isEmpty(userTeam)) {// 1.如果员工有对应的团队，则执行更新团队的操作   
-            if (userTeam.getTeamId().equals(req.getTeamId())) {   //  2.如果调整前后团队一致，则不允许
-                throw new ALSException("");
+            if (userTeam.getTeamId().equals(req.getAfterTeamId())) {   //  2.如果调整前后团队一致，则不允许
+                throw new ALSException("EMS6020");
             }
             TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class, "teamId",req.getTeamId());
             UserBelong userBelong = bomanager.loadBusinessObject(UserBelong.class, "userId",req.getEmployeeNo());
             
-            //TODO 向employee_belong_change表中添加数据
-
-            //3.先删除，再插入信息
-            bomanager.deleteObjectBySql(UserTeam.class, "userId=:userId and teamId=:teamId", "userId",req.getEmployeeNo(),"teamId",userTeam.getTeamId());
+            // 3.向employee_belong_change表中添加数据 (修改请求体)
+            RequestMessage<EmployeeBelongChangeInfoDtoSaveReq> reqMsg = new RequestMessage<EmployeeBelongChangeInfoDtoSaveReq>();
+            EmployeeBelongChangeInfoDtoSaveReq request = new EmployeeBelongChangeInfoDtoSaveReq();
+            request.setEmployeeNo(req.getEmployeeNo());
+            request.setEmployeeAcct(req.getEmployeeAcct());
+            request.setEmployeeName(req.getEmployeeName());
+            request.setAdjustReason(req.getAdjustReason());
+            request.setTeamNo(req.getTeamId());
+            request.setBeforeTeam(req.getTeamId());
+            request.setAfterTeam(req.getAfterTeamId());
+            request.setChangeManager(req.getRoleAId());
+            reqMsg.setMessage(request);
+            //4.去新增employee_belong_change
+            employeeBelongChangeInfoDtoClient.employeeBelongChangeInfoDtoSave(reqMsg); 
+            //5.先删除，再插入信息
+            bomanager.deleteObjectBySql(UserTeam.class, "userId=:userId and teamId=:teamId", "userId",req.getEmployeeNo(),"teamId",req.getTeamId());
             UserTeam ut = new UserTeam();
-            ut.setTeamId(req.getTeamId());
+            ut.setTeamId(req.getAfterTeamId());
             ut.setUserId(req.getEmployeeNo());
-            //4.插入user_belong表中的信息
-            UserBelong ub = new UserBelong();
-            ub.setUserId(req.getEmployeeNo());
-            ub.setOrgId(teamInfo.getBelongOrgId()); 
-            ub.setDataAuth(userBelong.getDataAuth());
-            ub.setDefaultFlag(userBelong.getDefaultFlag());
-            ub.setOriginOrgId(userBelong.getOriginOrgId());
-            ub.setMigrationStatus(userBelong.getMigrationStatus());
-            ub.setUpdateUserId(userId);
-            ub.setUpdateTime(LocalDateTime.now());
-            //5.删除表中原来数据后插入新的数据
-            bomanager.deleteObjectBySql(UserBelong.class, "userId=:userId", "userId",req.getEmployeeNo());
-            bomanager.updateBusinessObject(ut);    // 6.新增user_team中间表中的所属部门
-            bomanager.updateBusinessObject(ub);  //  7.更新user_belong表中的所属部门
+            
+            
+            if (!userBelong.getOrgId().equals(teamInfo.getBelongOrgId())) {//如果调整前后团队所属部门不一样
+              //6.插入user_belong表中的信息
+                UserBelong ub = new UserBelong();
+                ub.setUserId(req.getEmployeeNo());
+                ub.setOrgId(teamInfo.getBelongOrgId()); 
+                ub.setDataAuth(userBelong.getDataAuth());
+                ub.setDefaultFlag(userBelong.getDefaultFlag());
+                ub.setOriginOrgId(userBelong.getOriginOrgId());
+                ub.setMigrationStatus(userBelong.getMigrationStatus());
+                ub.setUpdateUserId(userId);
+                ub.setUpdateTime(LocalDateTime.now());
+                //7.删除表中原来数据后插入新的数据
+                bomanager.deleteObjectBySql(UserBelong.class, "userId=:userId and orgId=:orgId", "userId",req.getEmployeeNo(),"orgId",userBelong.getOrgId()); 
+                bomanager.updateBusinessObject(ub);  //  8.更新user_belong表中的所属部门
+            }
+            
+            bomanager.updateBusinessObject(ut);    // 9.新增user_team中间表中的所属部门
+            
             bomanager.updateDB();
         }      
     }
@@ -511,13 +534,13 @@ public class TeamServiceImpl implements TeamService {
         //根据部门ＩＤ将获取的部门团队信息排序
         List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
                 "select UI.userName as UserName,OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.roleA as RoleA "
-                + "from OrgTeam OT,TeamInfo TI,OrgInfo OI,UserTeam UT,UserInfo UI where OT.teamId = TI.teamId and OT.orgId = OI.orgId and UT.userId=UI.userId and TU.teamId=UT.teamId order by OT.orgId").getBusinessObjects();
-        if (!StringUtils.isEmpty(orgTeamLists)) {//如果部门团队信息不为空，则遍历循环
+                + "from OrgTeam OT,TeamInfo TI,OrgInfo OI,UserTeam UT,UserInfo UI where OT.teamId = TI.teamId and OT.orgId = OI.orgId and UT.userId=UI.userId and TI.teamId=UT.teamId order by OT.orgId").getBusinessObjects();
+        if (!CollectionUtils.isEmpty(orgTeamLists)) {//如果部门团队信息不为空，则遍历循环
             for (BusinessObject businessObject : orgTeamLists) {
                 orgTeam = new OrgAndTeam();
                 //获取当前部门的附属信息表中的部门管理员
                 Department dept = bomanager.loadBusinessObject(Department.class,"deptId",businessObject.getString("OrgId"));
-                if (!ObjectUtils.isEmpty(dept)) {//如果部门附属信息不为空
+                //如果部门附属信息不为空
                     orgTeam.setOrgId(businessObject.getString("OrgId"));
                     orgTeam.setOrgName(businessObject.getString("OrgName"));
                     orgTeam.setTeamId(businessObject.getString("TeamId"));
@@ -526,7 +549,7 @@ public class TeamServiceImpl implements TeamService {
                     orgTeam.setRoleA(businessObject.getString("UserName"));
                     orgTeam.setRoleAId(businessObject.getString("RoleA"));
                     orgTeams.add(orgTeam);
-                }
+               
             }
         }
         rsp.setTotalCount(orgTeamLists.size());
@@ -579,8 +602,7 @@ public class TeamServiceImpl implements TeamService {
         UserTeamQueryRsp rsp = new UserTeamQueryRsp();
         //查询用户对应的团队信息
         List<BusinessObject> businessObjects = bomanager
-            .selectBusinessObjectsBySql("select TI.teamId as TeamId,TI.teamName as TeamName from UserTeam UT,TeamInfo TI "
-                + "where UT.teamId=TI.teamId and UT.userId=:userId", "userId",req.getUserId()).getBusinessObjects();
+            .selectBusinessObjectsBySql("select TI.teamId as TeamId,TI.teamName as TeamName from UserTeam UT,TeamInfo TI where UT.teamId=TI.teamId and UT.userId=:userId", "userId",req.getUserId()).getBusinessObjects();
         String teamId = "";
         String teamName = "";
         if (!CollectionUtils.isEmpty(businessObjects)) {//如果获取的团队信息不为空则将信息返回

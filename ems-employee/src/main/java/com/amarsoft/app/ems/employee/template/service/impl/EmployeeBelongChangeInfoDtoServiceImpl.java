@@ -1,21 +1,34 @@
+/*
+ * 文件名：EmployeeBelongChangeInfoDtoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：团队调整申请InfoService实现类
+ * 修改人：xszhou
+ * 修改时间：2020/5/15
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.employee.template.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import javax.validation.Valid;
-import org.springframework.stereotype.Service;
-import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
-import com.amarsoft.app.ems.employee.template.service.EmployeeBelongChangeInfoDtoService;
-import com.amarsoft.app.ems.employee.entity.EmployeeBelongChange;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoQueryRsp;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoQueryReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoSaveReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDto;
+import java.time.LocalDateTime;
 
-/**
- * 团队调整申请InfoService实现类
- * @author lding
- */
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
+import com.amarsoft.app.ems.employee.entity.EmployeeBelongChange;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoQueryReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoQueryRsp;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.service.EmployeeBelongChangeInfoDtoService;
+
+import lombok.extern.slf4j.Slf4j;
+
+
 @Slf4j
 @Service
 public class EmployeeBelongChangeInfoDtoServiceImpl implements EmployeeBelongChangeInfoDtoService{
@@ -57,23 +70,40 @@ public class EmployeeBelongChangeInfoDtoServiceImpl implements EmployeeBelongCha
     }
 
     /**
-     * 团队调整申请Info单记录保存
-     * @param request
-     * @return
+     * Description: 保存员工团队申请记录表<br>
+     * @param EmployeeBelongChangeInfoDtoSaveReq
+     * @see
      */
     @Override
-    public void employeeBelongChangeInfoDtoSave(@Valid EmployeeBelongChangeInfoDtoSaveReq employeeBelongChangeInfoDtoSaveReq) {
+    public void employeeBelongChangeInfoDtoSave(@RequestBody @Valid EmployeeBelongChangeInfoDtoSaveReq employeeBelongChangeInfoDtoSaveReq) {
         employeeBelongChangeInfoDtoSaveAction(employeeBelongChangeInfoDtoSaveReq);
     }
     /**
-     * 团队调整申请Info单记录保存
-     * @param
-     * @return
+     * Description: 保存员工团队申请记录表<br>
+     * @param EmployeeBelongChangeInfoDtoSaveReq
+     * @see
      */
     @Transactional
-    public void employeeBelongChangeInfoDtoSaveAction(EmployeeBelongChangeInfoDto employeeBelongChangeInfoDto){
+    public void employeeBelongChangeInfoDtoSaveAction(EmployeeBelongChangeInfoDtoSaveReq req){
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if(employeeBelongChangeInfoDto!=null){
+        String orgId = GlobalShareContextHolder.getOrgId();
+        String userId = GlobalShareContextHolder.getUserId();
+        if(req!=null){//如果请求体不为空，则新增记录
+            EmployeeBelongChange ebc = new EmployeeBelongChange();
+            ebc.generateKey();
+            ebc.setAdjustReason(req.getAdjustReason());
+            ebc.setEmployeeNo(req.getEmployeeNo());
+            ebc.setEmployeeName(req.getEmployeeName());
+            ebc.setEmployeeAcct(req.getEmployeeAcct());
+            ebc.setTeamNo(req.getBeforeTeam());
+            ebc.setBeforeTeam(req.getBeforeTeam());
+            ebc.setAfterTeam(req.getAfterTeam());
+            ebc.setObjectType(req.getObjectType());
+            ebc.setChangeManager(req.getChangeManager());
+            ebc.setInputOrgId(orgId);
+            ebc.setInputUserId(userId);
+            ebc.setInputTime(LocalDateTime.now());
+            bomanager.updateBusinessObject(ebc);
         }
         bomanager.updateDB();
     }

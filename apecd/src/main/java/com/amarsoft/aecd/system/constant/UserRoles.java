@@ -28,16 +28,26 @@ public enum UserRoles {
     
     /**
      * 判断当前输入的参数值是否是枚举的一个值
+     * 
      * @param id
      * @return
      */
     public static boolean isExist(String id) {
+        return Admin.id.equals(id) || DeptManager.id.equals(id)||TeamLeader.id.equals(id);
+    }
+    
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * @param id
+     * @return
+     */
+    public static String getNameById(String id) {
         for(UserRoles userRoles : UserRoles.values()) {
-            if(userRoles.id.equals(id)) {
-                return true;
+            if(userRoles.id.equalsIgnoreCase(id)) {
+                return userRoles.name;
             }
         }
-        return false;
+        return "";
     }
     
 }
