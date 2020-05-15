@@ -10,6 +10,7 @@
  */
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
+
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -95,6 +96,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
         if (labelCatalogInfo != null) {
             LabelCatalog lc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogInfo.getSerialNo());
             if (lc == null) {
+                // TODO 判断目录名称、父目录、类型是否为空
                 lc = new LabelCatalog();
                 lc.generateKey();
                 lc.setInputTime(LocalDateTime.now());
@@ -105,7 +107,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             lc.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
             lc.setUpdateTime(LocalDateTime.now());
             lc.setUpdateUserId(GlobalShareContextHolder.getUserId());
-            //TODO 放入父目录parentNo           
+            // TODO 放入父目录parentNo
             bomanager.updateBusinessObject(lc);
         }
         bomanager.updateDB();
@@ -123,20 +125,28 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         LabelByLabelCatalogQueryRsp lableCatalogInfoQueryRsp = new LabelByLabelCatalogQueryRsp();
         BusinessObjectAggregate<BusinessObject> labelBelongCatalogQueryRspBoa = bomanager.selectBusinessObjectsBySql(
-            "select LC.serialNo as serialNo,LC.labelName as labelName,LC.belongCataLog as belongCataLog from LabelCatalog LC where LC.belongCataLog =:serialNo",
+            "select LC.serialNo as serialNo,LC.labelName as labelName,LC.codeNo as codeNo,LC.labelStatus as labelStatus,LC.belongCataLog as belongCataLog,LC.rootNo as rootNo,"
+             + "LC.parentNo as parentNo, LC.labelType as labelType, "
+             + "LC.abilityType as abilityType,LC.labelDescribe as labelDescribe,LC.labelVersion as labelVersion from LabelCatalog LC"
+             + " where LC.parentNo =:serialNo",
             "serialNo", labelByLabelCatalogQueryReq.getSerialNo());
         List<BusinessObject> labelBelongCatalogQueryRspBoList = labelBelongCatalogQueryRspBoa.getBusinessObjects();
         if (!CollectionUtils.isEmpty(labelBelongCatalogQueryRspBoList)) {
             List<LabelCatalogInfo> lableCatalogInfoLists = new ArrayList<LabelCatalogInfo>();
             for (int i = 0; i < labelBelongCatalogQueryRspBoList.size(); i++ ) {
                 BusinessObject labelBelongCatalogQueryRspBo = labelBelongCatalogQueryRspBoList.get(i);
-                LabelByLabelCatalogQueryRsp lableCatalogInof = new LabelByLabelCatalogQueryRsp();
-                lableCatalogInof.setLabelName(labelBelongCatalogQueryRspBo.getString("LabelName"));
-                lableCatalogInof.setSerialNo(labelBelongCatalogQueryRspBo.getString("SerialNo"));
-                lableCatalogInfoLists.add(lableCatalogInof);
+                LabelByLabelCatalogQueryRsp lableCatalogInfo = new LabelByLabelCatalogQueryRsp();
+                lableCatalogInfo.setLabelName(labelBelongCatalogQueryRspBo.getString("LabelName"));
+                lableCatalogInfo.setSerialNo(labelBelongCatalogQueryRspBo.getString("SerialNo"));
+                lableCatalogInfo.setRootNo(labelBelongCatalogQueryRspBo.getString("RootNo"));
+                lableCatalogInfo.setParentNo(labelBelongCatalogQueryRspBo.getString("ParentNo"));
+                lableCatalogInfo.setCatalogRemark(labelBelongCatalogQueryRspBo.getString("CatalogRemark"));
+                lableCatalogInfo.setLabelVersion(labelBelongCatalogQueryRspBo.getString("LabelVersion"));
+                lableCatalogInfo.setLabelType(labelBelongCatalogQueryRspBo.getString("LabelType"));
+                lableCatalogInfoLists.add(lableCatalogInfo);
             }
             lableCatalogInfoQueryRsp.setLableCatalogInfos(lableCatalogInfoLists);
         }
         return lableCatalogInfoQueryRsp;
-    }   
+    }
 }

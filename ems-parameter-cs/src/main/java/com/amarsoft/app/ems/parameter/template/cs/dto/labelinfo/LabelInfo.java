@@ -60,9 +60,9 @@ public class LabelInfo implements Serializable {
 
     @Description("所属目录")
     @Length(max=80)
-    @ActualColumn("LC.belongCataLog")
+    @ActualColumn("LC.parentNo")
     @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
-    private String belongCataLog;
+    private String parentNo;
 
     @Description("所属大类")
     @Length(max=40)
@@ -108,7 +108,7 @@ public class LabelInfo implements Serializable {
     private String LC_InputUserId;
 
     @Description("登记时间")
-    @Length(max=20)
+    @Length(max=40)
     @ActualColumn("LC.inputTime")
     @TemplateBody(sortNo = 12, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String LC_InputTime;
@@ -126,7 +126,7 @@ public class LabelInfo implements Serializable {
     private String LC_UpdateUserId;
 
     @Description("更新时间")
-    @Length(max=20)
+    @Length(max=40)
     @ActualColumn("LC.updateTime")
     @TemplateBody(sortNo = 15, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String LC_UpdateTime;
@@ -150,7 +150,7 @@ public class LabelInfo implements Serializable {
     private String LD_InputUserId;
 
     @Description("登记时间")
-    @Length(max=20)
+    @Length(max=40)
     @ActualColumn("LD.inputTime")
     @TemplateBody(sortNo = 18, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String LD_InputTime;
@@ -168,7 +168,7 @@ public class LabelInfo implements Serializable {
     private String LD_UpdateUserId;
 
     @Description("更新时间")
-    @Length(max=20)
+    @Length(max=40)
     @ActualColumn("LD.updateTime")
     @TemplateBody(sortNo = 21, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String LD_UpdateTime;
