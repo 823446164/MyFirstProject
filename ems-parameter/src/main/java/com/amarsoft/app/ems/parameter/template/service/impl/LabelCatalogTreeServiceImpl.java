@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.employee.constant.ParentNo;
 import com.amarsoft.aecd.parameter.constant.LabelType;
@@ -64,14 +65,15 @@ public class LabelCatalogTreeServiceImpl implements LabelCatalogTreeService {
      * 获取目录下的标签，并生成节点数图
      * 此方法主要把查询到的所有目录分好层级，梳理成树图结构
      * @param rootNode
-     * @param labelCatalogTemp
+     * @param labelCatalogTemp//查找属于前目录下的子目录
+
      * @param allCatalogs
      */
     private void addChildren(Tree rootNode, LabelCatalog labelCatalogTemp, List<LabelCatalog> allCatalogs) {
         //遍历存放所有目录的集合
         for (LabelCatalog labelCatalog : allCatalogs) {
             //查找属于前目录下的子目录
-            if (labelCatalog.getParentNo() != null && labelCatalog.getParentNo().equals(labelCatalogTemp.getSerialNo())) {
+            if (!StringUtils.isEmpty(labelCatalog.getParentNo()) && labelCatalog.getParentNo().equals(labelCatalogTemp.getSerialNo())) {
                 //把子目录信息放进node里面，此node就是rootNode的子机构信息
                 Tree node = new Tree();
                 node.setChildren(new ArrayList<Tree>());
