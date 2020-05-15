@@ -121,7 +121,6 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
         ResponseMessage<EmployeeListByUserQueryRsp> rspMsg = null;
         try {
             EmployeeListByUserQueryReq request = reqMsg.getMessage();
-            
             EmployeeListByUserQueryRsp response = employeeInfoListDtoServiceImpl.employeeListByUserQuery(request);
             rspMsg = new ResponseMessage<EmployeeListByUserQueryRsp>(response);
             

@@ -469,9 +469,8 @@ public class TeamServiceImpl implements TeamService {
             TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class, "teamId",req.getTeamId());
             UserBelong userBelong = bomanager.loadBusinessObject(UserBelong.class, "userId",req.getEmployeeNo());
             
-            //向employee_belong_change表中添加数据
-            
-            
+            //TODO 向employee_belong_change表中添加数据
+
             //3.先删除，再插入信息
             bomanager.deleteObjectBySql(UserTeam.class, "userId=:userId and teamId=:teamId", "userId",req.getEmployeeNo(),"teamId",userTeam.getTeamId());
             UserTeam ut = new UserTeam();
@@ -492,8 +491,7 @@ public class TeamServiceImpl implements TeamService {
             bomanager.updateBusinessObject(ut);    // 6.新增user_team中间表中的所属部门
             bomanager.updateBusinessObject(ub);  //  7.更新user_belong表中的所属部门
             bomanager.updateDB();
-        }
-        
+        }      
     }
 
     /**
