@@ -34,15 +34,24 @@ public class UpdateUserTeamReq implements Serializable{
     @NotEmpty
     @ActualColumn("EI.employeeAcct")
     private String employeeAcct;
-    @Description("调整后所在团队")
+    @Description("调整前所在团队编号")
     @Length(max=40)
     @NotEmpty
     @ActualColumn("TI.teamId")
     private String teamId;
+    @Description("调整后所在团队编号")
+    @Length(max=40)
+    @NotEmpty
+    @ActualColumn("TI.teamId")
+    private String afterTeamId;
     @Description("调整后团队负责人")
     @Length(max=40)
     @NotEmpty
-    @ActualColumn("TI.teamLeader")
-    private String teamLeader;
+    @ActualColumn("EBC.changeManger")
+    private String roleAId;
    
+    @Description("调整原因")
+    @Length(max=2000)
+    @ActualColumn("EBC.adjustReason")
+    private String adjustReason;
 }

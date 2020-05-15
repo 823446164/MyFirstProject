@@ -73,7 +73,7 @@ public class EmployeeBelongChange extends BusinessObject {
     private String beforeTeam;
       
     @Description("调整后所在的团队") 
-    @Column(name = "afterTeam", nullable=false,length=10) 
+    @Column(name = "afterTeam", nullable=false,length=40) 
     private String afterTeam;
       
     @Description("调整后所在团队负责人") 

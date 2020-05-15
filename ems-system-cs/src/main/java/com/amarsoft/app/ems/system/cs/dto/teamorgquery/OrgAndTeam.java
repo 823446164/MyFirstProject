@@ -22,8 +22,11 @@ public class OrgAndTeam implements Serializable{
     @Length(max=80)
     private String teamName;
     @Description("团队负责人")
-    @Length(max=40)
+    @Length(max=80)
     private String roleA;
+    @Description("团队负责人编号")
+    @Length(max=40)
+    private String roleAId;
     @Description("部门编号")
     @Length(max=40)
     private String orgId;
@@ -31,7 +34,7 @@ public class OrgAndTeam implements Serializable{
     @Length(max=80)
     private String orgName;
     @Description("部门负责人")
-    @Length(max=40)
+    @Length(max=80)
     private String deptManager;
    
 }

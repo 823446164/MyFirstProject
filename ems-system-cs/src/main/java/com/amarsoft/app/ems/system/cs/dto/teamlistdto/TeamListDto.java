@@ -1,16 +1,16 @@
 package com.amarsoft.app.ems.system.cs.dto.teamlistdto;
 
 import java.io.Serializable;
+
+import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.avta.annotation.TemplateBody;
+import com.amarsoft.amps.avta.annotation.TemplateHeader;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.amarsoft.amps.avta.annotation.TemplateHeader;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.acsc.annotation.Length;
-
-import com.amarsoft.amps.acsc.annotation.ActualColumn;
-import com.amarsoft.amps.acsc.annotation.Enum;
-import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
  * 团队信息
@@ -25,19 +25,18 @@ public class TeamListDto implements Serializable {
     @Description("团队编号")
     @Length(max=40)
     @ActualColumn("TINFO.teamId")
-    @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly =  false, isSorted = false, isFilter = true, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
+    @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly =  false, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String teamId;
 
     @Description("团队名称")
     @Length(max=80)
     @ActualColumn("TINFO.teamName")
-    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly =  false, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
+    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly =  false, isSorted = false, isFilter = true, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String teamName;
 
     @Description("团队A角")
     @Length(max=80)
     @ActualColumn("TINFO.roleA")
-
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = false, isReadOnly =  false, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String roleA;
     
@@ -82,4 +81,22 @@ public class TeamListDto implements Serializable {
     @Length(max=20)
     @TemplateBody(sortNo = 9, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly =  true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private  int   count; 
+    
+    @Description("部门编号")
+    @Length(max=40)
+    @ActualColumn("OINFO.orgId")
+    @TemplateBody(sortNo = 10, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly =  false, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
+    private String orgId;
+
+    @Description("部门名称")
+    @Length(max=80)
+    @ActualColumn("OINFO.orgName")
+    @TemplateBody(sortNo = 11, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly =  false, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
+    private String orgName;
+    
+    @Description("部门经理")
+    @Length(max=80)
+    @ActualColumn("TINFO.deptManager")
+    @TemplateBody(sortNo = 12, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = false, isReadOnly =  false, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
+    private String deptManager;
 }

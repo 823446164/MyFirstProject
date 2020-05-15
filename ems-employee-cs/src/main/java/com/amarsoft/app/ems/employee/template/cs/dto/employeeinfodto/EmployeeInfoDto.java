@@ -175,4 +175,11 @@ public class EmployeeInfoDto implements Serializable {
     @ActualColumn("TI.teamName")
     @TemplateBody(sortNo = 25, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String teamName;
+    
+    @Description("员工性别")
+    @Length(max=10)
+    @ActualColumn("EI.sex")
+    @TemplateBody(sortNo = 26, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    private String sex;
+    
 }

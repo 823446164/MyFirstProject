@@ -1,21 +1,20 @@
 package com.amarsoft.app.ems.employee.template.controller.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
-import lombok.extern.slf4j.Slf4j;
-import com.amarsoft.app.ems.employee.template.controller.EmployeeInfoListDtoController;
-import com.amarsoft.app.ems.employee.template.service.EmployeeInfoListDtoService;
 import com.amarsoft.amps.avts.annotation.TemplateExport;
-import com.amarsoft.app.ems.employee.template.service.impl.EmployeeInfoListDtoServiceImpl;
+import com.amarsoft.app.ems.employee.template.controller.EmployeeInfoListDtoController;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoDeleteReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSaveReq;
@@ -23,7 +22,10 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.Employee
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoDeleteReq;
+import com.amarsoft.app.ems.employee.template.service.EmployeeInfoListDtoService;
+import com.amarsoft.app.ems.employee.template.service.impl.EmployeeInfoListDtoServiceImpl;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 员工信息ListController实现类
@@ -119,7 +121,6 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
         ResponseMessage<EmployeeListByUserQueryRsp> rspMsg = null;
         try {
             EmployeeListByUserQueryReq request = reqMsg.getMessage();
-            
             EmployeeListByUserQueryRsp response = employeeInfoListDtoServiceImpl.employeeListByUserQuery(request);
             rspMsg = new ResponseMessage<EmployeeListByUserQueryRsp>(response);
             

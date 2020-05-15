@@ -75,7 +75,7 @@ public class EmployeeBelongChangeInfoDto implements Serializable {
     private String beforeTeam;
 
     @Description("调整后所在的团队")
-    @Length(max=10)
+    @Length(max=40)
     @ActualColumn("EBC.afterTeam")
     @TemplateBody(sortNo = 9, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String afterTeam;
