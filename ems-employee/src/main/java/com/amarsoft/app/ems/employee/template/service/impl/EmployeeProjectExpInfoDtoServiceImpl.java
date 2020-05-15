@@ -1,3 +1,12 @@
+/* 文件名：EmployeeProjectExpInfoDtoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：dxiao
+ * 修改时间：2020/05/15
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：修改保存方法
+ */
 package com.amarsoft.app.ems.employee.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +34,8 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexpinfodto.E
 public class EmployeeProjectExpInfoDtoServiceImpl implements EmployeeProjectExpInfoDtoService{
     /**
      * 员工项目经历Info单记录查询
-     * @param request
-     * @return
+     * @param  EPE.serialNo
+     * @return EmployeeProjectExpInfo
      */
     @Override
     @Transactional
@@ -58,9 +67,10 @@ public class EmployeeProjectExpInfoDtoServiceImpl implements EmployeeProjectExpI
     }
 
     /**
-     * 员工项目经历Info单记录保存
-     * @param request
-     * @return
+     * 员工项目经历Info单记录保存-只更新工作描述
+     * @param EPE.serialNo
+     * @param EPE.workDescribe
+     * @return map
      */
     @Override
     public Map<String,String> employeeProjectExpInfoDtoSave(@Valid EmployeeProjectExpInfoDtoSaveReq employeeProjectExpInfoDtoSaveReq) {

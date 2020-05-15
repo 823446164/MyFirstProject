@@ -1,47 +1,50 @@
-/*
- * 文件名：EmployeeDevelopTargetListDtoServiceImpl 版权：Copyright by www.amarsoft.com
- * 描述：修改方法employeeDevelopTargetListDtoDelete 修改人：dxiao 修改时间：2020/05/09 跟踪单号： 修改单号： 修改内容：
+/*文件名：EmployeeDevelopTargetListDtoServiceImpl 
+ * 版权：Copyright by www.amarsoft.com
+ * 描述： 
+ * 修改人：dxiao 
+ * 修改时间：2020/05/09 
+ * 跟踪单号： 
+ * 修改单号： 
+ * 修改内容：
  */
 package com.amarsoft.app.ems.employee.template.service.impl;
 
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import javax.validation.Valid;
-import org.springframework.stereotype.Service;
-import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
-import com.amarsoft.app.ems.employee.template.service.EmployeeDevelopTargetListDtoService;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoQueryReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoQueryRsp;
-import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
-import com.amarsoft.amps.acsc.query.QueryProperties;
-import com.amarsoft.amps.acsc.util.DTOHelper;
-import com.amarsoft.amps.arem.exception.ALSException;
-
-import java.util.List;
-import java.util.Map;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.amarsoft.amps.arpe.businessobject.BusinessObject;
-import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
+import com.amarsoft.amps.acsc.util.DTOHelper;
+import com.amarsoft.amps.arem.exception.ALSException;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDto;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoSaveReq;
 import com.amarsoft.app.ems.employee.entity.EmployeeDevelopTarget;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDto;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoDeleteReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoQueryReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeedeveloptargetlistdto.EmployeeDevelopTargetListDtoQueryRsp;
+import com.amarsoft.app.ems.employee.template.service.EmployeeDevelopTargetListDtoService;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 @Service
 public class EmployeeDevelopTargetListDtoServiceImpl implements EmployeeDevelopTargetListDtoService {
     /**
-     * 查询结果集
+     * 查询成长目标跟踪
      */
     public static class EmployeeDevelopTargetListDtoReqQuery implements RequestQuery<EmployeeDevelopTargetListDtoQueryReq> {
         @Override
@@ -49,8 +52,10 @@ public class EmployeeDevelopTargetListDtoServiceImpl implements EmployeeDevelopT
             QueryProperties queryProperties = DTOHelper.getQueryProperties(employeeDevelopTargetListDtoQueryReq,
                 EmployeeDevelopTargetListDto.class);
 
-            String sql = "select EDT.serialNo as serialNo,EDT.employeeNo as employeeNo,EDT.rankNo as rankNo,EDT.designTime as designTime,EDT.targetDescribe as targetDescribe,EDT.describeTime as describeTime,EDT.designerId as designerId,EDT.record as record,EDT.traceUserId as traceUserId,EDT.implStatus as implStatus,EDT.inputUserId as inputUserId,EDT.inputTime as inputTime,EDT.inputOrgId as inputOrgId,EDT.updateUserId as updateUserId,EDT.updateTime as updateTime,EDT.updateOrgId as updateOrgId"
-                         + " from EMPLOYEE_DEVELOP_TARGET EDT" + " where 1=1 and EDT.employeeNo = :employeeNo";
+            String sql = "select EDT.serialNo as serialNo,EDT.employeeNo as employeeNo,EDT.rankNo as rankNo,EDT.designTime as designTime,EDT.targetDescribe as targetDescribe,"
+                        + "EDT.describeTime as describeTime,EDT.designerId as designerId,EDT.record as record,EDT.traceUserId as traceUserId,EDT.implStatus as implStatus,EDT.inputUserId as inputUserId,"
+                        + "EDT.inputTime as inputTime,EDT.inputOrgId as inputOrgId,EDT.updateUserId as updateUserId,EDT.updateTime as updateTime,EDT.updateOrgId as updateOrgId"
+                        + " from EMPLOYEE_DEVELOP_TARGET EDT" + " where 1=1 and EDT.employeeNo = :employeeNo";
             return queryProperties.assembleSql(sql, "employeeNo", employeeDevelopTargetListDtoQueryReq.getEmployeeNo());
         }
     }
@@ -87,7 +92,9 @@ public class EmployeeDevelopTargetListDtoServiceImpl implements EmployeeDevelopT
     /**
      * 员工成长目标跟踪List多记录查询
      * 
-     * @param request
+     * @param begin
+     * @param pagesSize
+     * @param employeeNo
      * @return
      */
     @Override
@@ -118,36 +125,10 @@ public class EmployeeDevelopTargetListDtoServiceImpl implements EmployeeDevelopT
     }
 
     /**
-     * 员工成长目标跟踪List多记录保存
-     * 
-     * @param request
-     * @return
-     */
-    @Override
-    public void employeeDevelopTargetListDtoSave(@Valid EmployeeDevelopTargetListDtoSaveReq employeeDevelopTargetListDtoSaveReq) {
-        employeeDevelopTargetListDtoSaveAction(employeeDevelopTargetListDtoSaveReq.getEmployeeDevelopTargetListDtos());
-    }
-
-    /**
-     * 员工成长目标跟踪List多记录保存
-     * 
-     * @param
-     * @return
-     */
-    @Transactional
-    public void employeeDevelopTargetListDtoSaveAction(List<EmployeeDevelopTargetListDto> employeeDevelopTargetListDtos) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if (employeeDevelopTargetListDtos != null) {
-            for (EmployeeDevelopTargetListDto employeeDevelopTargetListDtoTmp : employeeDevelopTargetListDtos) {}
-        }
-        bomanager.updateDB();
-    }
-
-    /**
      * 员工成长目标跟踪List删除
      * 
-     * @param request
-     * @return
+     * @param EDT.serialNo
+     * @return Y
      */
     @Override
     @Transactional
@@ -157,10 +138,10 @@ public class EmployeeDevelopTargetListDtoServiceImpl implements EmployeeDevelopT
         // 获取要删除的list对象
         EmployeeDevelopTarget employeeDevelopTarget = bomanager.keyLoadBusinessObject(EmployeeDevelopTarget.class,
             employeeDevelopTargetListDtoDeleteReq.getSerialNo());
-        // 获取流水号-校验信息
+  
         if (employeeDevelopTarget == null) {// 获取对象为空
             // 抛出异常信息
-            throw new ALSException("EMS1005", "流水号不存在,请检查!");
+            throw new ALSException("EMS1005");
         }
         // 获取当前登录用户id
         String userId = GlobalShareContextHolder.getUserId();

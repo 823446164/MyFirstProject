@@ -1,3 +1,12 @@
+/* 文件名：EmployeeRankListDtoControllerImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：员工项目经历个人表现ListService实现类
+ * 修改人：dxiao
+ * 修改时间：2020/05/15
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.employee.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +62,7 @@ public class EmployeeRankListDtoControllerImpl implements EmployeeRankListDtoCon
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1006",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeRankListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -79,30 +87,6 @@ public class EmployeeRankListDtoControllerImpl implements EmployeeRankListDtoCon
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // 异常码设置
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1007",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    @Transactional
-    //员工职级List删除
-    public ResponseEntity<ResponseMessage<Object>> employeeRankListDtoDelete(@RequestBody @Valid RequestMessage<EmployeeRankListDtoDeleteReq> reqMsg){
-        ResponseMessage<Object> rspMsg = null;
-        try {
-            EmployeeRankListDtoDeleteReq request = reqMsg.getMessage();
-            
-            employeeRankListDtoServiceImpl.employeeRankListDtoDelete(request);
-            rspMsg = new ResponseMessage<Object>();
-
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("员工职级List删除："+ reqMsg.toString(), e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
