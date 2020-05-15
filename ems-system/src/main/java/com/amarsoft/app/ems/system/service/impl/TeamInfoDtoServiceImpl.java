@@ -32,6 +32,7 @@ import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDto;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
@@ -51,9 +52,9 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
     @Autowired
     EmployeeInfoListDtoClient employeeInfoDtoClient;
 
-    /**
+    /**查询团队详情
      * @param request
-     * @return
+     * @return 团队list
      */
 
     @Override
@@ -63,14 +64,6 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
         TeamInfoDtoQueryRsp rsp = new TeamInfoDtoQueryRsp();
         TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class, "teamId", teamInfoDtoQueryReq.getTeamId());
         TeamInfoDtoQueryRsp teamInfoDto = new TeamInfoDtoQueryRsp();
-        BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(
-            "select count(*)  as count from  UserTeam  where teamId=:teamId ", "teamId", teamInfoDtoQueryReq.getTeamId());
-        List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
-        if (businessObjects != null && businessObjects.size() > 0) {
-
-            int count = businessObjects.get(0).getInt("count");
-            teamInfoDto.setCount(count);
-        }
         if (teamInfo != null) {
             teamInfoDto.setTeamId(teamInfo.getTeamId());
             teamInfoDto.setTeamName(teamInfo.getTeamName());
@@ -83,6 +76,15 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
             teamInfoDto.setDescription(teamInfo.getDescription());
             return teamInfoDto;
         }
+        BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(
+            "select count(*)  as count from  UserTeam  where teamId=:teamId ", "teamId", teamInfoDtoQueryReq.getTeamId());
+        List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
+        if (businessObjects != null && businessObjects.size() > 0) {
+
+            int count = businessObjects.get(0).getInt("count");
+            teamInfoDto.setCount(count);
+        }
+ 
         return rsp;
 
     }
@@ -156,31 +158,22 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
         if (teamInfo == null) {
             // 不存在该团队
             throw new ALSException("901017");
-        }
-        // 判断状态 1:完成;2:停用;
-        if (teamInfoDtoQueryReq.getStringflag) { // 点击执行完成
-            teamInfo.setStatus(OrgStatus.Completed.id);
-            bomanager.updateBusinessObject(teamInfo);
-            bomanager.updateDB();
-
-        }
-        else { // 执行停用删除
-
-            if ((OrgStatus.Disabled.id).equals(teamInfo.getStatus())) {
-                throw new ALSException("EMS6012");
             }
-            BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(
-                "select  UT.userId  from  UserTeam UT ,TeamInfo TI where TI.teamId = UT.teamId", teamInfo.getTeamId());
-            List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
-            if (businessObjects != null) {
-                throw new ALSException("EMS6011");
-            }
-            bomanager.updateBusinessObject(teamInfo);
-            bomanager.updateDB();
-
-        }
-
-        return rsp;
+           //判断完成　还是　停用　　0:完成;1:停用;
+       String status= teamInfoDtoQueryReq.getStatus() ;
+        if(OrgStatus.Disabled.id .equals(status)) { //操作停用
+            throw new ALSException("EMS6012"); 
+               }
+        BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql("select  UT.userId  from  UserTeam UT ,TeamInfo TI where TI.teamId = UT.teamId", teamInfo.getTeamId());
+        List<BusinessObject> businessObjects = selectBusinessObjectsBySql.getBusinessObjects();
+        if(businessObjects !=null) {
+              throw new ALSException("EMS6011");  
+          }
+        teamInfo.setStatus(teamInfoDtoQueryReq.getStatus());
+        bomanager.updateBusinessObject(teamInfo);
+        bomanager.updateDB();
+        return rsp;   
+           
     }
-
+   
 }

@@ -214,7 +214,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     public void teamListDtoDelete(@Valid DeleteInfoDtoQueryReq req) {
        
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, req.getObjectNo());
+        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class,  "teamId =:req.getObjectNo()",req.getSerialNo());
         TeamListDtoDeleteRsp rsp = new TeamListDtoDeleteRsp();
         if (teamInfo == null) {
             throw new ALSException("901007");
@@ -241,9 +241,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         }
         bomanager.updateBusinessObject(ch);
         bomanager.deleteBusinessObject(teamInfo);
-        bomanager.updateDB();
-
-        
+        bomanager.updateDB(); 
     }
 
     /**

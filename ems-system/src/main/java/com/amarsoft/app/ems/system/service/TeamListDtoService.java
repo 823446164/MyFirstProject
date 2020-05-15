@@ -9,6 +9,7 @@ import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoSaveReq;
+import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
 
 
 /**
@@ -40,7 +41,7 @@ public interface TeamListDtoService {
      * @param request
      * @return
      */
-    public TeamListDtoDeleteRsp teamListDtoDelete(@Valid TeamListDtoDeleteReq teamListDtoDeleteReq);
+    public void  teamListDtoDelete(@Valid DeleteInfoDtoQueryReq req);
 
     /**
      * 根据部门查询团队信息
