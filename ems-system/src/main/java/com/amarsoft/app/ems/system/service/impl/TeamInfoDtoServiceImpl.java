@@ -166,17 +166,14 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
             if(count>0 || OrgStatus.Disabled.id.equals(teamStatus)||OrgStatus.New.id.equals(teamStatus)) {
             throw new ALSException("EMS6009");
           }
-        } /*
-           * else {// 操作完成 if( OrgStatus.Completed.id.equals(teamStatus)) { throw new
-           * ALSException("EMS6013"); } }
-           */
+        } 
       
         teamInfo.setStatus(teamInfoDtoQueryReq.getStatus());
         bomanager.updateBusinessObject(teamInfo);
         bomanager.updateDB();
         return rsp;
 
-        
+    
     }
     /**
      * 角色信息

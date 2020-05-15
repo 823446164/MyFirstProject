@@ -81,7 +81,7 @@ public interface TeamController {
     @PostMapping(value = "/teamlistdto/delete", name="团队信息删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg);
 
-   
+  
     @PostMapping(value = "/teamlistdto/teamquerybyid", name="根据部门查询团队信息接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>> teamQueryById(@RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg);
    

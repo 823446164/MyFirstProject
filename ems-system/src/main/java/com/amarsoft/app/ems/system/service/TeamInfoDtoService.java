@@ -43,8 +43,5 @@ public interface TeamInfoDtoService {
      */
     public TeamInfoDtoRoleRsp queryRole( @Valid TeamInfoDtoRoleReq request);
 
-    
-   
-    
    
 }

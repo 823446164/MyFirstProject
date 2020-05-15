@@ -32,7 +32,6 @@ import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.service.TeamListDtoService;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
 
-
 /**
  * 团队信息Service实现类
  * 

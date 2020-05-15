@@ -14,7 +14,7 @@ import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQu
  */
 public interface TeamListDtoService {
 
-    
+
     /**
      * 团队信息查询
      * 
