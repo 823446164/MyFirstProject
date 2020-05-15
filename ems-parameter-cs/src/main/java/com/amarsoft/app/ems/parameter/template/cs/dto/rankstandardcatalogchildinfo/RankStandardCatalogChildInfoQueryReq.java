@@ -9,7 +9,7 @@
  * 修改内容：
  */
 
-package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogsoninfo;
+package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo;
 
 import java.io.Serializable;
 
@@ -27,14 +27,14 @@ import lombok.ToString;
  * 〈子职级info界面查询请求实体〉
  * @author xphe
  * @version 2020年5月9日
- * @see RankStandardCatalogSonInfoQueryReq
+ * @see RankStandardCatalogChildInfoQueryReq
  * @since
  */
 @Getter
 @Setter
 @ToString
 @QueryRule(groupBy = {}, orderBy = {"serialNo", })
-public class RankStandardCatalogSonInfoQueryReq implements Serializable {
+public class RankStandardCatalogChildInfoQueryReq implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("职级编号")
     @Length(max=40)

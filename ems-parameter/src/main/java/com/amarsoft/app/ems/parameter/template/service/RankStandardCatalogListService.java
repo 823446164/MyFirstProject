@@ -12,12 +12,11 @@
 package com.amarsoft.app.ems.parameter.template.service;
 
 import javax.validation.Valid;
+
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogChildQueryReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogChildQueryRsq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListQueryRsp;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListSaveReq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogSonQueryRsq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogSonQueryReq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogListDeleteReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 
@@ -33,7 +32,7 @@ public interface RankStandardCatalogListService {
     /**
      * 
      * Description: 职级标准查询
-                     * 1、…开发职级标准查询
+                     * 1、…开发/管理职级标准查询
      *
      * @param rankStandardCatalogListQueryReq
      * @return
@@ -41,46 +40,19 @@ public interface RankStandardCatalogListService {
      */
     public RankStandardCatalogListQueryRsp rankStandardCatalogListQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq);
 
-    /**
-     * 
-     * Description: 职级标准列表保存
-     *
-     * @param rankStandardCatalogListSaveReq
-     * @return
-     * @see
-     */
-    public void rankStandardCatalogListSave(@Valid RankStandardCatalogListSaveReq rankStandardCatalogListSaveReq);
 
-    /**
-     * 
-     * Description: 职级标准列表删除
-     *
-     * @param rankStandardCatalogListDeleteReq
-     * @return
-     * @see
-     */
-    public void rankStandardCatalogListDelete(@Valid RankStandardCatalogListDeleteReq rankStandardCatalogListDeleteReq);
-      
+
     /**
      * 
      * Description: 子职级标准查询
      *
-     * @param rankStandardCatalogListDeleteReq
+     * @param rankStandardCatalogSonQueryReq
      * @return
      * @see
      */
-    public RankStandardCatalogSonQueryRsq rankStandardCatalogSonQuery(@Valid RankStandardCatalogSonQueryReq rankStandardCatalogSonQueryReq);
+    public RankStandardCatalogChildQueryRsq rankStandardCatalogChildQuery(@Valid RankStandardCatalogChildQueryReq rankStandardCatalogSonQueryReq);
    
-    /**
-     * 
-     * Description: 管理职级标准查询
-     *
-     * @param rankStandardCatalogListQueryReq
-     * @return
-     * @see
-     */ 
-    public RankStandardCatalogListQueryRsp ranStandardCatalogManagerQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq);
-    
+
     /**
      * 
      * Description: 展示团队列表

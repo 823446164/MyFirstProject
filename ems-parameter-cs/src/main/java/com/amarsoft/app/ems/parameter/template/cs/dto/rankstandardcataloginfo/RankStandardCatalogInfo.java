@@ -12,15 +12,16 @@
 package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloginfo;
 
 import java.io.Serializable;
+
+import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.avta.annotation.TemplateBody;
+import com.amarsoft.amps.avta.annotation.TemplateHeader;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.amarsoft.amps.avta.annotation.TemplateHeader;
-import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist.RankStandardCatalogSonQueryReq;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.amps.acsc.annotation.ActualColumn;
-import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
  * 〈职级标准详情〉
