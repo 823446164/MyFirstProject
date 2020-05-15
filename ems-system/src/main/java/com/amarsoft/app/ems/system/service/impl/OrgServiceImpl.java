@@ -1296,9 +1296,8 @@ public class OrgServiceImpl implements OrgService {
             employeeInfoListDto.setOrgName(orgName);
             employeeInfoListDtos.add(employeeInfoListDto);
         }
-        rsp.setTotalCount(employeeInfoDtos.size());
+        rsp.setTotalCount(employeeInfoListDtos.size());
         rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
-        rsp.setEmployeeInfoListDtos(list);
         return rsp;
     }
 
@@ -1343,7 +1342,7 @@ public class OrgServiceImpl implements OrgService {
             employeeInfoListDto.setOrgName(orgName);
             employeeInfoListDtos.add(employeeInfoListDto);
         }
-        rsp.setTotalCount(list.size());
+        rsp.setTotalCount(employeeInfoListDtos.size());
         rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
         return rsp;
     }
