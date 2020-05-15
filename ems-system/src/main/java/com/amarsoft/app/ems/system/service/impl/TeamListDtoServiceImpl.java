@@ -34,6 +34,7 @@ import com.amarsoft.app.ems.system.entity.ChangeEvent;
 import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.service.TeamListDtoService;
+import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
 
 
 /**
@@ -210,21 +211,21 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
      */
     @Transactional
     @Override
-    public TeamListDtoDeleteRsp teamListDtoDelete(@Valid TeamListDtoDeleteReq teamListDtoDeleteReq) {
+    public void teamListDtoDelete(@Valid DeleteInfoDtoQueryReq req) {
        
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamListDtoDeleteReq.getTeamId());
+        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class,  "teamId =:req.getObjectNo()",req.getSerialNo());
         TeamListDtoDeleteRsp rsp = new TeamListDtoDeleteRsp();
         if (teamInfo == null) {
             throw new ALSException("901007");
         }
         ChangeEvent ch = new ChangeEvent();
-
+        //DeleteInfoDto 
         // 填写变更理由
         ch.generateKey();
-        ch.setObjectNo(teamListDtoDeleteReq.getTeamId());
+        ch.setObjectNo(req.getObjectNo());
         ch.setObjectType("DELETE");
-        ch.setChangeContext("删除团队信息:" + teamListDtoDeleteReq.getObjectNo());
+        ch.setChangeContext("删除团队信息:" + req.getObjectNo());
         ch.setInputDate(LocalDateTime.now());
         ch.setOccurDate(LocalDateTime.now());
         BusinessObjectAggregate<BusinessObject> userTeamBo = bomanager.selectBusinessObjectsBySql(
@@ -240,9 +241,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         }
         bomanager.updateBusinessObject(ch);
         bomanager.deleteBusinessObject(teamInfo);
-        bomanager.updateDB();
-
-        return rsp;
+        bomanager.updateDB(); 
     }
 
     /**

@@ -48,6 +48,7 @@ import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
+import com.amarsoft.app.ems.system.cs.dto.updateteam.UpdateTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryRsp;
@@ -56,6 +57,7 @@ import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
 import com.amarsoft.app.ems.system.service.TeamListDtoService;
 import com.amarsoft.app.ems.system.service.TeamService;
 import com.amarsoft.app.ems.system.service.impl.TeamListDtoServiceImpl;
+import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -331,10 +333,10 @@ public class TeamControllerImpl implements TeamController {
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<TeamListDtoDeleteReq> reqMsg){
+    public ResponseEntity<ResponseMessage<Object>> teamListDtoDelete(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq > reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
-            TeamListDtoDeleteReq request = reqMsg.getMessage();
+            DeleteInfoDtoQueryReq request = reqMsg.getMessage();
             
             teamListDtoServiceImpl.teamListDtoDelete(request);
             rspMsg = new ResponseMessage<Object>();
@@ -468,20 +470,10 @@ public class TeamControllerImpl implements TeamController {
         }
     }
 
-    /**
-     * Description: 角色查询br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    @Transactional
-    public ResponseEntity<ResponseMessage<TeamInfoDtoRoleRsp>> queryRoele(@Valid RequestMessage<TeamInfoDtoQueryReq> reqMsg) {
-        // TODO 未完成
-        
-        return null;
-    }
+   
+  
 
-
+   
  
     /**
      * Description: 更新用户团队<br>
@@ -536,15 +528,5 @@ public class TeamControllerImpl implements TeamController {
         }
     }
 
-   
-   
-
-   
   
-    
-    
-
-  
-    
-     
 }

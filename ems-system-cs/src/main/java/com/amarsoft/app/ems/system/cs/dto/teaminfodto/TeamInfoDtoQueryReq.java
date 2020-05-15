@@ -31,8 +31,9 @@ public class TeamInfoDtoQueryReq implements Serializable {
      * @see
      */
     @Description("执行状态")
-    public boolean getStringflag ;
+    public String  status;
     
  
     
 }
+
