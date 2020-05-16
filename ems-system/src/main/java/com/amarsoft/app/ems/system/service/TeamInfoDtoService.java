@@ -1,20 +1,16 @@
 package com.amarsoft.app.ems.system.service;
 
 import javax.validation.Valid;
-
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
-import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleReq;
-import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoRoleRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
-
 
 /**
  * 团队信息Service接口
  * @author hpli
  */
 public interface TeamInfoDtoService {
-    
+   
     /**
      * 团队信息查询
      * @param request
@@ -35,13 +31,8 @@ public interface TeamInfoDtoService {
      * @return
      */
     public TeamInfoDtoQueryRsp updateStatus(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq);
-
-    /**
-     * 团队负责人
-     * @param request
-     * @return
-     */
-    public TeamInfoDtoRoleRsp queryRole( @Valid TeamInfoDtoRoleReq request);
+    
 
    
 }
+
