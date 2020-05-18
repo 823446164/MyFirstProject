@@ -24,7 +24,6 @@ public enum ButtonType {
     _1("1","add"),
     _2("2","edit"),
     _3("3","copy"),
-    _4("4","delete"),
     ;
     
     public final String id;
@@ -44,9 +43,7 @@ public enum ButtonType {
     public static boolean isExist(String id) {
         return _1.id.equals(id) 
             || _2.id.equals(id) 
-            || _3.id.equals(id)
-            || _4.id.equals(id);
-
+            || _3.id.equals(id);
     }
 
     /**
