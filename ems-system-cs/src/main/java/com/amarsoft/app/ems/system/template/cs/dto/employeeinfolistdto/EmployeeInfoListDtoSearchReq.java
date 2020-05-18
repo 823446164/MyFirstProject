@@ -6,6 +6,9 @@ import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.aecd.employee.constant.RankIsFormal;
+import com.amarsoft.aecd.system.constant.ArchitectureType;
+import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
@@ -39,4 +42,9 @@ public class EmployeeInfoListDtoSearchReq implements Serializable {
     @Description("员工名称")
     @Length(max=80)
     private String userName;
+    
+    @Description("员工编号")
+    @Length(max=80)
+    private String userId;  
+    
 }

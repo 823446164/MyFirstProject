@@ -38,7 +38,6 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq
 import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
 import com.amarsoft.app.ems.parameter.entity.LabelDescribe;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfo;
-import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoCopyReq;
 
 
 /**
@@ -152,7 +151,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
      */
     public void labelInfoSaveAction(LabelInfo labelInfo) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
+        if (ButtonType._3.name.equals(labelInfo.getButtonType())) {
             // 保留发过来的serialNo
             String indexSerialNo = labelInfo.getSerialNo();
             String indexName = labelInfo.getLabelName();
@@ -174,17 +173,46 @@ public class LabelInfoServiceImpl implements LabelInfoService {
                 indexSerialNo);
             // 复制标签
             for (LabelCatalog labelCatalogTemp : labelCatalogs) {
-               String copyLabelSerialNo= labelCatalogTemp.getSerialNo();
-                LabelInfo labelInfo1 = new LabelInfo();                                
+                // 要复制的标签的serialNo
+                String copyLabelSerialNo = labelCatalogTemp.getSerialNo();
+                LabelInfo labelInfo1 = new LabelInfo();
                 BeanUtils.copyProperties(labelCatalogTemp, labelInfo1);
                 labelInfo1.setSerialNo(null);
                 labelInfo1.setParentNo(labelInfoSave);
-                labelInfoSave(labelInfo1, copyLabelSerialNo);
+                labelInfo1.setButtonType(labelInfo.getButtonType());
+                // 新生成的标签的serialNo
+                String labelSerialNo = labelInfoSave(labelInfo1, null);
+                //为复制的标签复制标签能力描述
+                copyLabelDescribe(labelCatalogTemp,labelSerialNo,copyLabelSerialNo);
             }
         }
         else {
             labelInfoSave(labelInfo, null);
         }
+    }
+
+    /**
+     * 复制新指标下标签
+     * 
+     * @param labelInfoSaveReq
+     */
+    public void copyLabelDescribe(LabelCatalog labelCatalogTemp,String labelSerialNo,String copyLabelSerialNo) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        List<LabelDescribe> labelDescribes = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo",
+            copyLabelSerialNo);
+        for (LabelDescribe labelDescribeTemp : labelDescribes) {
+            LabelDescribe labelDescribe = new LabelDescribe();
+            labelDescribe.generateKey();
+            labelDescribe.setLabelNo(labelSerialNo);
+            labelDescribe.setLabelLevel(labelDescribeTemp.getLabelLevel());
+            labelDescribe.setLevelDescribe(labelDescribeTemp.getLevelDescribe());
+            labelDescribe.setInputUserId(labelDescribeTemp.getInputUserId());
+            labelDescribe.setInputTime(LocalDateTime.now());
+            labelDescribe.setInputOrgId(labelDescribeTemp.getInputOrgId());            
+            bomanager.updateBusinessObject(labelDescribe);
+            bomanager.updateDB();
+        }
+
     }
 
     /**
@@ -234,10 +262,9 @@ public class LabelInfoServiceImpl implements LabelInfoService {
      * @param bomanager
      */
     public void labelDescribeSave(BusinessObjectManager bomanager, LabelInfo labelInfo, LabelCatalog labelCatalog, String serialNo) {
-        List<LabelDescribe> labelDescribess = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo", serialNo);
-        if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
-
-        }
+        List<LabelDescribe> labelDescribess = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo",
+            labelInfo.getSerialNo());
+        if (ButtonType._3.name.equals(labelInfo.getButtonType())) {}
         // TODO 判断前端的数据 指标编号、
         // 空说明是新增信息，非空说明是修改
         else if (!CollectionUtils.isEmpty(labelDescribess)) {
@@ -246,6 +273,16 @@ public class LabelInfoServiceImpl implements LabelInfoService {
                 bomanager.deleteBusinessObject(labelDescribe);
             }
         }
+        labelDescribeSave(bomanager, labelInfo, labelCatalog);
+    }
+
+    /**
+     * 标签能力描述保存入数据库
+     * 
+     * @param labelInfo
+     * @param bomanager
+     */
+    public void labelDescribeSave(BusinessObjectManager bomanager, LabelInfo labelInfo, LabelCatalog labelCatalog) {
         List<LabelDescribe> labelDescribes = new ArrayList<LabelDescribe>();
         if (!StringUtils.isEmpty(labelInfo.getMasterDescribe())) {
             LabelDescribe labelDescribe = new LabelDescribe();
@@ -300,7 +337,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime parse = LocalDateTime.parse(labelCatalog.getInputTime(), df);
         for (LabelDescribe labelDescribeTemp : labelDescribes) {
-            if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
+            if (ButtonType._3.name.equals(labelInfo.getButtonType())) {
                 labelDescribeTemp.setLabelNo(labelCatalog.getSerialNo());
             }
             else {

@@ -533,22 +533,22 @@ public class TeamServiceImpl implements TeamService {
         
         //根据部门ＩＤ将获取的部门团队信息排序
         List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
-                "select UI.userName as UserName,OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.roleA as RoleA "
-                + "from OrgTeam OT,TeamInfo TI,OrgInfo OI,UserTeam UT,UserInfo UI where OT.teamId = TI.teamId and OT.orgId = OI.orgId and UT.userId=UI.userId and TI.teamId=UT.teamId order by OT.orgId").getBusinessObjects();
+                "select UI.userId as UserId,OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.roleA as RoleA "
+                + "from OrgTeam OT,TeamInfo TI,OrgInfo OI,UserTeam UT,UserInfo UI where UI.userName = TI.roleA and OT.teamId = TI.teamId and OT.orgId = OI.orgId and UT.userId=UI.userId and TI.teamId=UT.teamId order by OT.orgId").getBusinessObjects();
         if (!CollectionUtils.isEmpty(orgTeamLists)) {//如果部门团队信息不为空，则遍历循环
             for (BusinessObject businessObject : orgTeamLists) {
                 orgTeam = new OrgAndTeam();
                 //获取当前部门的附属信息表中的部门管理员
                 Department dept = bomanager.loadBusinessObject(Department.class,"deptId",businessObject.getString("OrgId"));
-                //如果部门附属信息不为空
-                    orgTeam.setOrgId(businessObject.getString("OrgId"));
-                    orgTeam.setOrgName(businessObject.getString("OrgName"));
-                    orgTeam.setTeamId(businessObject.getString("TeamId"));
-                    orgTeam.setTeamName(businessObject.getString("TeamName"));
-                    orgTeam.setDeptManager(dept.getDeptManager());
-                    orgTeam.setRoleA(businessObject.getString("UserName"));
-                    orgTeam.setRoleAId(businessObject.getString("RoleA"));
-                    orgTeams.add(orgTeam);
+                
+                orgTeam.setOrgId(businessObject.getString("OrgId"));
+                orgTeam.setOrgName(businessObject.getString("OrgName"));
+                orgTeam.setTeamId(businessObject.getString("TeamId"));
+                orgTeam.setTeamName(businessObject.getString("TeamName"));
+                orgTeam.setDeptManager(dept.getDeptManager());
+                orgTeam.setRoleA(businessObject.getString("RoleA"));
+                orgTeam.setRoleAId(businessObject.getString("UserId"));
+                orgTeams.add(orgTeam);
                
             }
         }
