@@ -36,6 +36,7 @@ import lombok.ToString;
 @ToString
 @TemplateHeader(id = "TreeLabelList", name = "树图下大标签List", type = com.amarsoft.aecd.common.constant.TemplateType.List, readOnly = false, span = 1, export = true)
 public class TreeLabel implements Serializable{
+    private static final long serialVersionUID = 1L;
     @Description("职级编号")
     @Length(max=40)
     @ActualColumn("RSC.serialNo")
@@ -56,7 +57,7 @@ public class TreeLabel implements Serializable{
     
     @Description("所属目录")
     @Length(max=40)
-    @ActualColumn("LC.belongCatalog")
-    @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, groupIndex = -1)
-    private String belongCatalog;
+    @ActualColumn("LC.parentNo")
+    @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, groupIndex = -1)
+    private String parentNo;
 }
