@@ -17,6 +17,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
@@ -195,5 +196,12 @@ public interface OrgService {
      * @return
      */
     EmployeeInfoListDtoQueryRsp employeeInfoListDtoQuery(EmployeeInfoListDtoSearchReq request);
+
+    /**
+     * 查询所有部门经理的userId
+     * @param 
+     * @return OrgUserQueryRsp
+     */
+    DeptManagerUserQueryRsp getDeptManagerAll();
 
 }

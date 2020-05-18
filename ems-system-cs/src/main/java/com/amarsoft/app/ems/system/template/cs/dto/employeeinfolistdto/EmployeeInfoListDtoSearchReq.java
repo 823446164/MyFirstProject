@@ -40,7 +40,7 @@ public class EmployeeInfoListDtoSearchReq implements Serializable {
     
     @Description("员工编号")
     @Length(max=80)
-    private String employeeAcct;  
+    private String employeeNo;  
     
     @Description("部门编号")
     @Length(max=80)

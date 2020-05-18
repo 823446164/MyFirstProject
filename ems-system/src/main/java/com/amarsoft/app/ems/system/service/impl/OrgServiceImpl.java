@@ -55,6 +55,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
@@ -1336,7 +1337,7 @@ public class OrgServiceImpl implements OrgService {
         List<String> ids = new ArrayList<String>();
 
         //模糊搜索
-        String userId = StringUtils.isEmpty(req.getEmployeeAcct()) ? "%" : req.getEmployeeAcct() + "%";// 模糊查询用户编号
+        String userId = StringUtils.isEmpty(req.getEmployeeNo()) ? "%" : req.getEmployeeNo() + "%";// 模糊查询用户编号
         String userName = StringUtils.isEmpty(req.getEmployeeName()) ? "%" : req.getEmployeeName() + "%";// 模糊查询用户名字
         //查询当前部门下指定员工的userId
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
@@ -1407,5 +1408,30 @@ public class OrgServiceImpl implements OrgService {
         map.put("teamName", teamName);
         map.put("orgName", orgName);
         return map;
+    }
+
+    /**
+     * Description:　查询所有部门经理的userId
+     * @param 
+     * @return  rsp
+     * @see
+     */
+    @Override
+    public DeptManagerUserQueryRsp getDeptManagerAll() {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();    
+        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+            "select userId as userId,userName as userName from UserInfo where userId not in (select deptManager from Department)"
+            ).getBusinessObjects();
+        DeptManagerUserQueryRsp rsp = new DeptManagerUserQueryRsp();
+        List<com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo> userInfos = new ArrayList<com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo>();
+        com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo userInfo =null;
+        for (BusinessObject businessObject : businessObjects) {
+            userInfo = new com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo();
+            userInfo.setUserId(businessObject.getString("userId"));
+            userInfo.setUserName(businessObject.getString("userName"));
+            userInfos.add(userInfo);
+        }
+        rsp.setUserInfos(userInfos);
+        return rsp;
     }
 }
