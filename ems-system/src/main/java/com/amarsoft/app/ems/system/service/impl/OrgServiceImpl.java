@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.antlr.v4.runtime.atn.SemanticContext.AND;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.common.constant.YesNo;
+import com.amarsoft.aecd.employee.constant.RankIsFormal;
 import com.amarsoft.aecd.system.constant.ArchitectureType;
 import com.amarsoft.aecd.system.constant.ChangeEventType;
 import com.amarsoft.aecd.system.constant.CompanyType;
@@ -26,6 +28,7 @@ import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.aecd.system.constant.OrgType;
 import com.amarsoft.aecd.system.constant.SystemStatus;
+import com.amarsoft.aecd.system.constant.UserRoles;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
@@ -559,6 +562,25 @@ public class OrgServiceImpl implements OrgService {
                 userTeamOrgInfo.setTeamId(teamId);
                 userTeamOrgInfo.setTeamName(teamInfo.getTeamName());
                 userTeamOrgInfo.setUserId(ut.getUserId());
+                userTeamOrgInfos.add(userTeamOrgInfo);
+            }
+        }else if (UserRoles.Admin.id.equals(req.getRoleId())) {//查询所有员工
+            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+                "select UB.userId as userId,UB.orgId as orgId,OI.orgName as orgName,TI.teamId as teamId,"
+                + "TI.teamName as teamName from UserBelong UB,UserTeam UT,OrgInfo OI,TeamInfo TI where "
+                + "UB.userId = UT.userId and UT.teamId = TI.teamId and OI.orgId = UB.orgId"
+                ).getBusinessObjects();
+            if (CollectionUtils.isEmpty(businessObjects)) {
+                throw new ALSException("EMS6014");
+            }
+            UserTeamOrgInfo userTeamOrgInfo = null;
+            for (BusinessObject businessObject : businessObjects) {
+                userTeamOrgInfo =new UserTeamOrgInfo();
+                userTeamOrgInfo.setOrgId(businessObject.getString("orgId"));
+                userTeamOrgInfo.setOrgName(businessObject.getString("orgName"));
+                userTeamOrgInfo.setTeamId(businessObject.getString("teamId"));
+                userTeamOrgInfo.setTeamName(businessObject.getString("teamName"));
+                userTeamOrgInfo.setUserId(businessObject.getString("userId"));
                 userTeamOrgInfos.add(userTeamOrgInfo);
             }
         }
@@ -1270,7 +1292,6 @@ public class OrgServiceImpl implements OrgService {
             ids.add(oi.getUserId()); 
         }
         //给id的list，返回员工对象List
-        List<EmployeeInfoListDto> list = new ArrayList<EmployeeInfoListDto>();
         //根据返回list循环 新建dto对象　赋值
         EmployeeListByEmplNoReq  elbNoReq = new EmployeeListByEmplNoReq();
         elbNoReq.setEmployeeNoList(ids);
@@ -1312,12 +1333,37 @@ public class OrgServiceImpl implements OrgService {
     public EmployeeInfoListDtoQueryRsp employeeInfoListDtoQuery(EmployeeInfoListDtoSearchReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
-        List<com.amarsoft.app.ems.system.entity.UserInfo> us = bomanager.loadBusinessObjects(UserInfo.class, 
-            "userName like :userName","userName","%"+req.getUserName()+"%");  
         List<String> ids = new ArrayList<String>();
-        for (com.amarsoft.app.ems.system.entity.UserInfo userInfo : us) {
-            ids.add(userInfo.getUserId());
+        //判断是否模糊查询编号，１：是；２：否  req.getConditionId()
+
+        if (req.getUserId()==null || req.getUserName()==null) {//未传入参数
+            throw new ALSException("请输入信息后再搜索!");
         }
+        if (RankIsFormal.Yes.id.equals(req.getConditionId())) {//模糊搜索
+            String userId = req.getUserId() == null ? "%" :req.getUserId()+"%";//模糊查询用户编号
+            String userName = req.getUserName() == null ? "%" : req.getUserName()+"%";//模糊查询用户名字
+            if (req.getUserId()==null && req.getUserName()!=null) {
+                List<com.amarsoft.app.ems.system.entity.UserInfo> us = bomanager.loadBusinessObjects(UserInfo.class, 
+                    "userName like :userName and userId like :userId","userName",userName,"userId",userId);  
+                for (com.amarsoft.app.ems.system.entity.UserInfo userInfo : us) {
+                    ids.add(userInfo.getUserId());
+                }
+            }
+        }else if(RankIsFormal.No.id.equals(req.getConditionId())){//精确查询
+            String userId = req.getUserId() == null ? "" :req.getUserId();//模糊查询用户编号
+            String userName = req.getUserName() == null ? "" : req.getUserName();//模糊查询用户名字
+            if (req.getUserId()==null && req.getUserName()!=null) {
+                List<com.amarsoft.app.ems.system.entity.UserInfo> us = bomanager.loadBusinessObjects(UserInfo.class, 
+                    "userName = :userName or userId = :userId","userName",userName,"userId",userId);  
+                for (com.amarsoft.app.ems.system.entity.UserInfo userInfo : us) {
+                    ids.add(userInfo.getUserId());
+                }
+            }
+        }    
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new ALSException("EMS6014");
+        }
+        
         //根据ids调用获取员工List
         EmployeeListByEmplNoReq  elbNoReq = new EmployeeListByEmplNoReq();
         ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
