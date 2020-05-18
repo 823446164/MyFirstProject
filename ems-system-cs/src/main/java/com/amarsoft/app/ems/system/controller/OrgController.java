@@ -72,7 +72,7 @@ public interface OrgController {
     public ResponseEntity<ResponseMessage<OneLevelDeptDtoQueryRsp>> oneLevelDeptDtoQuery(@RequestBody @Valid RequestMessage<OneLevelDeptDtoQueryReq> reqMsg);
     @PostMapping(value = "/system/oneleveldeptdto/save", name="一级部门详情Info保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> oneLevelDeptDtoSave(@RequestBody @Valid RequestMessage<OneLevelDeptDtoSaveReq> reqMsg);
-    @PostMapping(value = "/system/searchsecondleveldeptlistdto/query", name="搜索二级部门信息List查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/system/searchsecondleveldeptlistdto/query", name="搜索两个等级部门信息List查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<SearchSecondLevelDeptListDtoQueryRsp>> searchSecondLevelDeptListDtoQuery(@RequestBody @Valid RequestMessage<SearchSecondLevelDeptListDtoQueryReq> reqMsg);
     @PostMapping(value = "/system/deleteinfodto/delete", name="删除部门Info查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> deleteInfoDtoQuery(@RequestBody @Valid RequestMessage<DeleteInfoDtoQueryReq> reqMsg);
