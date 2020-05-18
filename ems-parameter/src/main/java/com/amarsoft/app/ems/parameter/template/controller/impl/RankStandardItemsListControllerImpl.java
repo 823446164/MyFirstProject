@@ -71,8 +71,7 @@ public class RankStandardItemsListControllerImpl implements RankStandardItemsLis
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO xphe  //补充异常代码。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2020",e.getMessage());
             return new ResponseEntity<ResponseMessage<RankStandardItemsListQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -101,15 +100,14 @@ public class RankStandardItemsListControllerImpl implements RankStandardItemsLis
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO xphe  //补充异常代码。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2022",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
     /**
      * 
-     * Description: 职级指标list界面的更新保存
+     * Description: 职级指标选择界面的查询
      *
      * @param reqMsg
      * @return 
@@ -132,8 +130,7 @@ public class RankStandardItemsListControllerImpl implements RankStandardItemsLis
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-         // TODO　xphe //标签查询设置异常码
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2023",e.getMessage());
             return new ResponseEntity<ResponseMessage<TreeLabelQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -163,8 +160,7 @@ public class RankStandardItemsListControllerImpl implements RankStandardItemsLis
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-         // TODO　xphe //标签保存设置异常码
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2021",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -191,8 +187,7 @@ public class RankStandardItemsListControllerImpl implements RankStandardItemsLis
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-         // TODO　xphe //标签删除设置异常码
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2024",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

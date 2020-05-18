@@ -14,8 +14,8 @@ package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildi
 import java.io.Serializable;
 
 import com.amarsoft.aecd.parameter.constant.ChildRankNo;
+import com.amarsoft.aecd.parameter.constant.RankName;
 import com.amarsoft.aecd.parameter.constant.RankStandard;
-import com.amarsoft.aecd.parameter.constant.RankType;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.amps.acsc.annotation.Length;
@@ -55,6 +55,7 @@ public class RankStandardCatalogChildInfo implements Serializable{
     @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String rankStandard;
 
+    @Enum(RankName.class)
     @Description("职级")
     @NotEmpty
     @Length(max=40)
@@ -64,7 +65,6 @@ public class RankStandardCatalogChildInfo implements Serializable{
 
     @Enum(ChildRankNo.class)
     @Description("子职级")
-    @NotEmpty
     @Length(max=40)
     @ActualColumn("RSC.childRankNo")
     @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = false, isSorted = false, isFilter = true, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)

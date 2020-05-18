@@ -68,17 +68,17 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
     @Transactional
     public RankStandardItemsListQueryRsp rankStandardItemsListQuery(@Valid RankStandardItemsListQueryReq rankStandardItemslistQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        List<RankStandardItems> rankStandardItems =new ArrayList<RankStandardItems>();
-        if(StringUtils.isEmpty( rankStandardItemslistQueryReq.getLabelNo())&& !StringUtils.isEmpty( rankStandardItemslistQueryReq.getSerialNo())) {
-         // 1.点击左侧树图，根据所属目录获取职级指标List
-          rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class,
-                "parentNo=:parentNo and rankNo=:rankNo", "parentNo", rankStandardItemslistQueryReq.getSerialNo(), "rankNo",
-                rankStandardItemslistQueryReq.getRankNo());
+        List<RankStandardItems> rankStandardItems = new ArrayList<RankStandardItems>();
+        if (StringUtils.isEmpty(rankStandardItemslistQueryReq.getLabelNo())
+            && !StringUtils.isEmpty(rankStandardItemslistQueryReq.getSerialNo())) {
+            // 1.点击左侧树图，根据所属目录获取职级指标List
+            rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class, "parentNo=:parentNo and rankNo=:rankNo", "parentNo",
+                rankStandardItemslistQueryReq.getSerialNo(), "rankNo", rankStandardItemslistQueryReq.getRankNo());
         }
-        if(!StringUtils.isEmpty( rankStandardItemslistQueryReq.getLabelNo())&& StringUtils.isEmpty( rankStandardItemslistQueryReq.getSerialNo())) {
-        rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class,
-                "parentNo=:parentNo and rankNo=:rankNo", "parentNo", rankStandardItemslistQueryReq.getLabelNo(), "rankNo",
-                rankStandardItemslistQueryReq.getRankNo());
+        if (!StringUtils.isEmpty(rankStandardItemslistQueryReq.getLabelNo())
+            && StringUtils.isEmpty(rankStandardItemslistQueryReq.getSerialNo())) {
+            rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class, "parentNo=:parentNo and rankNo=:rankNo", "parentNo",
+                rankStandardItemslistQueryReq.getLabelNo(), "rankNo", rankStandardItemslistQueryReq.getRankNo());
         }
         RankStandardItemsListQueryRsp rankQueryRsp = new RankStandardItemsListQueryRsp();
         List<RankStandardItemsList> ranStandardItemsLists = null;
@@ -113,19 +113,24 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
     public TreeLabelQueryRsp treeLabelListQuery(@Valid TreeLabelQueryReq treeQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         // 1.点击子节点获取当前节点下的标签
-     //   List<BusinessObject> labelCatalogs = bomanager.selectBusinessObjectsBySql(
-        //   "select LC.serialNo,LC.labelName,LC.parentNo from  LabelCatalog　LC where (LC.parentNo=:serialNo or LC.serialNo=:serialNo) and LC.serialNo not in (select RSI.labelNo from RankStandardItems RSI where RSI.rankNo=:rankNo)",
-        //    "serialNo", treeQueryReq.getSerialNo(),"rankNo",treeQueryReq.getRankNo()).getBusinessObjects();
-       List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:parentNo", "parentNo",
-           treeQueryReq.getSerialNo());
-    TreeLabelQueryRsp response = new TreeLabelQueryRsp();
+        // List<BusinessObject> labelCatalogs = bomanager.selectBusinessObjectsBySql(
+        // "select LC.serialNo,LC.labelName,LC.parentNo from LabelCatalog LC where
+        // (LC.parentNo=:serialNo or LC.serialNo=:serialNo) and LC.serialNo not in (select
+        // RSI.labelNo from RankStandardItems RSI where RSI.rankNo=:rankNo)",
+        // "serialNo",
+        // treeQueryReq.getSerialNo(),"rankNo",treeQueryReq.getRankNo()).getBusinessObjects();
+        List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:parentNo", "parentNo",
+            treeQueryReq.getSerialNo());
+        TreeLabelQueryRsp response = new TreeLabelQueryRsp();
         List<TreeLabel> labelLists = null;
         if (!CollectionUtils.isEmpty(labelCatalogs)) {
             labelLists = new ArrayList<TreeLabel>();
             // 2.循环输出List
             for (LabelCatalog label : labelCatalogs) {
-                BusinessObjectAggregate<BusinessObject> flowCount = bomanager.selectBusinessObjectsBySql("select count(1) as cnt from RankStandardItems RSI where RSI.rankNo=:rankNo and RSI.labelNo=:serialNo","rankNo",treeQueryReq.getRankNo(),"serialNo",label.getSerialNo());
-                if(flowCount.getBusinessObjects().get(0).getInt("cnt")==0) {
+                BusinessObjectAggregate<BusinessObject> flowCount = bomanager.selectBusinessObjectsBySql(
+                    "select count(1) as cnt from RankStandardItems RSI where RSI.rankNo=:rankNo and RSI.labelNo=:serialNo", "rankNo",
+                    treeQueryReq.getRankNo(), "serialNo", label.getSerialNo());
+                if (flowCount.getBusinessObjects().get(0).getInt("cnt") == 0) {
                     TreeLabel labelresponse = new TreeLabel();
                     labelresponse.setSerialNo(label.getSerialNo());
                     labelresponse.setLabelName(label.getLabelName());
@@ -212,8 +217,8 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
             for (TreeLabel treeLabelTmp : treeLabels) {
                 // 2.通过List里面的每个元素的serialNo得到本身元素及其下属元素
                 List<BusinessObject> boas = bomanager.selectBusinessObjectsBySql(
-                    "select serialNo,labelName,parentNo from LabelCatalog where parentNo=:serialNo or serialNo=:serialNo ",
-                    "serialNo", treeLabelTmp.getSerialNo()).getBusinessObjects();
+                    "select serialNo,labelName,parentNo from LabelCatalog where parentNo=:serialNo or serialNo=:serialNo ", "serialNo",
+                    treeLabelTmp.getSerialNo()).getBusinessObjects();
                 if (!CollectionUtils.isEmpty(boas)) {
                     // 3.将上一步获取的List循环输出至职级指标表
                     for (BusinessObject boasTmp : boas) {
@@ -232,7 +237,7 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
         }
         bomanager.updateDB();
     }
-    
+
     /**
      * 
      * Description: 职级指标页面删除指标及对应标签
@@ -254,7 +259,7 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
                 log.error(serialNo + "此职级指标不存在!");
             }
             throw new ALSException("EMS2003");
-        } // 删除对应职等及子职级
+        } // 删除对应指标及标签
         bomanager.deleteObjectBySql(RankStandardItems.class, "serialNo=:serialNo or parentNo=:serialNo", "serialNo", serialNo);
         bomanager.updateDB();
     }
