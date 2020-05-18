@@ -1,5 +1,15 @@
-package com.amarsoft.app.ems.parameter.template.service.impl;
+/*
+ * 文件名：RankStandardCatalogInfoServiceImpl.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：xphe
+ * 修改时间：2020年5月8日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 
+package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +39,13 @@ import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogInfoSe
 
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
- * 职级标准详情Service实现类
+ * 〈职级标准详情Service实现类〉
+ * 
  * @author xphe
+ * @version 2020年5月8日
+ * @see 
+ * @since
  */
 @Slf4j
 @Service
