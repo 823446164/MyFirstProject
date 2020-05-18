@@ -143,7 +143,7 @@ public class RankStandardCatalogListControllerImpl implements RankStandardCatalo
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2007", e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6019", e.getMessage());
             return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

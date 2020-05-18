@@ -38,7 +38,11 @@ public class RankStandardCatalogChildInfoQueryReq implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("职级编号")
     @Length(max=40)
-    @NotEmpty
     @ActualColumn("RSC.serialNo")
     private String serialNo;
+    
+    @Description("职等")
+    @Length(max=40)
+    @ActualColumn("RSC.rankStandard")
+    private String rankStandard;
 }

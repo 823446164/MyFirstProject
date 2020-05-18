@@ -12,6 +12,8 @@
 package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +29,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class RankStandardCatalogChildInfoQueryRsq extends RankStandardCatalogChildInfo implements Serializable {
+public class RankStandardCatalogChildInfoQueryRsq  implements Serializable {
     private static final long serialVersionUID = 1L;
+    private RankStandardCatalogChildInfo info;
+    private List<Map<String,String>> list;
 }
