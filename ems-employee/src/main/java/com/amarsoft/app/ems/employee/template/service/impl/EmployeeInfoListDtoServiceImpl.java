@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -201,7 +202,9 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
              rsp = showList(userAndRole.getRoleId(), orgId);
          }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
              rsp = showList(userAndRole.getRoleId(), userId);
-         }
+         }else {//９．如果不是这三种角色，则提示权限不足
+             throw new ALSException("EMS1008");
+        }
         return rsp; 
     }
    
@@ -221,27 +224,32 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         //1.获取员工其他信息
         ResponseEntity<ResponseMessage<OrgUserQueryRsp>> orgUserQuery = orgClient.orgUserQuery(reqMessage);
         List<UserTeamOrgInfo> utois = orgUserQuery.getBody().getMessage().getUserTeamOrgInfos();
-        //2.获取所有的员工ＩＤ
-        List<String> userIdList = new ArrayList<String>();
-        for (UserTeamOrgInfo userTeamOrgInfo : utois) {
-           userIdList.add(userTeamOrgInfo.getUserId()); 
-        }
-        //3.调用employeeListByEmployeeNo方法
-        EmployeeListByEmplNoReq emplNoReq = new EmployeeListByEmplNoReq();
-        emplNoReq.setEmployeeNoList(userIdList);
-        EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq);
-        //4.将用户ＩＤ一致的团队部门信息添加到员工详情信息上
-        for(EmployeeInfoDto eiDto:emplNoRsp.getEmployeeInfoList()) {
-            for(UserTeamOrgInfo utoi:utois) {
-                if(eiDto.getEmployeeNo().equals(utoi.getUserId())){
-                    eiDto.setOrgId(utoi.getOrgId());
-                    eiDto.setOrgName(utoi.getOrgName());
-                    eiDto.setTeamId(utoi.getTeamId());
-                    eiDto.setTeamName(utoi.getTeamName());
-                }
+        if (CollectionUtils.isEmpty(utois)) {
+            throw new ALSException("EMS1022");
+        }else {
+          //2.获取所有的员工ＩＤ
+            List<String> userIdList = new ArrayList<String>();
+            for (UserTeamOrgInfo userTeamOrgInfo : utois) {
+               userIdList.add(userTeamOrgInfo.getUserId()); 
             }
-        } 
-        rsp.setEmployeeList(emplNoRsp.getEmployeeInfoList());
+            //3.调用employeeListByEmployeeNo方法
+            EmployeeListByEmplNoReq emplNoReq = new EmployeeListByEmplNoReq();
+            emplNoReq.setEmployeeNoList(userIdList);
+            EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq);
+            //4.将用户ＩＤ一致的团队部门信息添加到员工详情信息上
+            for(EmployeeInfoDto eiDto:emplNoRsp.getEmployeeInfoList()) {
+                for(UserTeamOrgInfo utoi:utois) {
+                    if(eiDto.getEmployeeNo().equals(utoi.getUserId())){
+                        eiDto.setOrgId(utoi.getOrgId());
+                        eiDto.setOrgName(utoi.getOrgName());
+                        eiDto.setTeamId(utoi.getTeamId());
+                        eiDto.setTeamName(utoi.getTeamName());
+                    }
+                }
+            } 
+            rsp.setEmployeeList(emplNoRsp.getEmployeeInfoList());
+        }
+        
         return rsp;
     }
     
@@ -267,6 +275,9 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         }
         //２．查询所需员工们的信息
         List<EmployeeInfo> employeeList = bomanager.loadBusinessObjects(EmployeeInfo.class , "employeeNo in (" + userList+")");
+        if (CollectionUtils.isEmpty(employeeList)) {//如果查询出的员工信息为空
+            throw new ALSException("EMS1021");
+        }
         for(EmployeeInfo ei:employeeList) {
             EmployeeInfoDto eIDto = new EmployeeInfoDto();
             //３.复制信息（当两者属性大致相同）

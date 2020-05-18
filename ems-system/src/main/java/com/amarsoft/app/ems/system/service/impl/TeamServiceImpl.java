@@ -502,7 +502,7 @@ public class TeamServiceImpl implements TeamService {
                 ub.setOrgId(teamInfo.getBelongOrgId()); 
                 ub.setDataAuth(userBelong.getDataAuth());
                 ub.setDefaultFlag(userBelong.getDefaultFlag());
-                ub.setOriginOrgId(userBelong.getOriginOrgId());
+                ub.setOriginOrgId(userBelong.getOrgId());
                 ub.setMigrationStatus(userBelong.getMigrationStatus());
                 ub.setUpdateUserId(userId);
                 ub.setUpdateTime(LocalDateTime.now());

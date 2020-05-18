@@ -131,8 +131,8 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1021",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeListByUserQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -159,8 +159,8 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1010",e.getMessage());
+            
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1021",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }    
