@@ -24,9 +24,12 @@ import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
 import com.amarsoft.app.ems.parameter.template.controller.LabelInfoController;
 import com.amarsoft.app.ems.parameter.template.service.LabelInfoService;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcatalogtreequery.LabelCatalogTreeQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoCopyReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryRsp;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoRepeatReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoRepeatRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq;
 
 /**
@@ -94,7 +97,7 @@ public class LabelInfoControllerImpl implements LabelInfoController {
     @Override
     @Transactional
     /**
-     * Description: 标签生效
+     * Description: 标签生效/失效
      */
     public ResponseEntity<ResponseMessage<Object>> lableStatusOk(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg) {
         ResponseMessage<Object> rspMsg = null;
@@ -109,13 +112,33 @@ public class LabelInfoControllerImpl implements LabelInfoController {
         }
         catch (Exception e) {
             if (log.isErrorEnabled()) {
-                log.error("标签生效：" + reqMsg.toString(), e);
+                log.error("标签生效/失效设置：" + reqMsg.toString(), e);
             }
             // 事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @Override
+    @Transactional
+    /**
+     * Description: 标签判重
+     */
+    public ResponseEntity<ResponseMessage<LabelInfoRepeatRsp>> isRepeat(@RequestBody @Valid RequestMessage<LabelInfoRepeatReq> reqMsg){
+        ResponseMessage<LabelInfoRepeatRsp> rspMsg = null;
+        try {
+            LabelInfoRepeatReq request = reqMsg.getMessage();            
+            LabelInfoRepeatRsp repeat = labelInfoServiceImpl.isRepeat(request);
+            rspMsg = new ResponseMessage<LabelInfoRepeatRsp>(repeat);
+            return new ResponseEntity<ResponseMessage<LabelInfoRepeatRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {         
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<LabelInfoRepeatRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
