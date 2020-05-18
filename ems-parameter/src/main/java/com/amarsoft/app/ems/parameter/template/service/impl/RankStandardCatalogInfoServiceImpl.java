@@ -1,6 +1,17 @@
+/*
+ * 文件名：RankStandardCatalogInfoServiceImpl.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：xphe
+ * 修改时间：2020年5月8日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
+
 package com.amarsoft.app.ems.parameter.template.service.impl;
 
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.amarsoft.aecd.parameter.constant.ChildRankNo;
+import com.amarsoft.aecd.parameter.constant.RankStandard;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
@@ -18,6 +31,7 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.parameter.entity.RankStandardCatalog;
 import com.amarsoft.app.ems.parameter.entity.RankStandardItems;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfo;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoQueryRsq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoSaveReq;
@@ -25,10 +39,13 @@ import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogInfoSe
 
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
- * 职级标准详情Service实现类
+ * 〈职级标准详情Service实现类〉
+ * 
  * @author xphe
+ * @version 2020年5月8日
+ * @see 
+ * @since
  */
 @Slf4j
 @Service
@@ -45,11 +62,63 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
     @Transactional
     public RankStandardCatalogChildInfoQueryRsq rankStandardCatalogChildInfoQuery(@Valid RankStandardCatalogChildInfoQueryReq rankStandardCatalogChildInfoQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-
+        RankStandardCatalogChildInfoQueryRsq rankInfo = new RankStandardCatalogChildInfoQueryRsq();
         RankStandardCatalog rankStandardCatalog = bomanager.loadBusinessObject(RankStandardCatalog.class, "serialNo",
             rankStandardCatalogChildInfoQueryReq.getSerialNo());
+        RankStandardCatalogChildInfo rankStandardCatalogInfo=new RankStandardCatalogChildInfo();
+        String rankStandard=rankStandardCatalogChildInfoQueryReq.getRankStandard();
+        List<Map<String,String>> rankList=new ArrayList<Map<String,String>>();
+        Map<String,String> map1=new HashMap<String, String>();
+        Map<String,String> map2=new HashMap<String, String>();
+        Map<String,String> map3=new HashMap<String, String>();
+        //TODO xphe 优化代码－改为code_library传list
+        if(!StringUtils.isEmpty(rankStandard)) {
+            if(RankStandard._1.id.equals(rankStandard)) {
+                map1.put("value", ChildRankNo.B1_1.id);
+                map1.put("text", ChildRankNo.B1_1.name);
+                rankList.add(map1);
+                map2.put("value", ChildRankNo.B1_2.id);
+                map2.put("text", ChildRankNo.B1_2.name);
+                rankList.add(map2);
+                map3.put("value", ChildRankNo.B1_3.id);
+                map3.put("text", ChildRankNo.B1_3.name);
+                rankList.add(map3);
+            }
+            if(RankStandard._2.id.equals(rankStandard)) {
+                map1.put("value", ChildRankNo.B2_1.id);
+                map1.put("text", ChildRankNo.B2_1.name);
+                rankList.add(map1);
+                map2.put("value", ChildRankNo.B2_2.id);
+                map2.put("text", ChildRankNo.B2_2.name);
+                rankList.add(map2);
+                map3.put("value", ChildRankNo.B2_3.id);
+                map3.put("text", ChildRankNo.B2_3.name);
+                rankList.add(map3);
+            }
+            if(RankStandard._3.id.equals(rankStandard)) {
+                map1.put("value", ChildRankNo.B3_1.id);
+                map1.put("text", ChildRankNo.B3_1.name);
+                rankList.add(map1);
+                map2.put("value", ChildRankNo.B3_2.id);
+                map2.put("text", ChildRankNo.B3_2.name);
+                rankList.add(map2);
+                map3.put("value", ChildRankNo.B3_3.id);
+                map3.put("text", ChildRankNo.B3_3.name);
+                rankList.add(map3);
+            }
+            if(RankStandard._4.id.equals(rankStandard)) {
+                map1.put("value", ChildRankNo.B4_1.id);
+                map1.put("text", ChildRankNo.B4_1.name);
+                rankList.add(map1);
+                map2.put("value", ChildRankNo.B4_2.id);
+                map2.put("text", ChildRankNo.B4_2.name);
+                rankList.add(map2);
+                map3.put("value", ChildRankNo.B4_3.id);
+                map3.put("text", ChildRankNo.B4_3.name);
+                rankList.add(map3);
+            }
+        }
         if (rankStandardCatalog != null) {
-            RankStandardCatalogChildInfoQueryRsq rankStandardCatalogInfo = new RankStandardCatalogChildInfoQueryRsq();
             rankStandardCatalogInfo.setSerialNo(rankStandardCatalogChildInfoQueryReq.getSerialNo());
             rankStandardCatalogInfo.setBelongTeam(rankStandardCatalog.getBelongTeam());
             rankStandardCatalogInfo.setRankType(rankStandardCatalog.getRankType());
@@ -60,10 +129,15 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             rankStandardCatalogInfo.setResponeDescribe(rankStandardCatalog.getResponeDescribe());
             rankStandardCatalogInfo.setAbilityDescribe(rankStandardCatalog.getAbilityDescribe());
             rankStandardCatalogInfo.setAbility(rankStandardCatalog.getAbility());
-            return rankStandardCatalogInfo;
+            rankInfo.setInfo(rankStandardCatalogInfo);
+            rankInfo.setList(rankList);
+            return rankInfo;
+        }else {
+            rankInfo.setInfo(rankStandardCatalogInfo);
+            rankInfo.setList(rankList);
+            return rankInfo;
         }
 
-        return null;
     }
 
     /**

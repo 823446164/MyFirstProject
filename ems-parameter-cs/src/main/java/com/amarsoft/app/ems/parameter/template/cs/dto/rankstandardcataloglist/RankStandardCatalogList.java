@@ -18,7 +18,10 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.aecd.parameter.constant.ChildRankNo;
+import com.amarsoft.aecd.parameter.constant.RankStandard;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
@@ -41,6 +44,7 @@ public class RankStandardCatalogList implements Serializable {
     @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String serialNo;
 
+    @Enum(RankStandard.class)
     @Description("职等")
     @Length(max=40)
     @ActualColumn("RSC.rankStandard")
@@ -53,6 +57,7 @@ public class RankStandardCatalogList implements Serializable {
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = true, isSum = false, span=2, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String rankName;
 
+    @Enum(ChildRankNo.class)
     @Description("子职级")
     @Length(max=40)
     @ActualColumn("RSC.childRankNo")
