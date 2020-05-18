@@ -530,11 +530,12 @@ public class TeamServiceImpl implements TeamService {
         TeamOrgQueryRsp rsp = new TeamOrgQueryRsp();
         List<OrgAndTeam> orgTeams = new ArrayList<OrgAndTeam>();
         OrgAndTeam orgTeam = null;
-        
+        String teamName = StringUtils.isEmpty(req.getTeamName())?"%":req.getTeamName()+"%";
         //根据部门ＩＤ将获取的部门团队信息排序
         List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
                 "select UI.userId as UserId,OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.roleA as RoleA "
-                + "from OrgTeam OT,TeamInfo TI,OrgInfo OI,UserTeam UT,UserInfo UI where UI.userName = TI.roleA and OT.teamId = TI.teamId and OT.orgId = OI.orgId and UT.userId=UI.userId and TI.teamId=UT.teamId order by OT.orgId").getBusinessObjects();
+                + "from OrgTeam OT,TeamInfo TI,OrgInfo OI,UserTeam UT,UserInfo UI where UI.userName = TI.roleA and OT.teamId = TI.teamId "
+                + "and OT.orgId = OI.orgId and UT.userId=UI.userId and TI.teamId=UT.teamId and TI.teamName like:teamName order by OT.orgId","teamName",teamName).getBusinessObjects();
         if (!CollectionUtils.isEmpty(orgTeamLists)) {//如果部门团队信息不为空，则遍历循环
             for (BusinessObject businessObject : orgTeamLists) {
                 orgTeam = new OrgAndTeam();

@@ -28,4 +28,10 @@ public class EmployeeListByEmplNoReq implements Serializable{
     
     @Description("员工编号集合")
     private List<String> employeeNoList;
+    
+    @Description("员工编号")
+    private String employeeName;
+    
+    @Description("员工姓名")
+    private String employeeNo;
 }
