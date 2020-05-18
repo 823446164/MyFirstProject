@@ -536,6 +536,7 @@ public class TeamControllerImpl implements TeamController {
 		try {
 		TeamListDtoQueryReq request = reqMsg.getMessage();
 		TeamListDtoQueryRsp response=teamListDtoServiceImpl.teamSearch(request);
+		rspMsg = new ResponseMessage<TeamListDtoQueryRsp>(response);
 		return new   ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>>(rspMsg, HttpStatus.OK);
 		}catch (Exception e) {
 			if (log.isErrorEnabled()) {
@@ -543,7 +544,7 @@ public class TeamControllerImpl implements TeamController {
 			}
 			// 事务回滚
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6021", e.getMessage());
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "901013", e.getMessage());
 			return new  ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 

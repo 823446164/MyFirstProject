@@ -311,7 +311,4 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     	
     	  return rsp;
 	}
-
-
-  
 }
