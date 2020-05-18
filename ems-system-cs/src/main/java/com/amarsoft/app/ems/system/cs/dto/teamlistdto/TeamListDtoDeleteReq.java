@@ -28,6 +28,5 @@ public class TeamListDtoDeleteReq implements Serializable {
     @ActualColumn("ChangeEvent.objectNo")
     @Description("对象编号")
     public String  objectNo;
-   
     
 }

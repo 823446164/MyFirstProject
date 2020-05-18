@@ -22,6 +22,7 @@ import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
+import com.amarsoft.app.ems.system.entity.UserTeam;
 import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +97,6 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
     @Transactional
     public void teamInfoDtoSaveAction(TeamInfoDto teamInfoDto) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-
         if (teamInfoDto == null) {
             throw new ALSException("EMS6022");
         }
@@ -107,19 +107,19 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
             BusinessObjectAggregate<BusinessObject> teamOrgRsq = bomanager.selectBusinessObjectsBySql(
                 " select  TI.teamName as teamName" + " from OrgTeam OT,TeamInfo TI" + " where OT.teamId =TI.teamId and TI.teamName=:teamName",
                 "teamName", teamInfoDto.getTeamName());
-
             List<BusinessObject> teamOrg = teamOrgRsq.getBusinessObjects();
             if (!CollectionUtils.isEmpty(teamOrg)) {
                 throw new ALSException("901001");
             }
-            else {
+            else {        
                 teamInfo = new TeamInfo();
                 teamInfo.generateKey();
-            }
+                teamInfo.setStatus(OrgStatus.New.id);         
+            }   
         }
         else {
             // 更新
-            teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamInfoDto.getTeamId());
+            teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamInfoDto.getTeamId());          
         }
         // 拷贝属性
         BeanUtils.copyProperties(teamInfoDto, teamInfo);
@@ -151,7 +151,12 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
         TeamInfoDtoQueryRsp rsp = new TeamInfoDtoQueryRsp();
         // 判断完成 还是 停用 1:完成;2:停用 ;3.表示新增
         String status = teamInfoDtoQueryReq.getStatus();
-        //
+        //完成操作
+        if(OrgStatus.New.id.equals(status)||OrgStatus.Disabled.id.equals(status)) {
+        	
+        }else {
+        	 throw new ALSException("EMS6026");// 非完成状态的团队不予停用；
+        }
         if (OrgStatus.Disabled.id.equals(status)) { // 操作停用
             BusinessObjectAggregate<BusinessObject> userCount = bomanager.selectBusinessObjectsBySql(
                 "select count(1) as cnt from UserTeam where teamId=:teamId", "teamId", teamInfoDtoQueryReq.getTeamId());

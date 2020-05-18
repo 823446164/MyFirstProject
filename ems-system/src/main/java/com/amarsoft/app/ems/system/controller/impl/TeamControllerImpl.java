@@ -279,7 +279,7 @@ public class TeamControllerImpl implements TeamController {
 			// 事务回滚
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6014", e.getMessage());
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
 			return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -520,6 +520,34 @@ public class TeamControllerImpl implements TeamController {
 		}
 	}
 
+	/**
+	 * Description: 根据条件查询团队信息<br>
+	 * 
+	 * @param 
+	 * @return 
+	 * @see
+	 */
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>> teamSearch(
+			@RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
+		// TODO Auto-generated method stub
+		ResponseMessage<TeamListDtoQueryRsp> rspMsg=null;
+		try {
+		TeamListDtoQueryReq request = reqMsg.getMessage();
+		TeamListDtoQueryRsp response=teamListDtoServiceImpl.teamSearch(request);
+		return new   ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>>(rspMsg, HttpStatus.OK);
+		}catch (Exception e) {
+			if (log.isErrorEnabled()) {
+				log.error("条件搜素团队信息：" + reqMsg.toString(), e);
+			}
+			// 事务回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6021", e.getMessage());
+			return new  ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	}
 	
 
 }

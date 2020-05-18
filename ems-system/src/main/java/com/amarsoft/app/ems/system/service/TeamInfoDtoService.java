@@ -32,7 +32,5 @@ public interface TeamInfoDtoService {
      */
     public TeamInfoDtoQueryRsp updateStatus(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq);
     
-
-   
 }
 

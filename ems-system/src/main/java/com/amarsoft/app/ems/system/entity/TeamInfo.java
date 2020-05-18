@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.aecd.system.constant.OrgLevel;
+import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.aecd.system.constant.SystemStatus;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.arpe.annotation.EntityRelationShip;
@@ -55,10 +56,7 @@ public class TeamInfo extends BusinessObject {
     @Column(name = "ROLEC",length=80)
     private String roleC;
 
-    @Description("团队人数")
-    @Column(name = "USERNUM",length=40)
-    private String userNum;
-
+   
     @Description("团队绩效目标")
     @Column(name = "TARGET",length=80)
     private String target;
@@ -94,7 +92,7 @@ public class TeamInfo extends BusinessObject {
     private String teamLeader;
     
     @Description("团队状态")
-    @Enum(SystemStatus.class)
+    @Enum(OrgStatus.class)
     @Column(name = "STATUS",length=1)
     private String status;
     
@@ -157,14 +155,6 @@ public class TeamInfo extends BusinessObject {
 
 	public void setRoleC(String roleC) {
 		this.roleC = roleC;
-	}
-
-	public String getUserNum() {
-		return userNum;
-	}
-
-	public void setUserNum(String userNum) {
-		this.userNum = userNum;
 	}
 
 	public String getTarget() {

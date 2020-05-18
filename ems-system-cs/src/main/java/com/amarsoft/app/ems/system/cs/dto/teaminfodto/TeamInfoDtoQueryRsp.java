@@ -2,11 +2,6 @@ package com.amarsoft.app.ems.system.cs.dto.teaminfodto;
 
 import java.io.Serializable;
 import java.util.List;
-
-import com.amarsoft.amps.acsc.annotation.ActualColumn;
-import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.avta.annotation.TemplateBody;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
 
 import lombok.Getter;
@@ -25,7 +20,7 @@ import lombok.ToString;
 public class TeamInfoDtoQueryRsp extends TeamInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
    private  List<EmployeeInfoListDto> list;
-   
+  
    
 }
 
