@@ -31,6 +31,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
@@ -452,14 +453,14 @@ public class OrgControllerImpl implements OrgController {
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>> getDeptManagerAll() {
+    public ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>> getDeptManagerAll(@RequestBody @Valid RequestMessage<DeptManagerUserQueryReq> reqMsg) {
         ResponseMessage<DeptManagerUserQueryRsp> rspMsg = null;
         try {
-            DeptManagerUserQueryRsp rsp = orgService.getDeptManagerAll();
+            DeptManagerUserQueryRsp rsp = orgService.getDeptManagerAll(reqMsg.getMessage());
             return new ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>>(new ResponseMessage<DeptManagerUserQueryRsp>(rsp), HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
-                log.error("查询机构用户请求报文："+ e);
+                log.error("查询机构用户请求报文："+reqMsg.toString(), e);
             }
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "900209",e.getMessage());
             return new ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
