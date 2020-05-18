@@ -20,9 +20,6 @@ public class OneLevelDeptDtoSaveReq extends OneLevelDeptDto implements Serializa
     @Description("机构编号")
     @Length(max=40)
     private String orgId;
-    @Description("部门经理") 
-    @Length(max=40) 
-    private String deptManager;
     @Description("机构名称")
     @Length(max=80)
     private String orgName;

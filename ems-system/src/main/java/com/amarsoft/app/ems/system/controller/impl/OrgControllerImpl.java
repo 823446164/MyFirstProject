@@ -31,6 +31,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.service.OrgService;
@@ -46,7 +47,6 @@ import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.
 import com.amarsoft.app.ems.system.template.cs.dto.searchsecondleveldeptlistdto.SearchSecondLevelDeptListDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoQueryRsp;
-import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto.SecondLevelDeptInfoDtoSaveReq;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto.SecondLevelDeptListDtoQueryRsp;
 
@@ -441,6 +441,28 @@ public class OrgControllerImpl implements OrgController {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "900201",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 查询所有不是部门经理的userId
+     * @param reqMsg
+     * @return  rsp
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>> getDeptManagerAll() {
+        ResponseMessage<DeptManagerUserQueryRsp> rspMsg = null;
+        try {
+            DeptManagerUserQueryRsp rsp = orgService.getDeptManagerAll();
+            return new ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>>(new ResponseMessage<DeptManagerUserQueryRsp>(rsp), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("查询机构用户请求报文："+ e);
+            }
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "900209",e.getMessage());
+            return new ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

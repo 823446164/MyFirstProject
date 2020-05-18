@@ -6,12 +6,13 @@
 package com.amarsoft.app.ems.system.cs.dto.orguserquery;
 
 import java.io.Serializable;
+
+import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.arem.annotation.Description;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
-import com.amarsoft.amps.acsc.annotation.Length;
 
 @Getter
 @Setter
