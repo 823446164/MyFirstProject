@@ -149,6 +149,7 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
         try {
             EmployeeListByEmplNoReq request = reqMsg.getMessage();
             
+            
             EmployeeListByEmplNoRsp response = employeeInfoListDtoServiceImpl.employeeListByEmployeeNo(request);
             rspMsg = new ResponseMessage<EmployeeListByEmplNoRsp>(response);
             
@@ -158,7 +159,7 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
                 log.error("员工信息List查询："+ reqMsg.toString(), e);
             }
             //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); 
             
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1021",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
