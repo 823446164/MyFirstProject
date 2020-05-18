@@ -51,5 +51,6 @@ public interface EmployeeInfoListDtoService {
      * ${tags}
      * @see
      */
-    public EmployeeListByEmplNoRsp employeeListByEmployeeNo(@RequestBody @Valid EmployeeListByEmplNoReq req,String employeeId,String employeeName);
+    public EmployeeListByEmplNoRsp employeeListByEmployeeNo(@RequestBody @Valid EmployeeListByEmplNoReq req);
+
 }

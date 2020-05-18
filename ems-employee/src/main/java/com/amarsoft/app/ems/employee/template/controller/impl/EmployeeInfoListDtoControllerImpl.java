@@ -144,13 +144,13 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery(@RequestBody @Valid RequestMessage<EmployeeListByEmplNoReq> reqMsg,String employeeId,String employeeName) {
+    public ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery(@RequestBody @Valid RequestMessage<EmployeeListByEmplNoReq> reqMsg) {
         ResponseMessage<EmployeeListByEmplNoRsp> rspMsg = null;
         try {
             EmployeeListByEmplNoReq request = reqMsg.getMessage();
             
             
-            EmployeeListByEmplNoRsp response = employeeInfoListDtoServiceImpl.employeeListByEmployeeNo(request,employeeId,employeeId);
+            EmployeeListByEmplNoRsp response = employeeInfoListDtoServiceImpl.employeeListByEmployeeNo(request);
             rspMsg = new ResponseMessage<EmployeeListByEmplNoRsp>(response);
             
             return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg , HttpStatus.OK);
@@ -159,8 +159,7 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
                 log.error("员工信息List查询："+ reqMsg.toString(), e);
             }
             //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();            
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1021",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }

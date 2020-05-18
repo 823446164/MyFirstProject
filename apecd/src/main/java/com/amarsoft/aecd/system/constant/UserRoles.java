@@ -14,9 +14,8 @@ package com.amarsoft.aecd.system.constant;
 public enum UserRoles {
     Admin("099","系统管理员"),
     DeptManager("110","部门管理员"),
-    DeputManager("120","部门副经理"),
+    DeputyManager("120","部门副经理"),
     TeamLeader("210","团队负责人"),
-    
     ;
     
     public String id;
@@ -34,7 +33,7 @@ public enum UserRoles {
      * @return
      */
     public static boolean isExist(String id) {
-        return Admin.id.equals(id) || DeptManager.id.equals(id)||DeputManager.id.equals(id)||TeamLeader.id.equals(id);
+        return Admin.id.equals(id) || DeptManager.id.equals(id)||DeputyManager.id.equals(id)||TeamLeader.id.equals(id);
     }
     
     /**

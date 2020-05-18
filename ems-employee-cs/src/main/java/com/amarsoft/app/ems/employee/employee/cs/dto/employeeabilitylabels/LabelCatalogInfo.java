@@ -13,13 +13,13 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class LabelCatalog implements Serializable{
+public class LabelCatalogInfo implements Serializable{
 	private static final long serialVersionUID = 1L;
     @Description("标签编号")
     @NotEmpty
     @Length(max=40)
     private String serialNo;
-    @Description("标签")
+    @Description("标签名称")
     @NotEmpty
     @Length(max=80)
     private String labelName;

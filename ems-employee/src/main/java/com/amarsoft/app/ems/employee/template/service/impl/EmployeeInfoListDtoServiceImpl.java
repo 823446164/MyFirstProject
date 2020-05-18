@@ -199,7 +199,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         if (UserRoles.Admin.id.equals(userAndRole.getRoleId())) {//6.如果用户为系统管理员，展示所有员工
             String id = "";
             rsp = showList(userAndRole.getRoleId(), id,employeeId,employeeName);
-         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId()) || UserRoles.DeputManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员或者部门副经理，展示所在部门所有员工
+         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId()) || UserRoles.DeputyManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员或者部门副经理，展示所在部门所有员工
              rsp = showList(userAndRole.getRoleId(), orgId,employeeId,employeeName);
          }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
              rsp = showList(userAndRole.getRoleId(), userId,employeeId,employeeName);
@@ -235,8 +235,10 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             }
             //3.调用employeeListByEmployeeNo方法
             EmployeeListByEmplNoReq emplNoReq = new EmployeeListByEmplNoReq();
+            emplNoReq.setEmployeeNo(employeeNo);
+            emplNoReq.setEmployeeName(employeeName);
             emplNoReq.setEmployeeNoList(userIdList);
-            EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq,employeeNo,employeeName);
+            EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq);
             //4.将用户ＩＤ一致的团队部门信息添加到员工详情信息上
             for(EmployeeInfoDto eiDto:emplNoRsp.getEmployeeInfoList()) {
                 for(UserTeamOrgInfo utoi:utois) {
@@ -262,11 +264,17 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
      * @see
      */
     @Override
-    public EmployeeListByEmplNoRsp employeeListByEmployeeNo(@Valid EmployeeListByEmplNoReq req,String employeeId,String employeeName) {
+    public EmployeeListByEmplNoRsp employeeListByEmployeeNo(@Valid EmployeeListByEmplNoReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeListByEmplNoRsp rsp = new EmployeeListByEmplNoRsp();
         List<String> employeeNoList = req.getEmployeeNoList();
+        String employeeId = "%";
+        String employeeName = "%";
         List<EmployeeInfoDto> employeeDtoList = new ArrayList<EmployeeInfoDto>();
+        if (!("%".equals(req.getEmployeeNo()))||!("%".equals(req.getEmployeeName()))) {
+           employeeId = req.getEmployeeNo() ;
+           employeeName = req.getEmployeeName();
+        }
         
         String userList = "";
         //1.拼接员工查询参数
