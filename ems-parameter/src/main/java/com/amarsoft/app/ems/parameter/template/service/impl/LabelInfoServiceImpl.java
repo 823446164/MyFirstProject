@@ -22,7 +22,6 @@ import com.amarsoft.app.ems.parameter.template.service.LabelInfoService;
 import com.amarsoft.aecd.employee.constant.MasteryOne;
 import com.amarsoft.aecd.employee.constant.MasteryThree;
 import com.amarsoft.aecd.parameter.constant.ButtonType;
-import com.amarsoft.aecd.parameter.constant.LabelType;
 import com.amarsoft.aecd.system.constant.LabelStatus;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
@@ -165,7 +164,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
                 // 复制指标
                 BeanUtils.copyProperties(labelCatalog, labelInfo);
                 labelInfo.setSerialNo(null);
-                labelInfo.setLabelName(indexName + "_副本");
+                labelInfo.setLabelName(indexName);
                 labelInfo.setCodeNo(indexCodeNo);
                 String labelInfoSave = labelInfoSave(labelInfo);
                 // 查询该指标下的标签
@@ -423,9 +422,8 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         //更新判重
         else {
             List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class,
-                "labelName=:labelName and serialNo <> :serialNo", "labelName", labelInfoRepeatReq.getLabelName(), "serialNo",
-                labelInfoRepeatReq.getSerialNo());
-            
+                "(labelName=:labelName or codeNo = :codeNo) and serialNo <> :serialNo ", "labelName", labelInfoRepeatReq.getLabelName(), "serialNo",
+                labelInfoRepeatReq.getSerialNo(),"codeNo",labelInfoRepeatReq.getCodeNo());            
             if (CollectionUtils.isEmpty(labelCatalogs)) {
                 isRepeatRsp.setRepeat(true);
                 return isRepeatRsp;
@@ -436,7 +434,4 @@ public class LabelInfoServiceImpl implements LabelInfoService {
             }
         }
     }
-
-
-
 }
