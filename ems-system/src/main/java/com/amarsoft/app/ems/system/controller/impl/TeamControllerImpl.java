@@ -531,7 +531,7 @@ public class TeamControllerImpl implements TeamController {
 	@Transactional
 	public ResponseEntity<ResponseMessage<TeamListDtoQueryRsp>> teamSearch(
 			@RequestBody @Valid RequestMessage<TeamListDtoQueryReq> reqMsg) {
-		// TODO Auto-generated method stub
+
 		ResponseMessage<TeamListDtoQueryRsp> rspMsg=null;
 		try {
 		TeamListDtoQueryReq request = reqMsg.getMessage();
@@ -548,8 +548,4 @@ public class TeamControllerImpl implements TeamController {
 	}
 
 	}
-	
-
-	
-
 }
