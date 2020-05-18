@@ -16,6 +16,7 @@ public enum UserRoles {
     DeptManager("110","部门管理员"),
     DeputyManager("120","部门副经理"),
     TeamLeader("210","团队负责人"),
+    
     ;
     
     public String id;

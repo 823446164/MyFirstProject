@@ -18,5 +18,5 @@ public class EmployeeListByUserQueryReq implements Serializable{
     private String employeeName;
     
     @Description("员工姓名")
-    private String employeeNo;
+    private String employeeNo;    
 }

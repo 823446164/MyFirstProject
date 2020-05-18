@@ -22,6 +22,5 @@ public class LabelCatalogInfo implements Serializable{
     @Description("标签名称")
     @NotEmpty
     @Length(max=80)
-    private String labelName;
-    
+    private String labelName;    
 }

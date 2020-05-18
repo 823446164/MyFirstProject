@@ -59,8 +59,7 @@ public class EmployeeLabelServiceImpl implements EmployeeLabelService{
                         String serialNo = businessObject.getString("labelNo");
                         serialNoList.add(serialNo);
                     }
-					//TODO 调用参数服务的接口获取对应的指标名称
-						
+					//TODO 调用参数服务的接口获取对应的指标名称						
 					
 				}
 			}
