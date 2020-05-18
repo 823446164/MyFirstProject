@@ -146,13 +146,13 @@ public class LabelInfoServiceImpl implements LabelInfoService {
     }
 
     /**
-     * 标签详情新增,修改
+     * 标签详情新增/修改/复制，指标详情新增/修改复制
      * 
      * @param labelInfoSaveReq
      */
     public void labelInfoSaveAction(LabelInfo labelInfo) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
+        if (ButtonType._3.name.equals(labelInfo.getButtonType())) {
             // 保留发过来的serialNo
             String indexSerialNo = labelInfo.getSerialNo();
             String indexName = labelInfo.getLabelName();
@@ -235,7 +235,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
      */
     public void labelDescribeSave(BusinessObjectManager bomanager, LabelInfo labelInfo, LabelCatalog labelCatalog, String serialNo) {
         List<LabelDescribe> labelDescribess = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo", serialNo);
-        if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
+        if (ButtonType._3.name.equals(labelInfo.getButtonType())) {
 
         }
         // TODO 判断前端的数据 指标编号、
@@ -300,7 +300,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime parse = LocalDateTime.parse(labelCatalog.getInputTime(), df);
         for (LabelDescribe labelDescribeTemp : labelDescribes) {
-            if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
+            if (ButtonType._3.name.equals(labelInfo.getButtonType())) {
                 labelDescribeTemp.setLabelNo(labelCatalog.getSerialNo());
             }
             else {

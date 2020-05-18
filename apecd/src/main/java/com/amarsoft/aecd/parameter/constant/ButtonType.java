@@ -21,12 +21,10 @@ package com.amarsoft.aecd.parameter.constant;
  */
 
 public enum ButtonType {
-    _1("1","addLabel"),
-    _2("2","editLabel"),
-    _3("3","copyLabel"),
-    _4("4","addIndex"),
-    _5("5","editIndex"),
-    _6("6","copyIndex"),
+    _1("1","add"),
+    _2("2","edit"),
+    _3("3","copy"),
+    _4("4","delete"),
     ;
     
     public final String id;
@@ -47,9 +45,7 @@ public enum ButtonType {
         return _1.id.equals(id) 
             || _2.id.equals(id) 
             || _3.id.equals(id)
-            || _4.id.equals(id)
-            || _5.id.equals(id) 
-            || _6.id.equals(id);
+            || _4.id.equals(id);
 
     }
 
