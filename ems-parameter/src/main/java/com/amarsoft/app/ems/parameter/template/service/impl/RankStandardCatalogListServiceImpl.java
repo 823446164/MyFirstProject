@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.amarsoft.aecd.parameter.constant.ChildRankNo;
 import com.amarsoft.aecd.parameter.constant.RankName;
 import com.amarsoft.aecd.parameter.constant.RankStandard;
 import com.amarsoft.amps.acsc.query.QueryProperties;
@@ -173,9 +174,9 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             for (RankStandardCatalog rank : ranCatalogs) {
                 rankresponse = new RankStandardCatalogList();
                 rankresponse.setSerialNo(rank.getSerialNo());
-                rankresponse.setRankStandard(rank.getRankStandard());
-                rankresponse.setRankName(rank.getRankName());
-                rankresponse.setChildRankNo(rank.getChildRankNo());
+                rankresponse.setRankStandard(RankStandard.getNameById(rank.getRankStandard()));
+                rankresponse.setRankName(RankName.getNameById(rank.getRankName()));
+                rankresponse.setChildRankNo(ChildRankNo.getNameById(rank.getChildRankNo()));
                 rankresponse.setAbility(rank.getAbility());
                 rankresponse.setRankDescribe(rank.getRankDescribe());
                 rankresponse.setResponeDescribe(rank.getResponeDescribe());

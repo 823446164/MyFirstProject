@@ -73,7 +73,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         Map<String,String> map3=new HashMap<String, String>();
         //TODO xphe 优化代码－改为code_library传list
         if(!StringUtils.isEmpty(rankStandard)) {
-            if(RankStandard._1.id.equals(rankStandard)) {
+            if(RankStandard._1.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B1_1.id);
                 map1.put("text", ChildRankNo.B1_1.name);
                 rankList.add(map1);
@@ -84,7 +84,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 map3.put("text", ChildRankNo.B1_3.name);
                 rankList.add(map3);
             }
-            if(RankStandard._2.id.equals(rankStandard)) {
+            if(RankStandard._2.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B2_1.id);
                 map1.put("text", ChildRankNo.B2_1.name);
                 rankList.add(map1);
@@ -95,7 +95,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 map3.put("text", ChildRankNo.B2_3.name);
                 rankList.add(map3);
             }
-            if(RankStandard._3.id.equals(rankStandard)) {
+            if(RankStandard._3.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B3_1.id);
                 map1.put("text", ChildRankNo.B3_1.name);
                 rankList.add(map1);
@@ -106,7 +106,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 map3.put("text", ChildRankNo.B3_3.name);
                 rankList.add(map3);
             }
-            if(RankStandard._4.id.equals(rankStandard)) {
+            if(RankStandard._4.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B4_1.id);
                 map1.put("text", ChildRankNo.B4_1.name);
                 rankList.add(map1);
@@ -115,6 +115,28 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 rankList.add(map2);
                 map3.put("value", ChildRankNo.B4_3.id);
                 map3.put("text", ChildRankNo.B4_3.name);
+                rankList.add(map3);
+            }
+            if(RankStandard._5.name.equals(rankStandard)) {
+                map1.put("value", ChildRankNo.B5_1.id);
+                map1.put("text", ChildRankNo.B5_1.name);
+                rankList.add(map1);
+                map2.put("value", ChildRankNo.B5_2.id);
+                map2.put("text", ChildRankNo.B5_2.name);
+                rankList.add(map2);
+                map3.put("value", ChildRankNo.B5_3.id);
+                map3.put("text", ChildRankNo.B5_3.name);
+                rankList.add(map3);
+            }
+            if(RankStandard._6.name.equals(rankStandard)) {
+                map1.put("value", ChildRankNo.B6_1.id);
+                map1.put("text", ChildRankNo.B6_1.name);
+                rankList.add(map1);
+                map2.put("value", ChildRankNo.B6_2.id);
+                map2.put("text", ChildRankNo.B6_2.name);
+                rankList.add(map2);
+                map3.put("value", ChildRankNo.B6_3.id);
+                map3.put("text", ChildRankNo.B6_3.name);
                 rankList.add(map3);
             }
         }
