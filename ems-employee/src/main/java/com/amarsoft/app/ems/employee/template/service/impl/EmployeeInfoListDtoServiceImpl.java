@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amarsoft.aecd.system.constant.UserRoles;
-import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
@@ -166,7 +165,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeInfo employeeInfo=bomanager.keyLoadBusinessObject(EmployeeInfo.class, employeeInfoListDtoDeleteReq.getEmployeeNo());
         bomanager.deleteBusinessObject(employeeInfo);
-        // TODO 关联表数据如需删除的话，请自行补充代码
+        
         bomanager.updateDB();
     }
     
@@ -181,6 +180,8 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         //1.后端自动获取用户ＩＤ和部门ＩＤ
         String userId = GlobalShareContextHolder.getUserId();
         String orgId = GlobalShareContextHolder.getOrgId();
+        String employeeId = StringUtils.isEmpty(req.getEmployeeNo())? "%":req.getEmployeeNo()+"%";
+        String employeeName = StringUtils.isEmpty(req.getEmployeeName())?"%":req.getEmployeeName()+"%";
         EmployeeListByUserQueryRsp rsp = null;
         //2.查询用户角色的信息
         RequestMessage<UserRoleQueryReq> reqMsg = new RequestMessage<UserRoleQueryReq>();
@@ -197,12 +198,12 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         UserAndRole userAndRole = userRoles.get(0); //5.获取用户的最高权限（099、110、210）
         if (UserRoles.Admin.id.equals(userAndRole.getRoleId())) {//6.如果用户为系统管理员，展示所有员工
             String id = "";
-            rsp = showList(userAndRole.getRoleId(), id);
-         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员，展示所在部门所有员工
-             rsp = showList(userAndRole.getRoleId(), orgId);
+            rsp = showList(userAndRole.getRoleId(), id,employeeId,employeeName);
+         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId()) || UserRoles.DeputManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员或者部门副经理，展示所在部门所有员工
+             rsp = showList(userAndRole.getRoleId(), orgId,employeeId,employeeName);
          }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
-             rsp = showList(userAndRole.getRoleId(), userId);
-         }else {//９．如果不是这三种角色，则提示权限不足
+             rsp = showList(userAndRole.getRoleId(), userId,employeeId,employeeName);
+         }else {//９．如果不是这些角色，则提示权限不足
              throw new ALSException("EMS1008");
         }
         return rsp; 
@@ -214,7 +215,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
      * @return EmployeeListByUserQueryRsp(List<EmployeeInfoDto>)
      * @see
      */
-    public EmployeeListByUserQueryRsp showList(String roleId,String id) {
+    public EmployeeListByUserQueryRsp showList(String roleId,String id,String employeeNo,String employeeName) {
         EmployeeListByUserQueryRsp rsp = new EmployeeListByUserQueryRsp();
         RequestMessage<OrgUserQueryReq> reqMessage = new RequestMessage<OrgUserQueryReq>();
         OrgUserQueryReq orgUserQueryReq = new OrgUserQueryReq();
@@ -235,7 +236,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             //3.调用employeeListByEmployeeNo方法
             EmployeeListByEmplNoReq emplNoReq = new EmployeeListByEmplNoReq();
             emplNoReq.setEmployeeNoList(userIdList);
-            EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq);
+            EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq,employeeNo,employeeName);
             //4.将用户ＩＤ一致的团队部门信息添加到员工详情信息上
             for(EmployeeInfoDto eiDto:emplNoRsp.getEmployeeInfoList()) {
                 for(UserTeamOrgInfo utoi:utois) {
@@ -247,6 +248,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
                     }
                 }
             } 
+            rsp.setTotalCount(emplNoRsp.getTotalCount());
             rsp.setEmployeeList(emplNoRsp.getEmployeeInfoList());
         }
         
@@ -260,11 +262,12 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
      * @see
      */
     @Override
-    public EmployeeListByEmplNoRsp employeeListByEmployeeNo(@Valid EmployeeListByEmplNoReq req) {
+    public EmployeeListByEmplNoRsp employeeListByEmployeeNo(@Valid EmployeeListByEmplNoReq req,String employeeId,String employeeName) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeListByEmplNoRsp rsp = new EmployeeListByEmplNoRsp();
         List<String> employeeNoList = req.getEmployeeNoList();
         List<EmployeeInfoDto> employeeDtoList = new ArrayList<EmployeeInfoDto>();
+        
         String userList = "";
         //1.拼接员工查询参数
         for(String employeeNo:employeeNoList) {
@@ -274,10 +277,8 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             userList = userList.substring(0, userList.length()-1);
         }
         //２．查询所需员工们的信息
-        List<EmployeeInfo> employeeList = bomanager.loadBusinessObjects(EmployeeInfo.class , "employeeNo in (" + userList+")");
-        if (CollectionUtils.isEmpty(employeeList)) {//如果查询出的员工信息为空
-            throw new ALSException("EMS1021");
-        }
+        List<EmployeeInfo> employeeList = bomanager.loadBusinessObjects(EmployeeInfo.class , "employeeNo in (" + userList +") and employeeNo like :employeeNo and employeeName like :employeeName","employeeNo",employeeId,"employeeName",employeeName);
+
         for(EmployeeInfo ei:employeeList) {
             EmployeeInfoDto eIDto = new EmployeeInfoDto();
             //３.复制信息（当两者属性大致相同）
@@ -288,10 +289,11 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         rsp.setEmployeeInfoList(employeeDtoList);
         return rsp;
     }
+    
 
     @Override
     public void employeeInfoListDtoSave(@Valid EmployeeInfoListDtoSaveReq employeeInfoListDtoSaveReq) {
-        // TODO Auto-generated method stub
+        
         
     }
 }

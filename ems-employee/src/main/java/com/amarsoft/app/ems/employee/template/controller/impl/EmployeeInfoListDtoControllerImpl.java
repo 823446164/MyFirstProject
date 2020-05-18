@@ -144,12 +144,13 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery(@RequestBody @Valid RequestMessage<EmployeeListByEmplNoReq> reqMsg) {
+    public ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery(@RequestBody @Valid RequestMessage<EmployeeListByEmplNoReq> reqMsg,String employeeId,String employeeName) {
         ResponseMessage<EmployeeListByEmplNoRsp> rspMsg = null;
         try {
             EmployeeListByEmplNoReq request = reqMsg.getMessage();
             
-            EmployeeListByEmplNoRsp response = employeeInfoListDtoServiceImpl.employeeListByEmployeeNo(request);
+            
+            EmployeeListByEmplNoRsp response = employeeInfoListDtoServiceImpl.employeeListByEmployeeNo(request,employeeId,employeeId);
             rspMsg = new ResponseMessage<EmployeeListByEmplNoRsp>(response);
             
             return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg , HttpStatus.OK);
