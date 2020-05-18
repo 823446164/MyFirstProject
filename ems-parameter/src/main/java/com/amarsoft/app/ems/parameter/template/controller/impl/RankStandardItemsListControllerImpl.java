@@ -27,6 +27,7 @@ import com.amarsoft.app.ems.parameter.template.service.RankStandardItemsListServ
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelSaveReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsInfoDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListSaveReq;
@@ -163,6 +164,34 @@ public class RankStandardItemsListControllerImpl implements RankStandardItemsLis
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
          // TODO　xphe //标签保存设置异常码
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    /**
+     * 
+     * Description: 职级指标页面的删除
+     *
+     * @param reqMsg
+     * @return 
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> rankStandardItemsInfoDelete(@RequestBody @Valid RequestMessage<RankStandardItemsInfoDeleteReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            RankStandardItemsInfoDeleteReq request = reqMsg.getMessage();
+            rankStandardItemsInfoServiceImpl.rankStandardDelete(request);
+            rspMsg = new ResponseMessage<Object>();
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("职级指标删除："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+         // TODO　xphe //标签删除设置异常码
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -40,13 +40,14 @@ public class RankStandardItemsListQueryReq implements Serializable {
     @ActualColumn("RSI.serialNo")
     private String serialNo;
 
+    @Description("标签编号")
+    @Length(max=40)
+    @ActualColumn("RSI.labelNo")
+    private String labelNo;
+    
     @Description("职级编号")
     @Length(max=40)
     @ActualColumn("RSI.rankNo")
     private String rankNo;
     
-    @Description("所属目录")
-    @Length(max=40)
-    @ActualColumn("RSI.belongCatalog")
-    private String belongCatalog;
 }
