@@ -17,6 +17,8 @@ import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.MediaType;
+
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoCopyReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq;

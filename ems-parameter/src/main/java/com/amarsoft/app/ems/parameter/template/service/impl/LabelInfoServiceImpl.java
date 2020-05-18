@@ -1,7 +1,8 @@
 /*
  * 文件名：LabelInfoServiceImpl 
  * 版权：Copyright by www.amarsoft.com 
- * 描述：为LabelInfo模板提供方法 修改人：yrong
+ * 描述：为LabelInfo模板提供方法 
+ * 修改人：yrong
  * 修改时间：2020年5月11日 
  * 跟踪单号： 
  * 修改单号： 
@@ -15,12 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import javax.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.parameter.template.service.LabelInfoService;
-import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.aecd.employee.constant.MasteryOne;
 import com.amarsoft.aecd.employee.constant.MasteryThree;
+import com.amarsoft.aecd.parameter.constant.ButtonType;
 import com.amarsoft.aecd.system.constant.LabelStatus;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
@@ -36,6 +38,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq
 import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
 import com.amarsoft.app.ems.parameter.entity.LabelDescribe;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfo;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoCopyReq;
 
 
 /**
@@ -57,7 +60,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
     public LabelInfoQueryRsp labelInfoQuery(@Valid LabelInfoQueryReq labelInfoQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         BusinessObjectAggregate<BusinessObject> labelInfoQueryRspBoa = bomanager.selectBusinessObjectsBySql(
-            "select LC.serialNo as serialNo,LC.labelName as labelName,LC.codeNo as codeNo,LC.labelStatus as labelStatus,LC.belongCataLog as belongCataLog,LC.rootNo as rootNo,LC.abilityType as abilityType,LC.labelDescribe as labelDescribe,LC.labelVersion as labelVersion,"
+            "select LC.serialNo as serialNo,LC.parentNo as parentNo,LC.labelType as labelType,LC.labelType as labelType,LC.labelName as labelName,LC.codeNo as codeNo,LC.labelStatus as labelStatus,LC.belongCataLog as belongCataLog,LC.rootNo as rootNo,LC.abilityType as abilityType,LC.labelDescribe as labelDescribe,LC.labelVersion as labelVersion,"
             + "LC.inputUserId as inputUserId,LC.inputTime as inputTime,LC.inputOrgId as inputOrgId,LC.updateUserId as updateUserId,LC.updateTime as updateTime,LC.updateOrgId as updateOrgId,"
             + "LD.levelDescribe as levelDescribe,LD.labelNo as labelNo,LD.labelLevel as labelLevel,LD.inputUserId as inputUserId,LD.inputTime as inputTime,LD.inputOrgId as inputOrgId,LD.updateUserId as updateUserId,LD.updateTime as updateTime,LD.updateOrgId as updateOrgId"
             + " from LabelCatalog LC,LabelDescribe LD"
@@ -110,7 +113,8 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         labelInfo.setLabelName(labelInfoQueryRspBo.getString("LabelName"));
         labelInfo.setCodeNo(labelInfoQueryRspBo.getString("CodeNo"));
         labelInfo.setLabelStatus(labelInfoQueryRspBo.getString("LabelStatus"));
-        labelInfo.setBelongCataLog(labelInfoQueryRspBo.getString("BelongCataLog"));
+        labelInfo.setParentNo(labelInfoQueryRspBo.getString("ParentNo"));
+        labelInfo.setLabelType(labelInfoQueryRspBo.getString("LabelType"));
         labelInfo.setRootNo(labelInfoQueryRspBo.getString("RootNo"));
         labelInfo.setAbilityType(labelInfoQueryRspBo.getString("AbilityType"));
         labelInfo.setLabelDescribe(labelInfoQueryRspBo.getString("LabelDescribe"));
@@ -142,41 +146,85 @@ public class LabelInfoServiceImpl implements LabelInfoService {
     }
 
     /**
+     * 标签详情新增,修改
+     * 
+     * @param labelInfoSaveReq
+     */
+    public void labelInfoSaveAction(LabelInfo labelInfo) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
+            // 保留发过来的serialNo
+            String indexSerialNo = labelInfo.getSerialNo();
+            String indexName = labelInfo.getLabelName();
+            String indexCodeNo = labelInfo.getCodeNo();
+            // 在label_Catalog表中查出指标数据
+            LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelInfo.getSerialNo());
+            // 复制指标
+            BeanUtils.copyProperties(labelCatalog, labelInfo);
+            labelInfo.setSerialNo(null);
+            labelInfo.setLabelName(indexName);
+            labelInfo.setCodeNo(indexCodeNo);
+            String labelInfoSave = labelInfoSave(labelInfo, indexSerialNo);
+
+            // 查询该指标下的标签
+            // List<LabelCatalog> labelCatalogs=
+            // bomanager.loadBusinessObjects(LabelCatalog.class,"parentNo=:serialNo"
+            // ,"serialNo",indexSerialNo);
+            List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:serialNo", "serialNo",
+                indexSerialNo);
+            // 复制标签
+            for (LabelCatalog labelCatalogTemp : labelCatalogs) {
+               String copyLabelSerialNo= labelCatalogTemp.getSerialNo();
+                LabelInfo labelInfo1 = new LabelInfo();                                
+                BeanUtils.copyProperties(labelCatalogTemp, labelInfo1);
+                labelInfo1.setSerialNo(null);
+                labelInfo1.setParentNo(labelInfoSave);
+                labelInfoSave(labelInfo1, copyLabelSerialNo);
+            }
+        }
+        else {
+            labelInfoSave(labelInfo, null);
+        }
+    }
+
+    /**
      * 标签详情新增,修改action 把要新增或修改的标签数据跟新进LABEL_Describe表和Label_Catalog表
      * 
      * @param labelInfo
      */
     @Transactional
-    public void labelInfoSaveAction(LabelInfo labelInfo) {
+    public String labelInfoSave(LabelInfo labelInfo, String serialNo) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if (labelInfo != null) {
             LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelInfo.getSerialNo());
             LocalDateTime localDateTime = LocalDateTime.now();
             if (labelCatalog == null) {
                 labelCatalog = new LabelCatalog();
-                labelCatalog.generateKey();                
+                labelCatalog.generateKey();
                 labelCatalog.setInputTime(localDateTime);
                 labelCatalog.setInputUserId(GlobalShareContextHolder.getUserId());
                 labelCatalog.setInputOrgId(GlobalShareContextHolder.getOrgId());
                 labelCatalog.setLabelStatus(LabelStatus.New.id);
                 labelCatalog.setLabelType(labelInfo.getLabelType());
-            }           
+            }
             labelInfo.setLabelNo(labelCatalog.getSerialNo());
             labelCatalog.setUpdateTime(localDateTime);
             labelCatalog.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
             labelCatalog.setUpdateUserId(GlobalShareContextHolder.getUserId());
             labelCatalog.setLabelName(labelInfo.getLabelName());
             labelCatalog.setCodeNo(labelInfo.getCodeNo());
-            labelCatalog.setBelongCataLog(labelInfo.getBelongCataLog());
+            labelCatalog.setParentNo(labelInfo.getParentNo());
             labelCatalog.setRootNo(labelInfo.getRootNo());
             labelCatalog.setAbilityType(labelInfo.getAbilityType());
             labelCatalog.setLabelDescribe(labelInfo.getLabelDescribe());
             labelCatalog.setLabelVersion(labelInfo.getLabelVersion());
             bomanager.updateBusinessObject(labelCatalog);
             bomanager.updateDB();
+            // 调用labelDescribeSave方法，把数据存放进LABEL_Describe表
+            labelDescribeSave(bomanager, labelInfo, labelCatalog, serialNo);
+            return labelCatalog.getSerialNo();
         }
-        // 调用labelDescribeSave方法，把数据存放进LABEL_Describe表
-        labelDescribeSave(bomanager, labelInfo);
+        return null;
     }
 
     /**
@@ -185,15 +233,14 @@ public class LabelInfoServiceImpl implements LabelInfoService {
      * @param labelInfo
      * @param bomanager
      */
-    public void labelDescribeSave(BusinessObjectManager bomanager, LabelInfo labelInfo) {
-        List<LabelDescribe> labelDescribess = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo",
-            labelInfo.getSerialNo());
-        LocalDateTime inputTime = LocalDateTime.now();
+    public void labelDescribeSave(BusinessObjectManager bomanager, LabelInfo labelInfo, LabelCatalog labelCatalog, String serialNo) {
+        List<LabelDescribe> labelDescribess = bomanager.loadBusinessObjects(LabelDescribe.class, "labelNo=:serialNo", "serialNo", serialNo);
+        if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
+
+        }
+        // TODO 判断前端的数据 指标编号、
         // 空说明是新增信息，非空说明是修改
-        if (!CollectionUtils.isEmpty(labelDescribess)) {
-            DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateFormat.format);
-            LocalDateTime ldt = LocalDateTime.parse(labelDescribess.get(0).getInputTime(), sdf);
-            inputTime = ldt;
+        else if (!CollectionUtils.isEmpty(labelDescribess)) {
             for (LabelDescribe labelDescribesTemp : labelDescribess) {
                 LabelDescribe labelDescribe = bomanager.keyLoadBusinessObject(LabelDescribe.class, labelDescribesTemp.getSerialNo());
                 bomanager.deleteBusinessObject(labelDescribe);
@@ -250,12 +297,19 @@ public class LabelInfoServiceImpl implements LabelInfoService {
             labelDescribe.setLevelDescribe(labelInfo.getCommonlyDescribe());
             labelDescribes.add(labelDescribe);
         }
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime parse = LocalDateTime.parse(labelCatalog.getInputTime(), df);
         for (LabelDescribe labelDescribeTemp : labelDescribes) {
-            labelDescribeTemp.setLabelNo(labelInfo.getLabelNo());
+            if (ButtonType._6.name.equals(labelInfo.getButtonType())) {
+                labelDescribeTemp.setLabelNo(labelCatalog.getSerialNo());
+            }
+            else {
+                labelDescribeTemp.setLabelNo(labelInfo.getLabelNo());
+            }
             labelDescribeTemp.setLevelDescribe(labelDescribeTemp.getLevelDescribe());
             labelDescribeTemp.setLabelLevel(labelDescribeTemp.getLabelLevel());
             labelDescribeTemp.setInputUserId(GlobalShareContextHolder.getUserId());
-            labelDescribeTemp.setInputTime(inputTime);
+            labelDescribeTemp.setInputTime(parse);
             labelDescribeTemp.setInputOrgId(GlobalShareContextHolder.getOrgId());
             labelDescribeTemp.setUpdateTime(LocalDateTime.now());
             labelDescribeTemp.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
@@ -306,13 +360,4 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         }
         bomanager.updateDB();
     }
-    //TODO 需要和前端沟通
-//    /**
-//     * 标签复制
-//     * 
-//     * @param labelInfoSaveReq
-//     */
-//    public void copyLabelCatalog(LabelInfoQueryReq labelInfoQueryReq) {
-//        
-//    }
 }

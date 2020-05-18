@@ -24,6 +24,7 @@ import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
 import com.amarsoft.app.ems.parameter.template.controller.LabelInfoController;
 import com.amarsoft.app.ems.parameter.template.service.LabelInfoService;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoCopyReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq;

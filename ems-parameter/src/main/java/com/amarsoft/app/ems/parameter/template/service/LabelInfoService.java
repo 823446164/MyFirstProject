@@ -11,6 +11,8 @@
 package com.amarsoft.app.ems.parameter.template.service;
 
 import javax.validation.Valid;
+
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoCopyReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq;
@@ -22,14 +24,14 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq
 public interface LabelInfoService {
     /**
      * 标签Info查询
-     * @param request
+     * @param labelInfoQueryReq
      * @return
      */
     public LabelInfoQueryRsp labelInfoQuery(@Valid LabelInfoQueryReq labelInfoQueryReq);
 
     /**
      * 标签Info保存 
-     * @param request
+     * @param labelInfoSaveReq
      * @return
      */
     public void labelInfoSave(@Valid LabelInfoSaveReq labelInfoSaveReq);
@@ -37,9 +39,8 @@ public interface LabelInfoService {
     /**
      * 标签生效 
      * 
-     * @param request
-     * @return
-     * @throws Exception 
+     * @param lableDescribeInfoSaveReq
+     * @return 
      */
     public void lableStatusOk(@Valid LabelInfoSaveReq lableDescribeInfoSaveReq);
 }
