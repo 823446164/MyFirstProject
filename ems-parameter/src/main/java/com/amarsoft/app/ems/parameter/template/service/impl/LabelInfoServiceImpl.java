@@ -156,7 +156,6 @@ public class LabelInfoServiceImpl implements LabelInfoService {
     public void labelInfoSaveAction(LabelInfo labelInfo) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if (ButtonType._3.name.equals(labelInfo.getButtonType())) {
-            if (LabelType._2.id.equals(labelInfo.getLabelType())) {// 指标复制
                 // 保留发过来的serialNo
                 String indexSerialNo = labelInfo.getSerialNo();
                 String indexName = labelInfo.getLabelName();
@@ -186,11 +185,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
                     String labelSerialNo = labelInfoSave(labelInfo1);
                     // 为复制的标签复制标签能力描述
                     copyLabelDescribe(labelCatalogTemp, labelSerialNo, copyLabelSerialNo);
-                }
-            }
-            else {
-                labelInfoSave(labelInfo);// 标签复制
-            }
+                }            
         }
         else {
             labelInfoSave(labelInfo);
@@ -428,8 +423,9 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         //更新判重
         else {
             List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class,
-                "labelName=:labelName and serialNo!=serialNo", "labelName", labelInfoRepeatReq.getLabelName(), "serialNo",
+                "labelName=:labelName and serialNo <> :serialNo", "labelName", labelInfoRepeatReq.getLabelName(), "serialNo",
                 labelInfoRepeatReq.getSerialNo());
+            
             if (CollectionUtils.isEmpty(labelCatalogs)) {
                 isRepeatRsp.setRepeat(true);
                 return isRepeatRsp;

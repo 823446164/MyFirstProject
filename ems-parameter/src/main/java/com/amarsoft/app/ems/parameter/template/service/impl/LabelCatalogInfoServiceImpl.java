@@ -156,12 +156,13 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     public LabelByLabelCatalogQueryRsp labelBelongCatalogQuery(@Valid LabelByLabelCatalogQueryReq labelByLabelCatalogQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         LabelByLabelCatalogQueryRsp lableCatalogInfoQueryRsp = new LabelByLabelCatalogQueryRsp();
+        String labelName = StringUtils.isEmpty(labelByLabelCatalogQueryReq.getLabelName())? "%" : labelByLabelCatalogQueryReq.getLabelName()+"%";
         BusinessObjectAggregate<BusinessObject> labelBelongCatalogQueryRspBoa = bomanager.selectBusinessObjectsBySql(
-            "select LC.serialNo as serialNo,LC.labelName as labelName,LC.codeNo as codeNo,LC.labelStatus as labelStatus,LC.belongCataLog as belongCataLog,LC.rootNo as rootNo,"
-                                                                                                                     + "LC.parentNo as parentNo, LC.labelType as labelType, "
-                                                                                                                     + "LC.abilityType as abilityType,LC.labelDescribe as labelDescribe,LC.labelVersion as labelVersion from LabelCatalog LC"
-                                                                                                                     + " where LC.parentNo =:serialNo",
-            "serialNo", labelByLabelCatalogQueryReq.getSerialNo());
+            "select LC.serialNo as serialNo,LC.labelName as labelName,LC.codeNo as codeNo,LC.labelStatus as labelStatus,LC.belongCataLog as belongCataLog,"
+            + "LC.rootNo as rootNo,LC.parentNo as parentNo, LC.labelType as labelType, "
+            + "LC.abilityType as abilityType,LC.labelDescribe as labelDescribe,LC.labelVersion as labelVersion from LabelCatalog LC"
+            + " where LC.parentNo =:serialNo and labelName like :labelName",
+            "serialNo", labelByLabelCatalogQueryReq.getSerialNo(),"labelName",labelName);
         List<BusinessObject> labelBelongCatalogQueryRspBoList = labelBelongCatalogQueryRspBoa.getBusinessObjects();
         if (!CollectionUtils.isEmpty(labelBelongCatalogQueryRspBoList)) {
             List<LabelCatalogInfo> lableCatalogInfoLists = new ArrayList<LabelCatalogInfo>();
@@ -181,4 +182,6 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
         }
         return lableCatalogInfoQueryRsp;
     }
+    
+  
 }
