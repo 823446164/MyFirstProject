@@ -17,6 +17,7 @@ import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,4 +40,8 @@ public class TreeLabelQueryReq implements Serializable{
     @Length(max=40)
     @ActualColumn("LC.serialNo")
     private String serialNo;
+    
+    @Description("职级编号")
+    @Length(max=40)
+    private String rankNo;
 }
