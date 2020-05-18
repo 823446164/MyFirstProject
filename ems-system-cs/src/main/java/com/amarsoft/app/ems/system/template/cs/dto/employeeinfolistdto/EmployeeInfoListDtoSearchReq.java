@@ -47,9 +47,4 @@ public class EmployeeInfoListDtoSearchReq implements Serializable {
     @Length(max=80)
     private String userId;  
     
-    @Description("查询条件编号")
-    @Length(max=80)
-    @Enum(RankIsFormal.class)
-    private String conditionId;  
-    
 }

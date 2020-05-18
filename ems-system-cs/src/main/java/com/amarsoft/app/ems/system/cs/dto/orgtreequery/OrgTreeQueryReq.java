@@ -25,4 +25,8 @@ public class OrgTreeQueryReq implements Serializable{
     @Description("树图查询等级参数")
     @Length(max=40)
     private String param;
+    
+    @Description("树图搜索部门名称")
+    @Length(max=40)
+    private String orgName;
 }
