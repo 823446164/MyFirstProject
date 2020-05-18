@@ -89,7 +89,7 @@ public class EmployeeBelongChangeInfoDto implements Serializable {
     @Description("调整原因")
     @Length(max=2000)
     @ActualColumn("EBC.adjustReason")
-    @TemplateBody(sortNo = 11, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 11, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String adjustReason;
 
     @Description("登记人")
