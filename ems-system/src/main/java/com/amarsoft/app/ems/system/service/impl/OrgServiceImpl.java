@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.antlr.v4.runtime.atn.SemanticContext.AND;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.common.constant.YesNo;
-import com.amarsoft.aecd.employee.constant.RankIsFormal;
 import com.amarsoft.aecd.system.constant.ArchitectureType;
 import com.amarsoft.aecd.system.constant.ChangeEventType;
 import com.amarsoft.aecd.system.constant.CompanyType;
@@ -59,7 +57,6 @@ import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
-import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
 import com.amarsoft.app.ems.system.entity.ChangeEvent;
 import com.amarsoft.app.ems.system.entity.Department;
@@ -67,6 +64,7 @@ import com.amarsoft.app.ems.system.entity.OrgInfo;
 import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.entity.UserBelong;
+import com.amarsoft.app.ems.system.entity.UserInfo;
 import com.amarsoft.app.ems.system.entity.UserTeam;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
@@ -963,7 +961,9 @@ public class OrgServiceImpl implements OrgService {
         rsp.setOrgId(orgInfo.getOrgId());
         rsp.setParentOrgId(orgInfo.getParentOrgId());
         rsp.setOrgName(orgInfo.getOrgName());
-        rsp.setDeptManager(department.getDeptManager());
+        rsp.setDeptManagerId(department.getDeptManager());//设置部门经理编号
+        UserInfo UI = bomanager.keyLoadBusinessObject(UserInfo.class, department.getDeptManager());
+        rsp.setDeptManagerName(UI.getUserName());
         rsp.setParentOrgName(parentOrgInfo.getOrgName());
         //查询下一级部门list
         List<OrgInfo> ois = bomanager.loadBusinessObjects(OrgInfo.class, "parentOrgId = :parentOrgId", "parentOrgId",
@@ -1021,7 +1021,7 @@ public class OrgServiceImpl implements OrgService {
             department = new Department();
             department.setDeptId(orgId);
             department.setDeptName(req.getOrgName());
-            department.setDeptManager(req.getDeptManager());
+            department.setDeptManager(req.getDeptManagerId());
             department.setDeptEquipment(req.getDeptEquipment());
             department.setDeptAddress(req.getDeptAddress());
             department.setRemark(req.getRemark());
@@ -1047,7 +1047,7 @@ public class OrgServiceImpl implements OrgService {
             department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
             department.setDeptId(req.getOrgId());
             department.setDeptName(req.getOrgName());
-            department.setDeptManager(req.getDeptManager());
+            department.setDeptManager(req.getDeptManagerId());
             department.setDeptEquipment(req.getDeptEquipment());
             department.setDeptAddress(req.getDeptAddress());
             department.setRemark(req.getRemark());
@@ -1057,7 +1057,7 @@ public class OrgServiceImpl implements OrgService {
             orgInfo.setOrgId(req.getOrgId());
             orgInfo.setSortNo(req.getOrgId());
             orgInfo.setOrgName(req.getOrgName());
-        }
+        }       
 
         // 更新到数据库
         bomanager.updateBusinessObject(department);
@@ -1080,8 +1080,8 @@ public class OrgServiceImpl implements OrgService {
         SearchSecondLevelDeptListDtoQueryRsp response = new SearchSecondLevelDeptListDtoQueryRsp();
         List<SearchSecondLevelDeptListDto> ssds = new ArrayList<SearchSecondLevelDeptListDto>();
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-            "select DT.deptName as deptName,DT.deptManager as deptManager,OI.orgId as orgId from OrgInfo OI,Department DT where"
-            + " DT.deptId = OI.orgId and OI.orgLevel= :orgLevel and DT.deptName like :deptName","orgLevel",req.getOrgLevel(),"deptName",req.getOrgName()+"%"
+            "select DT.deptName as deptName,UI.userName as deptManagerName,OI.orgId as orgId from UserInfo UI, OrgInfo OI,Department DT where"
+            + " DT.deptId = OI.orgId and OI.orgLevel= :orgLevel and DT.deptName like :deptName and UI.userId = DT.deptManager","orgLevel",req.getOrgLevel(),"deptName",req.getOrgName()+"%"
             ).getBusinessObjects();
         if (CollectionUtils.isEmpty(businessObjects)) {
             throw new ALSException("EMS6012");
@@ -1090,7 +1090,7 @@ public class OrgServiceImpl implements OrgService {
         for (BusinessObject businessObject : businessObjects) {
             searchSecondLevelDeptListDto = new SearchSecondLevelDeptListDto();
             searchSecondLevelDeptListDto.setDeptName(businessObject.getString("deptName"));//员工的团队名称
-            searchSecondLevelDeptListDto.setDeptManager(businessObject.getString("deptManager"));//员工的部门名称
+            searchSecondLevelDeptListDto.setDeptManager(businessObject.getString("deptManagerName"));//员工的部门经理名称
             List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class, "orgId = :orgId","orgId",businessObject.getString("orgId"));
             searchSecondLevelDeptListDto.setDeptUserNumber(String.valueOf(userBelongs.size()));//部门下人数
             ssds.add(searchSecondLevelDeptListDto);
@@ -1167,7 +1167,7 @@ public class OrgServiceImpl implements OrgService {
 
         OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
         Department department = bomanager.keyLoadBusinessObject(Department.class, req.getOrgId());
-        
+        UserInfo uInfo = bomanager.keyLoadBusinessObject(UserInfo.class, department.getDeptManager());//查询部门经理姓名
         if(orgInfo == null || department == null) {
             throw new ALSException("EMS6012");         
         }
@@ -1179,7 +1179,7 @@ public class OrgServiceImpl implements OrgService {
         }
         rsp.setParentOrgName(orgInfoParent.getOrgName());
         rsp.setOrgName(orgInfo.getOrgName());
-        rsp.setDeptManager(department.getDeptManager());
+        rsp.setDeptManagerName(uInfo.getUserName());//获取部门经理姓名
         rsp.setDeptAddress(department.getDeptAddress());
         rsp.setRemark(department.getRemark());
         rsp.setDeptEquipment(department.getDeptEquipment());
@@ -1205,25 +1205,21 @@ public class OrgServiceImpl implements OrgService {
             throw new ALSException("EMS6012");         
         }
         
+        List<SecondLevelDeptListDto> secondLevelDeptListDtos = new ArrayList<SecondLevelDeptListDto>(); //新建返回list
         //查询二级部门list
-        List<OrgInfo> ois = bomanager.loadBusinessObjects(OrgInfo.class, "parentOrgId = :parentOrgId", "parentOrgId",
-            orgInfo.getOrgId());
-        List<SecondLevelDeptListDto> secondLevelDeptListDtos = new ArrayList<SecondLevelDeptListDto>(); 
-        for(OrgInfo oi : ois) {
-            SecondLevelDeptListDto secondLevelDeptListDto = new SecondLevelDeptListDto();
-            //获取每个下级部门的部门经理
-            Department dt = bomanager.keyLoadBusinessObject(Department.class, oi.getOrgId());
-            if(dt == null) {
-                throw new ALSException("EMS6012");         
-            }
-            secondLevelDeptListDto.setDeptManager(dt.getDeptManager());
-            secondLevelDeptListDto.setDeptName(dt.getDeptName());
-            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",orgInfo.getOrgId()+"%");  
+        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+            "select UI.userName as deptManagerName,DT.deptName as deptName,DT.deptId as orgId from UserInfo UI, OrgInfo OI,Department DT where"
+            + " UI.userId = DT.deptManager and DT.deptId = OI.orgId and OI.parentOrgId = :parentOrgId", "parentOrgId",orgInfo.getOrgId()
+            ).getBusinessObjects();
+        SecondLevelDeptListDto secondLevelDeptListDto = null;
+        for (BusinessObject businessObject : businessObjects) {
+            secondLevelDeptListDto = new SecondLevelDeptListDto();
+            secondLevelDeptListDto.setDeptName(businessObject.getString("deptName"));
+            secondLevelDeptListDto.setDeptManager(businessObject.getString("deptManagerName"));
+            secondLevelDeptListDto.setOrgId(businessObject.getString("orgId"));
+            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId", businessObject.getString("orgId") + "%");
             secondLevelDeptListDto.setDeptUserNumber(String.valueOf(ubs.size()));
-            secondLevelDeptListDto.setOrgId(dt.getDeptId());
-
             secondLevelDeptListDtos.add(secondLevelDeptListDto);
-           
         }
         rsp.setTotalCount(secondLevelDeptListDtos.size());
         rsp.setSecondLevelDeptListDtos(secondLevelDeptListDtos);
@@ -1243,10 +1239,9 @@ public class OrgServiceImpl implements OrgService {
         rsp.setTrees(new ArrayList<com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree>());
         List<OrgInfo> allOrgs = new ArrayList<>();
         int param = (req.getParam()) == null?2:Integer.valueOf(req.getParam());
-        String orgName = (req.getOrgName() == null) ? "%" :(req.getOrgName()+"%");
         allOrgs = bomanager.loadBusinessObjects(OrgInfo.class, 0, Integer.MAX_VALUE,
-            "orglevel between 1 and :param and orgName like :orgName order by sortNo,orgType desc","param",param,"orgName",orgName).getBusinessObjects();
-        //TODO zcluo　需修改
+            "orglevel between 1 and :param order by sortNo,orgType desc","param",param).getBusinessObjects();
+
         for (OrgInfo orgInfo : allOrgs) {
             if (OrgLevel.LEVEL_1.id.equals(orgInfo.getOrgLevel())) {//将一级部门作为根节点
                 com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree rootNode = new com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree();
@@ -1341,16 +1336,18 @@ public class OrgServiceImpl implements OrgService {
         List<String> ids = new ArrayList<String>();
 
         //模糊搜索
-        String userId = StringUtils.isEmpty(req.getUserId()) ? "%" : req.getUserId() + "%";// 模糊查询用户编号
-        String userName = StringUtils.isEmpty(req.getUserName()) ? "%" : req.getUserName() + "%";// 模糊查询用户名字
-        
-        List<com.amarsoft.app.ems.system.entity.UserInfo> us = bomanager.loadBusinessObjects(UserInfo.class,
-            "userName like :userName and userId like :userId", "userName", userName, "userId", userId);
-        for (com.amarsoft.app.ems.system.entity.UserInfo userInfo : us) {
-            ids.add(userInfo.getUserId());
+        String userId = StringUtils.isEmpty(req.getEmployeeAcct()) ? "%" : req.getEmployeeAcct() + "%";// 模糊查询用户编号
+        String userName = StringUtils.isEmpty(req.getEmployeeName()) ? "%" : req.getEmployeeName() + "%";// 模糊查询用户名字
+        //查询当前部门下指定员工的userId
+        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+            "select UB.userId as userId from UserBelong UB,UserInfo UI where userName like :userName and "
+            + " userId like :userId and UI.userId = UB.userId UB.orgId = :orgId ","orgId",req.getOrgId(),"userName", userName, "userId", userId
+            ).getBusinessObjects();
+        for (BusinessObject businessObject : businessObjects) {
+            ids.add(businessObject.getString("userId"));
         }
-
-        if (CollectionUtils.isEmpty(ids)) {
+        
+        if (CollectionUtils.isEmpty(ids)) {//判空
             throw new ALSException("EMS6014");
         }
         

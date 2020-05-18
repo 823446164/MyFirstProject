@@ -38,22 +38,23 @@ public class OneLevelDeptDto implements Serializable {
     @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String parentOrgId;
     
-    @Description("部门经理")
+    @Description("部门经理姓名")
     @Length(max=40)
-//    @ActualColumn("OI.deptManager")
     @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
-    private String deptManager;
+    private String deptManagerName;
     
     @Description("所属上级")
     @Length(max=80)
-//    @ActualColumn("OI.parentOrgName")
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String parentOrgName;
     
     @Description("下级部门数")
     @Length(max=40)
-//    @ActualColumn("OI.parentOrgName")
     @TemplateBody(sortNo = 5, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 2, groupIndex = -1)
     private String secondOrgNumber;
 
+    @Description("部门经理编号")
+    @Length(max=40)
+    @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
+    private String deptManagerId;
 }

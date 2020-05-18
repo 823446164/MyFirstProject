@@ -2,9 +2,6 @@ package com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptinfodto;
 
 import java.io.Serializable;
 
-import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.amps.arem.annotation.Description;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

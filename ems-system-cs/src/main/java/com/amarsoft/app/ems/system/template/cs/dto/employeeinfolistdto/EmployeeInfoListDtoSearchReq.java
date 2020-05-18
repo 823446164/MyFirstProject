@@ -1,20 +1,15 @@
 package com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto;
 
 import java.io.Serializable;
+
+import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.acsc.query.annotation.QueryOrderBy;
+import com.amarsoft.amps.acsc.query.annotation.QueryRule;
+import com.amarsoft.amps.arem.annotation.Description;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.amarsoft.amps.acsc.query.annotation.QueryRule;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.aecd.employee.constant.RankIsFormal;
-import com.amarsoft.aecd.system.constant.ArchitectureType;
-import com.amarsoft.amps.acsc.annotation.Enum;
-import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
-import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
-import com.amarsoft.amps.acsc.annotation.Range;
-import com.amarsoft.amps.acsc.query.annotation.QueryPageSize;
-import com.amarsoft.amps.acsc.query.annotation.QueryOrderBy;
 
 /**
  * 员工详情List查询请求实体类
@@ -41,10 +36,13 @@ public class EmployeeInfoListDtoSearchReq implements Serializable {
     
     @Description("员工名称")
     @Length(max=80)
-    private String userName;
+    private String employeeName;
     
     @Description("员工编号")
     @Length(max=80)
-    private String userId;  
+    private String employeeAcct;  
     
+    @Description("部门编号")
+    @Length(max=80)
+    private String orgId;  
 }
