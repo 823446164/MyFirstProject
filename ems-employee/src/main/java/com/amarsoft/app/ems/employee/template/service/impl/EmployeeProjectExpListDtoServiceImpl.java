@@ -60,7 +60,7 @@ public class EmployeeProjectExpListDtoServiceImpl implements EmployeeProjectExpL
             String projectName = null;
             String employeeJob = null;
             //模糊搜索判断
-            if(StringUtils.isEmpty(employeeProjectExpListDtoQueryReq.getProjectName())) {//如果项目名称参数为空.初始化 %            
+            if(StringUtils.isEmpty(employeeProjectExpListDtoQueryReq.getProjectName())) {//如果项目名称参数为空.初始化 %     
                 projectName = "%";
             }else {
                 projectName = employeeProjectExpListDtoQueryReq.getProjectName()+"%"; //初始化%    
@@ -121,14 +121,16 @@ public class EmployeeProjectExpListDtoServiceImpl implements EmployeeProjectExpL
         BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(employeeProjectExpListDtoQueryReq.getBegin(), employeeProjectExpListDtoQueryReq.getPageSize(), fullsql, query.getParam());
         List<BusinessObject> businessObjectList = boa.getBusinessObjects();
         
+        //新建集合存储数据
+        List<EmployeeProjectExpListDto> employeeProjectExpListDtos = new ArrayList<EmployeeProjectExpListDto>();
         if(null != businessObjectList && !businessObjectList.isEmpty()) {
-            List<EmployeeProjectExpListDto> employeeProjectExpListDtos = new ArrayList<EmployeeProjectExpListDto>();
             for(BusinessObject bo : businessObjectList) {
                 //查询到的数据转换为响应实体
                 employeeProjectExpListDtos.add(convert.apply(bo));
             }
-            employeeProjectExpListDtoQueryRsp.setEmployeeProjectExpListDtos(employeeProjectExpListDtos);
+            
         }
+        employeeProjectExpListDtoQueryRsp.setEmployeeProjectExpListDtos(employeeProjectExpListDtos);
         employeeProjectExpListDtoQueryRsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
         
         return employeeProjectExpListDtoQueryRsp;
