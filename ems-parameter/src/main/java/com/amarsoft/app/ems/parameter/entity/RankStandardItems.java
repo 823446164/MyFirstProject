@@ -61,8 +61,8 @@ public class RankStandardItems extends BusinessObject {
     private String labelStandardType;
     
     @Description("所属目录") 
-    @Column(name = "belongCatalog",length=80) 
-    private String belongCatalog;
+    @Column(name = "parentNo",length=80) 
+    private String parentNo;
     
     @Description("登记人") 
     @CreatedBy
