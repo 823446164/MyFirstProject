@@ -1422,6 +1422,9 @@ public class OrgServiceImpl implements OrgService {
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
             "select userId as userId,userName as userName from UserInfo where userId not in (select deptManager from Department)"
             ).getBusinessObjects();
+        if (CollectionUtils.isEmpty(businessObjects)) {
+            throw new ALSException("EMS6014");
+        }
         DeptManagerUserQueryRsp rsp = new DeptManagerUserQueryRsp();
         List<com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo> userInfos = new ArrayList<com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo>();
         com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo userInfo =null;
