@@ -12,6 +12,8 @@ package com.amarsoft.app.ems.parameter.template.service;
 
 import javax.validation.Valid;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListDeleteReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListQueryReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListQueryRsp;
 
 /**
  * 标签目录树图Service接口
@@ -24,4 +26,12 @@ public interface LabelCatalogListService {
      * @return
      */
     public void labelCatalogListDelete(@Valid LabelCatalogListDeleteReq labelCatalogListDeleteReq);
+    
+    /**
+     * 标签查询
+     * 根据请求中的serialNo集合查询出所有相关的标签数据
+     * @param request
+     * @return
+     */
+    public LabelCatalogListQueryRsp selectLabelBySerialNos(@Valid LabelCatalogListQueryReq labelCatalogListQueryReq);
 }

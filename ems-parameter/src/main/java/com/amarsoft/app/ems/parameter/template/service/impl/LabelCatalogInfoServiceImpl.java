@@ -75,7 +75,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
         }
         return null;
     }
-
+   
     /**
      * 标签目录详情单记录保存
      * 
@@ -217,6 +217,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
                 lableCatalogInfo.setCatalogRemark(labelBelongCatalogQueryRspBo.getString("CatalogRemark"));
                 lableCatalogInfo.setLabelVersion(labelBelongCatalogQueryRspBo.getString("LabelVersion"));
                 lableCatalogInfo.setLabelType(labelBelongCatalogQueryRspBo.getString("LabelType"));
+                lableCatalogInfo.setLabelStatus(labelBelongCatalogQueryRspBo.getString("LabelStatus"));
                 lableCatalogInfoLists.add(lableCatalogInfo);
             }
             lableCatalogInfoQueryRsp.setLableCatalogInfos(lableCatalogInfoLists);
