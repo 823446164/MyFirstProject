@@ -20,5 +20,7 @@ import lombok.ToString;
 @ToString
 public class TeamOrgQueryReq implements Serializable{
 	private static final long serialVersionUID = 1L;
-
+	
+	@Description("团队名称")
+	private String teamName;	
 }

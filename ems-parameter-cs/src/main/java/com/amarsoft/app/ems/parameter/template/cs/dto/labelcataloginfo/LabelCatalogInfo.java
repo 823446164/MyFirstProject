@@ -38,9 +38,8 @@ public class LabelCatalogInfo  implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("标签编号")
     @Length(max=40)
-    @NotEmpty
     @ActualColumn("LC.serialNo")
-    @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String serialNo;
 
     @Description("标签名称")

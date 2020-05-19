@@ -44,4 +44,9 @@ public class LabelByLabelCatalogQueryReq {
     @Length(max=80)
     @ActualColumn("LC.labelName")
     private String labelName;
+    
+    @Description("标签类型")
+    @Length(max=80)
+    @ActualColumn("LC.labelType")
+    private String labelType;
 }
