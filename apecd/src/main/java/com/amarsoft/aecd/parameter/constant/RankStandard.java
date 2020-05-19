@@ -61,5 +61,18 @@ public enum RankStandard {
         }
         return "";
     }
-
+    /**
+     * 判断当前输入的参数值是否是枚举的一个值
+     * 
+     * @param name
+     * @return
+     */
+    public static String getIdByName(String name) {
+        for (RankStandard rankStandard : RankStandard.values()) {
+            if (rankStandard.name.equalsIgnoreCase(name)) {
+                return rankStandard.id;
+            }
+        }
+        return "";
+    }
 }

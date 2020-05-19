@@ -20,6 +20,8 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import com.amarsoft.aecd.employee.constant.ParentNo;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
@@ -97,7 +99,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
      * @param labelCatalogInfo
      * @param bomanager
      */
-    public boolean isRepeat(BusinessObjectManager bomanager, LabelCatalogInfo labelCatalogInfo) {
+    public boolean isAddRepeat(BusinessObjectManager bomanager, LabelCatalogInfo labelCatalogInfo) {
         List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "labelName=:labelName", "labelName",
             labelCatalogInfo.getLabelName());
         if (CollectionUtils.isEmpty(labelCatalogs)) {
@@ -109,6 +111,25 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     }
 
     /**
+     * 标签目录新增判重 标签目录新增时判断名称是否重复
+     * 
+     * @param labelCatalogInfo
+     * @param bomanager
+     */
+    public boolean isUpdateRepeat(BusinessObjectManager bomanager, LabelCatalogInfo labelCatalogInfo) {
+        //更新需要判断修改后的数据是否和自身以外的数据的名称是否重复
+        List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class,
+            "labelName=:labelName  and serialNo <> :serialNo", "labelName", labelCatalogInfo.getLabelName(),
+            "serialNo", labelCatalogInfo.getSerialNo());
+        if (CollectionUtils.isEmpty(labelCatalogs)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    /**
      * 标签目录详情单记录保存
      * 
      * @param labelCatalogInfo
@@ -117,34 +138,54 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     @Transactional
     public void labelCatalogInfoSaveAction(LabelCatalogInfo labelCatalogInfo) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        //获得新增目录的父目录信息
+        LabelCatalog parentLc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogInfo.getParentNo());
+        if(ParentNo._1.name.equals(parentLc.getParentNo())) {
+            throw new ALSException("EMS2016");
+        }else {
+        boolean a =true;
         if (labelCatalogInfo != null) {
             LabelCatalog lc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogInfo.getSerialNo());
+            //新增判重
             if (lc == null) {
                 // 判重
-                boolean isRepeat = isRepeat(bomanager, labelCatalogInfo);
+                boolean isRepeat = isAddRepeat(bomanager, labelCatalogInfo);
                 if (false == isRepeat) {
+                    a=isRepeat;
                     throw new ALSException("EMS2013", labelCatalogInfo.getLabelName());
                 }
                 else {
                     lc = new LabelCatalog();
-                    lc.generateKey();
+                    lc.generateKey();       
+                    lc.setLabelType(labelCatalogInfo.getLabelType());
                     lc.setInputTime(LocalDateTime.now());
                     lc.setInputOrgId(GlobalShareContextHolder.getOrgId());
                     lc.setInputUserId(GlobalShareContextHolder.getUserId());
                 }
             }
+            //更新判重
+            else {
+                boolean isRepeat = isUpdateRepeat(bomanager, labelCatalogInfo);
+                if(false==isRepeat) {
+                    a=isRepeat;
+                    throw new ALSException("EMS2013", labelCatalogInfo.getLabelName());
+                }
+            }
+            //如果未抛过异常，则说明没有问题
+            if(true==a) {
             BeanUtils.copyProperties(labelCatalogInfo, lc);
             lc.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
             lc.setUpdateTime(LocalDateTime.now());
             lc.setUpdateUserId(GlobalShareContextHolder.getUserId());
-            // TODO 放入父目录parentNo
+            lc.setParentNo(labelCatalogInfo.getParentNo());
+            lc.setParentNo(labelCatalogInfo.getParentNo());
+            lc.setRootNo(parentLc.getRootNo());
             bomanager.updateBusinessObject(lc);
-
+            }
         }
         bomanager.updateDB();
-
     }
-
+    }
     /**
      * 根据当前目录，展示所有属于该目录的标签
      * 
