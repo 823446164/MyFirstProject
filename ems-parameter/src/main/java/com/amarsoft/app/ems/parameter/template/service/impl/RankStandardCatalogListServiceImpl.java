@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.parameter.constant.ChildRankNo;
 import com.amarsoft.aecd.parameter.constant.RankName;
@@ -71,14 +72,24 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
         @Override
         public Query apply(RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(rankStandardCatalogListQueryReq, RankStandardCatalogList.class);
-
-            String sql = "select RSC.serialNo as serialNo,RSC.rankStandard as rankStandard,RSC.rankName as rankName,RSC.parentRankNo as parentRankNo,RSC.ability as ability,RSC.rankDescribe as rankDescribe,RSC.responeDescribe as responeDescribe,"
+            String sql =null;
+            String rankStandard=rankStandardCatalogListQueryReq.getRankStandard();
+            String search=RankStandard.getIdByName(rankStandard);
+               if(StringUtils.isEmpty(rankStandard)) {
+                   sql = "select RSC.serialNo as serialNo,RSC.rankStandard as rankStandard,RSC.rankName as rankName,RSC.parentRankNo as parentRankNo,RSC.ability as ability,RSC.rankDescribe as rankDescribe,RSC.responeDescribe as responeDescribe,"
+                       + "RSC.abilityDescribe as abilityDescribe,RSC.belongTeam as belongTeam,RSC.rankType as rankType,RSC.inputUserId as inputUserId,RSC.inputTime as inputTime,RSC.inputOrgId as inputOrgId,RSC.updateUserId as updateUserId,"
+                       + "RSC.updateTime as updateTime,RSC.updateOrgId as updateOrgId" + " from RANK_STANDARD_CATALOG RSC"
+                       + " where 1=1  and RSC.rankType=:rankType and RSC.belongTeam= :belongTeam and RSC.parentRankNo is null ";
+          return queryProperties.assembleSql(sql, "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam(), "rankType",
+              rankStandardCatalogListQueryReq.getRankType());
+               }else {
+             sql = "select RSC.serialNo as serialNo,RSC.rankStandard as rankStandard,RSC.rankName as rankName,RSC.parentRankNo as parentRankNo,RSC.ability as ability,RSC.rankDescribe as rankDescribe,RSC.responeDescribe as responeDescribe,"
                          + "RSC.abilityDescribe as abilityDescribe,RSC.belongTeam as belongTeam,RSC.rankType as rankType,RSC.inputUserId as inputUserId,RSC.inputTime as inputTime,RSC.inputOrgId as inputOrgId,RSC.updateUserId as updateUserId,"
                          + "RSC.updateTime as updateTime,RSC.updateOrgId as updateOrgId" + " from RANK_STANDARD_CATALOG RSC"
-                         + " where 1=1  and RSC.rankType=:rankType and RSC.belongTeam= :belongTeam and RSC.parentRankNo is null ";
+                         + " where 1=1  and RSC.rankType=:rankType and RSC.belongTeam= :belongTeam and RSC.rankStandard like :search and RSC.parentRankNo is null ";
             return queryProperties.assembleSql(sql, "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam(), "rankType",
-                rankStandardCatalogListQueryReq.getRankType());
-
+                rankStandardCatalogListQueryReq.getRankType(),"search","%"+search+"%");
+               }
         }
     }
 

@@ -13,7 +13,10 @@ package com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcataloglist;
 
 import java.io.Serializable;
 
+import com.amarsoft.aecd.parameter.constant.RankStandard;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.Enum;
+import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.annotation.Range;
 import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
@@ -21,6 +24,7 @@ import com.amarsoft.amps.acsc.query.annotation.QueryOrderBy;
 import com.amarsoft.amps.acsc.query.annotation.QueryPageSize;
 import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -48,6 +52,13 @@ public class RankStandardCatalogListQueryReq implements Serializable {
     @ActualColumn("RSC.rankType")
     private String rankType;
 
+    @Enum(RankStandard.class)
+    @Description("职等")
+    @Length(max=40)
+    @ActualColumn("RSC.rankStandard")
+    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = false,groupIndex = -1)
+    private String rankStandard;
+    
     @Description("起始条数")
     @NotEmpty
     @QueryBegin
