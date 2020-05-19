@@ -23,6 +23,8 @@ import com.amarsoft.app.ems.system.cs.dto.deleteteam.DeleteTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.deleteteamuser.DeleteTeamUserReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
@@ -108,12 +110,11 @@ public interface TeamService {
      */
     TeamQueryRsp teamSearch(TeamQueryReq message);
     
-    /**
-     * Description: 根据用户查找对应的团队<br>
-     * @param UserTeamQueryReq
-     * @return UserTeamQueryRsp
-     * @see
-     */
+   
     public UserTeamQueryRsp userTeamQuery(@RequestBody @Valid UserTeamQueryReq req);
+
+
+
+	
   
 }
