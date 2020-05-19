@@ -3,7 +3,6 @@ package com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto;
 import java.io.Serializable;
 
 import com.amarsoft.aecd.system.constant.OrgStatus;
-import com.amarsoft.aecd.system.constant.SystemStatus;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.amps.acsc.annotation.Length;
