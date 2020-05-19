@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.amarsoft.aecd.parameter.constant.ChildRankNo;
+import com.amarsoft.aecd.parameter.constant.RankName;
+import com.amarsoft.aecd.parameter.constant.RankStandard;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.acsc.util.DTOHelper;
@@ -91,11 +94,10 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
         @Override
         public RankStandardCatalogList apply(BusinessObject bo) {
             RankStandardCatalogList temp = new RankStandardCatalogList();
-
             // 查询到的数据转换为响应实体
             temp.setSerialNo(bo.getString("SerialNo"));
-            temp.setRankStandard(bo.getString("RankStandard"));
-            temp.setRankName(bo.getString("RankName"));
+            temp.setRankStandard(RankStandard.getNameById(bo.getString("RankStandard")));
+            temp.setRankName(RankName.getNameById(bo.getString("RankName")));
             temp.setParentRankNo(bo.getString("ParentRankNo"));
             temp.setRankDescribe(bo.getString("RankDescribe"));
             temp.setResponeDescribe(bo.getString("ResponeDescribe"));
@@ -172,9 +174,9 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             for (RankStandardCatalog rank : ranCatalogs) {
                 rankresponse = new RankStandardCatalogList();
                 rankresponse.setSerialNo(rank.getSerialNo());
-                rankresponse.setRankStandard(rank.getRankStandard());
-                rankresponse.setRankName(rank.getRankName());
-                rankresponse.setChildRankNo(rank.getChildRankNo());
+                rankresponse.setRankStandard(RankStandard.getNameById(rank.getRankStandard()));
+                rankresponse.setRankName(RankName.getNameById(rank.getRankName()));
+                rankresponse.setChildRankNo(ChildRankNo.getNameById(rank.getChildRankNo()));
                 rankresponse.setAbility(rank.getAbility());
                 rankresponse.setRankDescribe(rank.getRankDescribe());
                 rankresponse.setResponeDescribe(rank.getResponeDescribe());
