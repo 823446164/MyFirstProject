@@ -38,6 +38,7 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjec
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeBelongChangeInfoDtoClient;
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoDtoClient;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeebelongchangeinfodto.EmployeeBelongChangeInfoDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.Filter;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.addteamuser.AddTeamUserReq;
@@ -530,8 +531,15 @@ public class TeamServiceImpl implements TeamService {
         TeamOrgQueryRsp rsp = new TeamOrgQueryRsp();
         List<OrgAndTeam> orgTeams = new ArrayList<OrgAndTeam>();
         OrgAndTeam orgTeam = null;
-        String teamName = StringUtils.isEmpty(req.getTeamName())?"%":req.getTeamName()+"%";
-        //根据部门ＩＤ将获取的部门团队信息排序
+        //根据团队名称查询团队，获取参数
+        String value = "";
+        for (Filter filter : req.getFilters()) {
+            if ("teamName".equals(filter.getName())) {
+                value = filter.getValue()[0];
+            }
+        }
+        String teamName = StringUtils.isEmpty(value)?"%":value+"%";
+        //根据部门ＩＤ将获取的部门团队信息排序(加上模糊查询)
         List<BusinessObject> orgTeamLists = bomanager.selectBusinessObjectsBySql(
                 "select UI.userId as UserId,OI.orgName as OrgName,OI.orgId as OrgId,TI.teamId as TeamId,TI.teamName as TeamName,TI.roleA as RoleA "
                 + "from OrgTeam OT,TeamInfo TI,OrgInfo OI,UserTeam UT,UserInfo UI where UI.userName = TI.roleA and OT.teamId = TI.teamId "

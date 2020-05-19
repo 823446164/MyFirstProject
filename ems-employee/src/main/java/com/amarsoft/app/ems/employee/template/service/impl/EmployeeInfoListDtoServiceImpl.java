@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +35,7 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.Employe
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryRsp;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.Filter;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
 import com.amarsoft.app.ems.employee.template.service.EmployeeInfoListDtoService;
@@ -178,10 +179,10 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     @Override
     public EmployeeListByUserQueryRsp employeeListByUserQuery(@Valid @RequestBody EmployeeListByUserQueryReq req) {
         //1.后端自动获取用户ＩＤ和部门ＩＤ
-        String userId = GlobalShareContextHolder.getUserId();
-        String orgId = GlobalShareContextHolder.getOrgId();
-        String employeeId = StringUtils.isEmpty(req.getEmployeeNo())? "%":req.getEmployeeNo()+"%";
-        String employeeName = StringUtils.isEmpty(req.getEmployeeName())?"%":req.getEmployeeName()+"%";
+        String userId ="test22";// GlobalShareContextHolder.getUserId();
+        String orgId ="0001";// GlobalShareContextHolder.getOrgId();
+        List<Filter> filters = req.getFilters();
+        
         EmployeeListByUserQueryRsp rsp = null;
         //2.查询用户角色的信息
         RequestMessage<UserRoleQueryReq> reqMsg = new RequestMessage<UserRoleQueryReq>();
@@ -198,11 +199,11 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         UserAndRole userAndRole = userRoles.get(0); //5.获取用户的最高权限（099、110、210）
         if (UserRoles.Admin.id.equals(userAndRole.getRoleId())) {//6.如果用户为系统管理员，展示所有员工
             String id = "";
-            rsp = showList(userAndRole.getRoleId(), id,employeeId,employeeName);
+            rsp = showList(userAndRole.getRoleId(), id,filters);
          }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId()) || UserRoles.DeputyManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员或者部门副经理，展示所在部门所有员工
-             rsp = showList(userAndRole.getRoleId(), orgId,employeeId,employeeName);
+             rsp = showList(userAndRole.getRoleId(), orgId,filters);
          }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
-             rsp = showList(userAndRole.getRoleId(), userId,employeeId,employeeName);
+             rsp = showList(userAndRole.getRoleId(), userId,filters);
          }else {//９．如果不是这些角色，则提示权限不足
              throw new ALSException("EMS1008");
         }
@@ -216,7 +217,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
      * @return EmployeeListByUserQueryRsp(List<EmployeeInfoDto>)
      * @see
      */
-    public EmployeeListByUserQueryRsp showList(String roleId,String id,String employeeNo,String employeeName) {
+    public EmployeeListByUserQueryRsp showList(String roleId,String id,List<Filter> filters) {
         EmployeeListByUserQueryRsp rsp = new EmployeeListByUserQueryRsp();
         RequestMessage<OrgUserQueryReq> reqMessage = new RequestMessage<OrgUserQueryReq>();
         OrgUserQueryReq orgUserQueryReq = new OrgUserQueryReq();
@@ -236,8 +237,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             }
             //3.调用employeeListByEmployeeNo方法
             EmployeeListByEmplNoReq emplNoReq = new EmployeeListByEmplNoReq();
-            emplNoReq.setEmployeeNo(employeeNo);
-            emplNoReq.setEmployeeName(employeeName);
+            emplNoReq.setFilters(filters);
             emplNoReq.setEmployeeNoList(userIdList);
             EmployeeListByEmplNoRsp emplNoRsp = employeeListByEmployeeNo(emplNoReq);
             //4.将用户ＩＤ一致的团队部门信息添加到员工详情信息上
@@ -269,14 +269,21 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeListByEmplNoRsp rsp = new EmployeeListByEmplNoRsp();
         List<String> employeeNoList = req.getEmployeeNoList();
-        String employeeId = "%";
-        String employeeName = "%";
-        List<EmployeeInfoDto> employeeDtoList = new ArrayList<EmployeeInfoDto>();
-        if (!("%".equals(req.getEmployeeNo()))||!("%".equals(req.getEmployeeName()))) {
-           employeeId = req.getEmployeeNo() ;
-           employeeName = req.getEmployeeName();
+      //获取查询条件
+        String eNo = "";
+        String eName = "";
+        for (Filter  filter : req.getFilters()) {
+            if ("employeeNo".equals(filter.getName())) {
+                eNo = filter.getValue()[0];
+            }else if ("employeeName".equals(filter.getName())) {
+                eName = filter.getValue()[0];
+            }
         }
+
+        String employeeId = StringUtils.isEmpty(eNo)? "%":eNo+"%";
+        String employeeName = StringUtils.isEmpty(eNo)?"%":eName+"%";
         
+        List<EmployeeInfoDto> employeeDtoList = new ArrayList<EmployeeInfoDto>();
         String userList = "";
         //1.拼接员工查询参数
         for(String employeeNo:employeeNoList) {

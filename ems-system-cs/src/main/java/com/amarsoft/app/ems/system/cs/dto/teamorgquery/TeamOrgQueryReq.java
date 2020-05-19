@@ -5,12 +5,11 @@
 package com.amarsoft.app.ems.system.cs.dto.teamorgquery;
 
 import java.io.Serializable;
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
-import com.amarsoft.amps.acsc.annotation.Range;
-import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
-import com.amarsoft.amps.acsc.query.annotation.QueryOrderBy;
-import com.amarsoft.amps.acsc.query.annotation.QueryPageSize;
+import java.util.List;
+
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.Filter;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -21,6 +20,6 @@ import lombok.ToString;
 public class TeamOrgQueryReq implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
-	@Description("团队名称")
-	private String teamName;	
+	@Description("查询条件数组")
+	private List<Filter> filters;
 }

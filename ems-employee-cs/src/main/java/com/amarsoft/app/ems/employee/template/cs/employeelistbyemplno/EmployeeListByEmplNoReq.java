@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.Filter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -29,9 +30,6 @@ public class EmployeeListByEmplNoReq implements Serializable{
     @Description("员工编号集合")
     private List<String> employeeNoList;
     
-    @Description("员工编号")
-    private String employeeName;
-    
-    @Description("员工姓名")
-    private String employeeNo;
+    @Description("查询参数数组")
+    private List<Filter> filters;
 }
