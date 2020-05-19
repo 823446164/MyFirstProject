@@ -1,7 +1,5 @@
 package com.amarsoft.app.ems.system.service;
 import javax.validation.Valid;
-
-import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.EmployeeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.EmployeeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;

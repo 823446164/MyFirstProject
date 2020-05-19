@@ -11,16 +11,9 @@
 
 package com.amarsoft.app.ems.system.cs.dto.teamlistdto;
 
-
-import java.util.List;
-
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
-import com.amarsoft.amps.arem.annotation.Description;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 
 /**
  * 〈
