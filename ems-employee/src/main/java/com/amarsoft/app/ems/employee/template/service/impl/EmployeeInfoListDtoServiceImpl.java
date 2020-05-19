@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amarsoft.aecd.system.constant.UserRoles;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
@@ -179,8 +180,8 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     @Override
     public EmployeeListByUserQueryRsp employeeListByUserQuery(@Valid @RequestBody EmployeeListByUserQueryReq req) {
         //1.后端自动获取用户ＩＤ和部门ＩＤ
-        String userId ="test22";// GlobalShareContextHolder.getUserId();
-        String orgId ="0001";// GlobalShareContextHolder.getOrgId();
+        String userId = GlobalShareContextHolder.getUserId();
+        String orgId = GlobalShareContextHolder.getOrgId();
         List<Filter> filters = req.getFilters();
         
         EmployeeListByUserQueryRsp rsp = null;
@@ -269,17 +270,19 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeListByEmplNoRsp rsp = new EmployeeListByEmplNoRsp();
         List<String> employeeNoList = req.getEmployeeNoList();
-      //获取查询条件
         String eNo = "";
         String eName = "";
-        for (Filter  filter : req.getFilters()) {
-            if ("employeeNo".equals(filter.getName())) {
-                eNo = filter.getValue()[0];
-            }else if ("employeeName".equals(filter.getName())) {
-                eName = filter.getValue()[0];
+        //获取查询条件
+        if (!CollectionUtils.isEmpty(req.getFilters())) {//判断查询条件是否为空，为空则不获取值
+            for (Filter  filter : req.getFilters()) {
+                if ("employeeNo".equals(filter.getName())) {
+                    eNo = filter.getValue()[0];
+                }else if ("employeeName".equals(filter.getName())) {
+                    eName = filter.getValue()[0];
+                }
             }
         }
-
+        
         String employeeId = StringUtils.isEmpty(eNo)? "%":eNo+"%";
         String employeeName = StringUtils.isEmpty(eNo)?"%":eName+"%";
         
