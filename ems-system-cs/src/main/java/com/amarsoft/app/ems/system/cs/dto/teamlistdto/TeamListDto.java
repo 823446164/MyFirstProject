@@ -6,6 +6,7 @@ import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
@@ -39,6 +40,7 @@ public class TeamListDto implements Serializable {
     @Description("团队A角")
     @Length(max=80)
     @ActualColumn("TINFO.roleA")
+    @NotEmpty
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly =  false, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String roleA;
     
