@@ -29,4 +29,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCata
 public interface LabelCatalogListController {
     @PostMapping(value = "/labelcataloglist/delete", name="标签目录树图删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> labelCatalogListDelete(@RequestBody @Valid RequestMessage<LabelCatalogListDeleteReq> reqMsg);
+    
+    @PostMapping(value = "/labelcataloglist/selectByserialNos", name="根据标签流水号集合查询所有标签信息接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<LabelCatalogListQueryRsp>> selectLabelBySerialNos(@RequestBody @Valid RequestMessage<LabelCatalogListQueryReq> reqMsg);
 }

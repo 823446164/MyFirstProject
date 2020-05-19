@@ -13,10 +13,16 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import javax.validation.Valid;
+
+import org.apache.commons.io.CopyUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.amarsoft.amps.arem.exception.ALSException;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.parameter.template.service.LabelCatalogListService;
 import com.amarsoft.aecd.parameter.constant.LabelType;
@@ -24,7 +30,10 @@ import com.amarsoft.aecd.system.constant.LabelStatus;
 import java.util.List;
 import java.util.ArrayList;
 import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfo;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListDeleteReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListQueryReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListQueryRsp;
 
 
 /**
@@ -35,6 +44,39 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCata
 @Slf4j
 @Service
 public class LabelCatalogListServiceImpl implements LabelCatalogListService {
+    /**
+     * 根据标签serialNo查询标签内容
+     * 
+     * @param labelCatalogListDeleteReq
+     * @return void
+     */
+    @Override
+    @Transactional
+    public LabelCatalogListQueryRsp selectLabelBySerialNos(@Valid LabelCatalogListQueryReq labelCatalogListQueryReq) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        String serialNos = "";
+        List<String> serialNolist = labelCatalogListQueryReq.getSerialNoList();
+        for(String serialNo:serialNolist) {
+            serialNos+="'"+serialNo+"',";
+        }
+        if(!StringUtils.isEmpty(serialNos)) {
+            serialNos = serialNos.substring(0, serialNos.length()-1);
+        }
+        List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "serialNo in (" + serialNos +") and labelType=:labelType", "labelType",LabelType._3.id);        
+        List<LabelCatalogInfo> labelCatalogInfos =new ArrayList<>();
+        LabelCatalogInfo  labelCatalogInfo = new LabelCatalogInfo();
+        for (LabelCatalog labelCatalogTemp : labelCatalogs) {
+            BeanUtils.copyProperties(labelCatalogTemp, labelCatalogInfo);
+            labelCatalogInfos.add(labelCatalogInfo);
+        }
+        LabelCatalogListQueryRsp labelCatalogListQueryRsp =new LabelCatalogListQueryRsp();
+        labelCatalogListQueryRsp.setLableCatalogInfos(labelCatalogInfos);
+        return labelCatalogListQueryRsp;
+    }
+    
+    
+    
+    
     /**
      * 标签目录树图删除
      * 
@@ -56,7 +98,7 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
             throw new ALSException("EMS2010");
         }
     }
-   
+         
     /**
      * 查询出选中目录下所有标签
      * 

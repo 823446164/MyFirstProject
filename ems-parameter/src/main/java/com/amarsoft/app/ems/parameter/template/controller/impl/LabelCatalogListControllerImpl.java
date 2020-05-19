@@ -22,6 +22,8 @@ import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.app.ems.parameter.template.controller.LabelCatalogListController;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListDeleteReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListQueryReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListQueryRsp;
 import com.amarsoft.app.ems.parameter.template.service.LabelCatalogListService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,9 +59,20 @@ public class LabelCatalogListControllerImpl implements LabelCatalogListControlle
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    
+    /**
+     * 根据serialNo查询标签
+     * @author yrong
+     */
+    public ResponseEntity<ResponseMessage<LabelCatalogListQueryRsp>> selectLabelBySerialNos(@RequestBody @Valid RequestMessage<LabelCatalogListQueryReq> reqMsg){                                   
+            ResponseMessage<LabelCatalogListQueryRsp> rspMsg = null;
+            LabelCatalogListQueryReq request = reqMsg.getMessage();            
+            LabelCatalogListQueryRsp response = labelCatalogListServiceImpl.selectLabelBySerialNos(request);
+            rspMsg = new ResponseMessage<LabelCatalogListQueryRsp>(response);
+            return new ResponseEntity<ResponseMessage<LabelCatalogListQueryRsp>>(rspMsg , HttpStatus.OK);
     }
 }

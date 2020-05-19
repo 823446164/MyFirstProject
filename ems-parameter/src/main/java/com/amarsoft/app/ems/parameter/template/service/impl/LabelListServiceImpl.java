@@ -15,6 +15,8 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.amarsoft.aecd.parameter.constant.LabelType;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
@@ -33,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class LabelListServiceImpl implements LabelListService {
-
     /**
      * 标签详情删除删除
      * 需要删除Label_Catalog表和Label_Describe表的数据
@@ -42,6 +43,21 @@ public class LabelListServiceImpl implements LabelListService {
     @Override
     @Transactional
     public void labelListDelete(@Valid LabelListDeleteReq labelListDeleteReq) {
+        //执行删除标签方法
+        if(LabelType._3.id.equals(labelListDeleteReq.getLabelType())) {
+            labelDelete(labelListDeleteReq);
+        }else {//删除指标
+            indexDelete(labelListDeleteReq);
+        }        
+    }
+    
+    /**
+     * 标签详情删除删除
+     * 需要删除Label_Catalog表和Label_Describe表的数据
+     * @param labelListDeleteReq
+     */
+    @Transactional
+    public void labelDelete(@Valid LabelListDeleteReq labelListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelListDeleteReq.getSerialNo());
         bomanager.deleteBusinessObject(labelCatalog);
@@ -58,5 +74,26 @@ public class LabelListServiceImpl implements LabelListService {
             bomanager.deleteBusinessObject(labelDescribe);
         }
         bomanager.updateDB();
+    }
+    
+    /**
+     * 指标删除
+     * 需要删除Label_Catalog表和Label_Describe表的数据
+     * @param labelListDeleteReq
+     */
+    @Transactional
+    public void indexDelete(@Valid LabelListDeleteReq labelListDeleteReq) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        //查询要删除指标的信息
+        LabelCatalog index = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelListDeleteReq.getSerialNo());        
+        //查询该指标下所有标签的信息
+        List<LabelCatalog> labels = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:serialNo","serialNo",index.getSerialNo());
+        LabelListDeleteReq labelDeleteReq = new LabelListDeleteReq();
+        for(LabelCatalog labelTemp:labels) {            
+            labelDeleteReq.setSerialNo(labelTemp.getSerialNo());
+            labelDelete(labelDeleteReq);
+        }        
+        //删除指标
+        labelDelete(labelListDeleteReq);
     }
 }

@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfo;
+
 import java.util.List;
 
 /**
@@ -24,11 +26,9 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class LabelCatalogListQueryRsp implements Serializable {
+public class LabelCatalogListQueryRsp extends LabelCatalogInfo implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Description("总笔数")
-    private Integer totalCount = 0;
-
-    @Description("标签目录树图")
-    private List<LabelCatalogList> labelCatalogLists;
+    
+    @Description("查询到的LabelCatalogInfo")
+    private List<LabelCatalogInfo> LableCatalogInfos;
 }
