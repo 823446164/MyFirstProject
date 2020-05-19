@@ -199,14 +199,10 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     @Transactional
     @Override
     public void teamListDtoDelete(@Valid DeleteInfoDtoQueryReq req) {
-
+    	//TODO  未完成删除团队操作
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, "teamId =:req.getObjectNo()", req.getSerialNo());
-        if (teamInfo == null) {
-            throw new ALSException("901007");
-        }
+       
         ChangeEvent ch = new ChangeEvent();
-
         // 填写变更理由
         ch.generateKey();
         ch.setObjectNo(req.getObjectNo());
@@ -214,20 +210,29 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         ch.setChangeContext("删除团队信息:" + req.getObjectNo());
         ch.setInputDate(LocalDateTime.now());
         ch.setOccurDate(LocalDateTime.now());
-        BusinessObjectAggregate<BusinessObject> userTeamBo = bomanager.selectBusinessObjectsBySql(
-            "select UT.userId as userId,TI.status as status from TeamInfo TI,UserTeam UT where" + " TI.teamId=UT.teamId and UT.teamId =:teamId",
-            "teamId", teamInfo.getTeamId());
-
-        List<BusinessObject> businessObjects = userTeamBo.getBusinessObjects();
-        if (!CollectionUtils.isEmpty(businessObjects)) {
+        ch.setRemark(req.getRemark());
+    
+        List<BusinessObject> bos= bomanager.selectBusinessObjectsBySql("select  UT.userId as userId,TI.status as status ,  TI.teamId from  TeamInfo TI,  UserTeam UT   where  TI.teamId=UT.teamId and teamId =:objectNO","objectNO" ,req.getObjectNo()).getBusinessObjects();
+        if ( bos  == null) {
             throw new ALSException("901007");
         }
-        // 团队下存员工
-        if (teamInfo.getRoleA() != null && teamInfo.getStatus().equals(OrgStatus.Disabled.id)) {
-            throw new ALSException("EMS6008");
+        if(!CollectionUtils.isEmpty(bos)) {
+        	for(BusinessObject bo :bos) {
+        		  // 团队下存员工
+        		if(!StringUtils.isEmpty(bo.getString("userId"))) {
+        			 throw new ALSException("EMS6008");
+        		}
+				/*
+				 * //停用的状态不予删除 if(!StringUtils.isEmpty(OrgStatus.Disabled.id)) { throw new
+				 * ALSException("EMS6008"); }
+				 */
+        		 bomanager.deleteBusinessObject(bo);
+        	}
+        	
+        	
         }
+       
         bomanager.updateBusinessObject(ch);
-        bomanager.deleteBusinessObject(teamInfo);
         bomanager.updateDB();
     }
 
