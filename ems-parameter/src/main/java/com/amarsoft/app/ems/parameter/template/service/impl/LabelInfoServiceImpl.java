@@ -415,8 +415,8 @@ public class LabelInfoServiceImpl implements LabelInfoService {
             // 新增判重
             if (ButtonType._1.id.equals(labelInfoRepeatReq.getButtonType())) {
                 //新增只需要判断数据库中是否有与新增变迁重名的
-                List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "labelName=:labelName", "labelName",
-                    labelInfoRepeatReq.getLabelName());
+                List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "labelName=:labelName or codeNo=:codeNo", "labelName",
+                    labelInfoRepeatReq.getLabelName(),"codeNo",labelInfoRepeatReq.getCodeNo());
                 if (CollectionUtils.isEmpty(labelCatalogs)) {
                     isRepeatRsp.setRepeat(true);
                     return isRepeatRsp;
