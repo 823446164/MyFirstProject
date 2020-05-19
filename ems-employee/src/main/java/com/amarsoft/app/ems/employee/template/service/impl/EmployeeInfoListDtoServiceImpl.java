@@ -269,14 +269,16 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeListByEmplNoRsp rsp = new EmployeeListByEmplNoRsp();
         List<String> employeeNoList = req.getEmployeeNoList();
-      //获取查询条件
         String eNo = "";
         String eName = "";
-        for (Filter  filter : req.getFilters()) {
-            if ("employeeNo".equals(filter.getName())) {
-                eNo = filter.getValue()[0];
-            }else if ("employeeName".equals(filter.getName())) {
-                eName = filter.getValue()[0];
+        //获取查询条件
+        if (!CollectionUtils.isEmpty(req.getFilters())) {//判断查询条件是否为空，为空则不获取值
+            for (Filter  filter : req.getFilters()) {
+                if ("employeeNo".equals(filter.getName())) {
+                    eNo = filter.getValue()[0];
+                }else if ("employeeName".equals(filter.getName())) {
+                    eName = filter.getValue()[0];
+                }
             }
         }
 
