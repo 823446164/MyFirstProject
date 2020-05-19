@@ -1,14 +1,18 @@
 package com.amarsoft.app.ems.system.template.cs.dto.secondleveldeptlistdto;
 
 import java.io.Serializable;
+
+import com.amarsoft.aecd.system.constant.OrgStatus;
+import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.Enum;
+import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.amps.avta.annotation.TemplateBody;
+import com.amarsoft.amps.avta.annotation.TemplateHeader;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.amarsoft.amps.avta.annotation.TemplateHeader;
-import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.amps.acsc.annotation.ActualColumn;
-import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
  * 二级部门信息List
@@ -42,4 +46,10 @@ public class SecondLevelDeptListDto implements Serializable {
     @ActualColumn("OI.orgId")
     @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String orgId;
+    
+    @Description("部门状态")
+    @Length(max=1)
+    @Enum(OrgStatus.class)
+    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
+    private String status;
 }
