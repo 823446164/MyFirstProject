@@ -58,6 +58,7 @@ import com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptUserInfo;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.Filter;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
@@ -1340,9 +1341,18 @@ public class OrgServiceImpl implements OrgService {
         EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
         List<String> ids = new ArrayList<String>();
 
-        //模糊搜索
-        String userId = StringUtils.isEmpty(req.getEmployeeNo()) ? "%" : req.getEmployeeNo() + "%";// 模糊查询用户编号
-        String userName = StringUtils.isEmpty(req.getEmployeeName()) ? "%" : req.getEmployeeName() + "%";// 模糊查询用户名字
+        String eNo = null;
+        String eName = null;
+        for (Filter filter : req.getFilters()) {//获取前段传递的filter数组，遍历获取employeeNo,employeeName
+            if ("employeeNo".equals(filter.getName())) {
+                eNo = filter.getValue()[0];
+            }else if ("employeeName".equals(filter.getName())) {
+                eName = filter.getValue()[0];
+            }
+        }
+        //模糊搜索 
+        String userId = StringUtils.isEmpty(eNo) ? "%" : eNo+"%";// 模糊查询用户编号
+        String userName = StringUtils.isEmpty(eName) ? "%" : eName+"%";// 模糊查询用户名字
         //查询当前部门下指定员工的userId
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
             "select UB.userId as userId from UserBelong UB,UserInfo UI where userName like :userName and "
@@ -1350,10 +1360,6 @@ public class OrgServiceImpl implements OrgService {
             ).getBusinessObjects();
         for (BusinessObject businessObject : businessObjects) {
             ids.add(businessObject.getString("userId"));
-        }
-        
-        if (CollectionUtils.isEmpty(ids)) {//判空
-            throw new ALSException("EMS6014");
         }
         
         //根据ids调用获取员工List
@@ -1422,9 +1428,18 @@ public class OrgServiceImpl implements OrgService {
      */
     @Override
     public DeptManagerUserQueryRsp getDeptManagerAll(DeptManagerUserQueryReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();  
-        String employeeNo = StringUtils.isEmpty(req.getEmployeeNo())?"%":(req.getEmployeeNo()+"%");
-        String employeeName = StringUtils.isEmpty(req.getEmployeeName())?"%":(req.getEmployeeName()+"%");
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        String eNo = null;
+        String eName = null;
+        for (Filter filter : req.getFilters()) {//获取前段传递的filter数组，遍历获取employeeNo,employeeName
+            if ("employeeNo".equals(filter.getName())) {
+                eNo = filter.getValue()[0];
+            }else if ("employeeName".equals(filter.getName())) {
+                eName = filter.getValue()[0];
+            }
+        }
+        String employeeNo = StringUtils.isEmpty(eNo)?"%":(eNo+"%");//判空，若为空则查询所有，不为空则模糊搜索
+        String employeeName = StringUtils.isEmpty(eName)?"%":(eName+"%");//同上
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
             "select userId as userId,userName as userName from UserInfo where userId like :userId"
             + " and userName like :userName and userId not in (select deptManager from Department)","userId",employeeNo,"userName",employeeName
