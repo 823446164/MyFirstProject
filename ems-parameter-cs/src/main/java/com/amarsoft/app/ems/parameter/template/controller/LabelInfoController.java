@@ -17,10 +17,10 @@ import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.MediaType;
-
-import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoCopyReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoQueryRsp;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoRepeatReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoRepeatRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelinfo.LabelInfoSaveReq;
 
 /**
@@ -36,4 +36,8 @@ public interface LabelInfoController {
  
     @PostMapping(value = "/labelinfo/labelStatus", name="标签生效/失效接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> lableStatusOk(@RequestBody @Valid RequestMessage<LabelInfoSaveReq> reqMsg);
+
+    @PostMapping(value = "/labelinfo/isRepeat", name="标签判重接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<LabelInfoRepeatRsp>> isRepeat(@RequestBody @Valid RequestMessage<LabelInfoRepeatReq> reqMsg);
+    
 }
