@@ -112,39 +112,30 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
     @Transactional
     public TreeLabelQueryRsp treeLabelListQuery(@Valid TreeLabelQueryReq treeQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        // 1.点击子节点获取当前节点下的标签
-        // List<BusinessObject> labelCatalogs = bomanager.selectBusinessObjectsBySql(
-        // "select LC.serialNo,LC.labelName,LC.parentNo from LabelCatalog LC where
-        // (LC.parentNo=:serialNo or LC.serialNo=:serialNo) and LC.serialNo not in (select
-        // RSI.labelNo from RankStandardItems RSI where RSI.rankNo=:rankNo)",
-        // "serialNo",
-        // treeQueryReq.getSerialNo(),"rankNo",treeQueryReq.getRankNo()).getBusinessObjects();
-        List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:parentNo", "parentNo",
-            treeQueryReq.getSerialNo());
+        
+         // 1.点击子节点获取当前节点下的标签 // 
+        List<BusinessObject> labelCatalogs =
+          bomanager.selectBusinessObjectsBySql(  "select LC.serialNo,LC.labelName,LC.parentNo    from LabelCatalog LC "
+              + "where  LC.parentNo=:serialNo  "
+              + "and    LC.serialNo not in (select  RSI.labelNo from RankStandardItems RSI where   RSI.rankNo=:rankNo)", "serialNo", 
+          treeQueryReq.getSerialNo(),"rankNo",treeQueryReq.getRankNo()).getBusinessObjects();
         TreeLabelQueryRsp response = new TreeLabelQueryRsp();
         List<TreeLabel> labelLists = null;
         if (!CollectionUtils.isEmpty(labelCatalogs)) {
             labelLists = new ArrayList<TreeLabel>();
             // 2.循环输出List
-            for (LabelCatalog label : labelCatalogs) {
-                BusinessObjectAggregate<BusinessObject> flowCount = bomanager.selectBusinessObjectsBySql(
-                    "select count(1) as cnt from RankStandardItems RSI where RSI.rankNo=:rankNo and RSI.labelNo=:serialNo", "rankNo",
-                    treeQueryReq.getRankNo(), "serialNo", label.getSerialNo());
-                if (flowCount.getBusinessObjects().get(0).getInt("cnt") == 0) {
+            for (BusinessObject label : labelCatalogs) {
                     TreeLabel labelresponse = new TreeLabel();
-                    labelresponse.setSerialNo(label.getSerialNo());
-                    labelresponse.setLabelName(label.getLabelName());
-                    labelresponse.setParentNo(label.getParentNo());
+                    labelresponse.setSerialNo(label.getString("serialNo"));
+                    labelresponse.setLabelName(label.getString("labelName"));
+                    labelresponse.setParentNo(label.getString("parentNo"));
                     labelresponse.setRankSerialNo(treeQueryReq.getRankNo());
                     labelLists.add(labelresponse);
-                }
             }
-
         }
         response.setTreeLabel(labelLists);
         response.setTotalCount(response.getTreeLabel().size());
         return response;
-
     }
 
     /**
