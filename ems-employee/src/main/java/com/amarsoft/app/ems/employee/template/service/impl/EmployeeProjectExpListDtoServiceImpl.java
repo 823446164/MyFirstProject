@@ -2,7 +2,7 @@
  * 版权：Copyright by www.amarsoft.com
  * 描述：
  * 修改人：dxiao
- * 修改时间：2020/05/15
+ * 修改时间：2020/05/19
  * 跟踪单号：
  * 修改单号：
  * 修改内容：使用项目经历查询方法
@@ -29,6 +29,7 @@ import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexplistdto.EmployeeProjectExpListDto;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexplistdto.EmployeeProjectExpListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexplistdto.Filter;
 import com.amarsoft.app.ems.employee.entity.EmployeeProjectExperience;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeprojectexplistdto.EmployeeProjectExpListDtoDeleteReq;
 
@@ -59,19 +60,21 @@ public class EmployeeProjectExpListDtoServiceImpl implements EmployeeProjectExpL
                 +" where 1=1 and EPE.employeeNo = :employeeNo and EPE.projectName like :projectName and EPE.employeeJob like :employeeJob";
             String projectName = null;
             String employeeJob = null;
-            //模糊搜索判断
-            if(StringUtils.isEmpty(employeeProjectExpListDtoQueryReq.getProjectName())) {//如果项目名称参数为空.初始化 %     
-                projectName = "%";
-            }else {
-                projectName = employeeProjectExpListDtoQueryReq.getProjectName()+"%"; //初始化%    
+            //遍历数组
+            for (Filter filter : employeeProjectExpListDtoQueryReq.getFilters()) {//获取前段传递的filter数组，遍历获取projectName,employeeJob
+                if ("projectName".equals(filter.getName())) {
+                    projectName = filter.getValue()[0];
+                }else if ("employeeJob".equals(filter.getName())) {
+                    employeeJob = filter.getValue()[0];
+                }
             }
-            if(StringUtils.isEmpty(employeeProjectExpListDtoQueryReq.getEmployeeJob())){     
-                employeeJob = "%";
-            }else {                                                     
-                employeeJob = employeeProjectExpListDtoQueryReq.getEmployeeJob()+"%";
-            }
+            //模糊搜索赋值
+            String pName = StringUtils.isEmpty(projectName)?"%" : projectName+"%";
+            String eJob = StringUtils.isEmpty(employeeJob)?"%" : employeeJob+"%";
+  
+            
             return queryProperties.assembleSql(sql,"employeeNo",employeeProjectExpListDtoQueryReq.getEmployeeNo(),
-                "projectName",projectName,"employeeJob",employeeJob);
+                "projectName",pName,"employeeJob",eJob);
         }
     }
 
