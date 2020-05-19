@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amarsoft.aecd.system.constant.UserRoles;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
@@ -179,8 +180,8 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     @Override
     public EmployeeListByUserQueryRsp employeeListByUserQuery(@Valid @RequestBody EmployeeListByUserQueryReq req) {
         //1.后端自动获取用户ＩＤ和部门ＩＤ
-        String userId ="test22";// GlobalShareContextHolder.getUserId();
-        String orgId ="0001";// GlobalShareContextHolder.getOrgId();
+        String userId = GlobalShareContextHolder.getUserId();
+        String orgId = GlobalShareContextHolder.getOrgId();
         List<Filter> filters = req.getFilters();
         
         EmployeeListByUserQueryRsp rsp = null;
@@ -281,7 +282,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
                 }
             }
         }
-
+        
         String employeeId = StringUtils.isEmpty(eNo)? "%":eNo+"%";
         String employeeName = StringUtils.isEmpty(eNo)?"%":eName+"%";
         
