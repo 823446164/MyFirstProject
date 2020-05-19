@@ -17,6 +17,7 @@ import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
@@ -202,6 +203,6 @@ public interface OrgService {
      * @param 
      * @return OrgUserQueryRsp
      */
-    DeptManagerUserQueryRsp getDeptManagerAll();
+    DeptManagerUserQueryRsp getDeptManagerAll(DeptManagerUserQueryReq request);
 
 }

@@ -55,7 +55,9 @@ import com.amarsoft.app.ems.system.cs.dto.orginfoupdate.OrgInfoUpdateReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.Tree;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptUserInfo;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
@@ -1411,28 +1413,28 @@ public class OrgServiceImpl implements OrgService {
     }
 
     /**
-     * Description:　查询所有部门经理的userId
-     * @param 
+     * Description:　查询所有不是部门经理的userId
+     * @param  req
      * @return  rsp
      * @see
      */
     @Override
-    public DeptManagerUserQueryRsp getDeptManagerAll() {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();    
+    public DeptManagerUserQueryRsp getDeptManagerAll(DeptManagerUserQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();  
+        String employeeNo = StringUtils.isEmpty(req.getEmployeeNo())?"%":(req.getEmployeeNo()+"%");
+        String employeeName = StringUtils.isEmpty(req.getEmployeeName())?"%":(req.getEmployeeName()+"%");
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-            "select userId as userId,userName as userName from UserInfo where userId not in (select deptManager from Department)"
+            "select userId as userId,userName as userName from UserInfo where userId like :userId"
+            + " and userName like :userName and userId not in (select deptManager from Department)","userId",employeeNo,"userName",employeeName
             ).getBusinessObjects();
-        if (CollectionUtils.isEmpty(businessObjects)) {
-            throw new ALSException("EMS6014");
-        }
         DeptManagerUserQueryRsp rsp = new DeptManagerUserQueryRsp();
-        List<com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo> userInfos = new ArrayList<com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo>();
-        com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo userInfo =null;
+        List<DeptUserInfo> userInfos = new ArrayList<DeptUserInfo>();
+        DeptUserInfo deptUserInfo =null;
         for (BusinessObject businessObject : businessObjects) {
-            userInfo = new com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo();
-            userInfo.setUserId(businessObject.getString("userId"));
-            userInfo.setUserName(businessObject.getString("userName"));
-            userInfos.add(userInfo);
+            deptUserInfo = new DeptUserInfo();
+            deptUserInfo.setEmployeeNo(businessObject.getString("userId"));
+            deptUserInfo.setEmployeeName(businessObject.getString("userName"));
+            userInfos.add(deptUserInfo);
         }
         rsp.setUserInfos(userInfos);
         return rsp;

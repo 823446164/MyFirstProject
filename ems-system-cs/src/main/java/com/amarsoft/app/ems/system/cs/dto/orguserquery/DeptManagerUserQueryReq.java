@@ -1,5 +1,5 @@
 /*
- * 文件名：DeptManagerUserQueryRsp.java
+ * 文件名：DeptManagerUserQueryReq.java
  * 版权：Copyright by www.amarsoft.com
  * 描述：
  * 修改人：zcluo
@@ -15,14 +15,19 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.arem.annotation.Description;
-import java.util.List;
+import com.amarsoft.amps.acsc.annotation.Length;
 
 @Getter
 @Setter
 @ToString
-public class DeptManagerUserQueryRsp implements Serializable{
+public class DeptManagerUserQueryReq implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    @Description("员工Id LIST")
-    private List<DeptUserInfo> userInfos;
+    @Description("员工编号")
+    @Length(max=80)
+    private String employeeNo;
+    @Description("员工姓名")
+    @Length(max=80)
+    private String employeeName;
+
 }
