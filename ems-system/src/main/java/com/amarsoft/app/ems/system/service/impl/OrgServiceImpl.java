@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -102,7 +101,7 @@ public class OrgServiceImpl implements OrgService {
     @Value("${global.business.org.default-length}")
     private int orgDefaultLength;
     
-    
+    public final static String ORG_PRULELENGTH = "4"; 
     private final static String ROOT_ORG_PARENTORGID = "root"; 
     
 
@@ -998,7 +997,8 @@ public class OrgServiceImpl implements OrgService {
                 + "orgLevel = :orgLevel order by orgId desc","orgId",req.getParentOrgId()+"%","orgLevel",req.getOrgLevel()
                 ).getBusinessObjects();
             OrgInfo oInfo = bomanager.keyLoadBusinessObject(OrgInfo.class,req.getParentOrgId());//查询父部门的部门等级
-            int ruleLength = Integer.parseInt(req.getRuleLength());//部门编号长度
+            String ruleLengthString = ORG_PRULELENGTH;//部门编号规则：限定部门编号一级长度为４
+            int ruleLength = Integer.parseInt(ruleLengthString);//部门编号长度
             String orgId = null;
             if (!CollectionUtils.isEmpty(businessObjects)) {//当前部门级别存在子部门
                 String temp = businessObjects.get(0).getString("orgId");//获取最大子部门编号
@@ -1039,12 +1039,12 @@ public class OrgServiceImpl implements OrgService {
             orgInfo.setOrgName(req.getOrgName());
             orgInfo.setStatus(OrgStatus.New.id);
             //设置部门等级，可修改  2为一级部门  3为二级部门
-            if(OrgLevel.LEVEL_2.id.equals(req.getParam())) {//一级部门
+            if(OrgLevel.LEVEL_2.id.equals(req.getOrgLevel())) {//一级部门
                 orgInfo.setOrgLevel(OrgLevel.LEVEL_2.id); 
-            }else if(OrgLevel.LEVEL_3.id.equals(req.getParam())){//二级部门
+            }else if(OrgLevel.LEVEL_3.id.equals(req.getOrgLevel())){//二级部门
                 orgInfo.setOrgLevel(OrgLevel.LEVEL_3.id); 
             }else {
-                throw new ALSException("EMS6016",req.getParam());
+                throw new ALSException("EMS6016",req.getOrgLevel());
             }
         }else {//保存功能
             orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());

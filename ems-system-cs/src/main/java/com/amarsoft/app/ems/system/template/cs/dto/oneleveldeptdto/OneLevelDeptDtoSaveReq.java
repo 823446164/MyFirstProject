@@ -38,9 +38,6 @@ public class OneLevelDeptDtoSaveReq extends OneLevelDeptDto implements Serializa
     @Description("备注") 
     @Length(max=2000)  
     private String remark;
-    @Description("部门等级参数") 
-    @Length(max=10)  
-    private String param;
     @Description("部门等级") 
     @Length(max=10)  
     private String orgLevel;
