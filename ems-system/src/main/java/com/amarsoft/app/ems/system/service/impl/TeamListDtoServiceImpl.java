@@ -199,7 +199,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     @Transactional
     @Override
     public void teamListDtoDelete(@Valid DeleteInfoDtoQueryReq req) {
-
+    	//TODO  未完成删除团队操作
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
        
         ChangeEvent ch = new ChangeEvent();
@@ -222,10 +222,10 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         		if(!StringUtils.isEmpty(bo.getString("userId"))) {
         			 throw new ALSException("EMS6008");
         		}
-        		//停用的状态不予删除
-        		if(!StringUtils.isEmpty(OrgStatus.Disabled.id)) {
-        			throw new ALSException("EMS6008");
-        		}
+				/*
+				 * //停用的状态不予删除 if(!StringUtils.isEmpty(OrgStatus.Disabled.id)) { throw new
+				 * ALSException("EMS6008"); }
+				 */
         		 bomanager.deleteBusinessObject(bo);
         	}
         	
