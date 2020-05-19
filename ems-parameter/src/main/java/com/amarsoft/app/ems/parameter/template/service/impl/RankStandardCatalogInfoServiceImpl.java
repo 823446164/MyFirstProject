@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.parameter.constant.ChildRankNo;
+import com.amarsoft.aecd.parameter.constant.ManaRankName;
+import com.amarsoft.aecd.parameter.constant.RankName;
 import com.amarsoft.aecd.parameter.constant.RankStandard;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
@@ -128,17 +130,6 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 map3.put("text", ChildRankNo.B5_3.name);
                 rankList.add(map3);
             }
-            if(RankStandard._6.name.equals(rankStandard)) {
-                map1.put("value", ChildRankNo.B6_1.id);
-                map1.put("text", ChildRankNo.B6_1.name);
-                rankList.add(map1);
-                map2.put("value", ChildRankNo.B6_2.id);
-                map2.put("text", ChildRankNo.B6_2.name);
-                rankList.add(map2);
-                map3.put("value", ChildRankNo.B6_3.id);
-                map3.put("text", ChildRankNo.B6_3.name);
-                rankList.add(map3);
-            }
         }
         if (rankStandardCatalog != null) {
             rankStandardCatalogInfo.setSerialNo(rankStandardCatalogChildInfoQueryReq.getSerialNo());
@@ -164,7 +155,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
 
     /**
      * 
-     * Description: 子职级标准详情保存
+     * Description: 职级/子职级标准详情保存
      * @param rankStandardCatalogChildInfoSaveReq
      * @return　map
      * @see
@@ -175,6 +166,13 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         // 定义业务对象管理容器
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if (rankStandardCatalogChildInfoSaveReq != null) {
+            //为界面传过来的职级枚举类转换id
+            String rankNamaId=null;
+            if(StringUtils.isEmpty(RankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName()))) {
+                rankNamaId=ManaRankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName());
+            }else {
+                rankNamaId=RankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName());
+            }
             // 根据主键获取实体类信息
             RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
                 rankStandardCatalogChildInfoSaveReq.getSerialNo());
@@ -199,8 +197,8 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 rankStandardCatalog.generateKey();
                 rankStandardCatalog.setInputOrgId(GlobalShareContextHolder.getOrgId());
                 rankStandardCatalog.setParentRankNo(rankStandardCatalogChildInfoSaveReq.getParentRankNo());
-                rankStandardCatalog.setRankStandard(rankStandardCatalogChildInfoSaveReq.getRankStandard());
-                rankStandardCatalog.setRankName(rankStandardCatalogChildInfoSaveReq.getRankName());
+                rankStandardCatalog.setRankStandard(RankStandard.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankStandard()));
+                rankStandardCatalog.setRankName(rankNamaId);
                 rankStandardCatalog.setRankDescribe(rankStandardCatalogChildInfoSaveReq.getRankDescribe());
                 rankStandardCatalog.setAbilityDescribe(rankStandardCatalogChildInfoSaveReq.getAbilityDescribe());
                 rankStandardCatalog.setResponeDescribe(rankStandardCatalogChildInfoSaveReq.getResponeDescribe());
@@ -211,12 +209,12 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             }
             else {
                 rankStandardCatalog.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
-                rankStandardCatalog.setRankStandard(rankStandardCatalogChildInfoSaveReq.getRankStandard());
-                rankStandardCatalog.setRankName(rankStandardCatalogChildInfoSaveReq.getRankName());
+                rankStandardCatalog.setRankStandard(RankStandard.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankStandard()));
+                rankStandardCatalog.setRankName(rankNamaId);
                 rankStandardCatalog.setRankDescribe(rankStandardCatalogChildInfoSaveReq.getRankDescribe());
                 rankStandardCatalog.setAbilityDescribe(rankStandardCatalogChildInfoSaveReq.getAbilityDescribe());
                 rankStandardCatalog.setResponeDescribe(rankStandardCatalogChildInfoSaveReq.getResponeDescribe());
-                rankStandardCatalog.setChildRankNo(rankStandardCatalogChildInfoSaveReq.getChildRankNo());
+                rankStandardCatalog.setChildRankNo(ChildRankNo.getIdByName(rankStandardCatalogChildInfoSaveReq.getChildRankNo()));
                 rankStandardCatalog.setAbility(rankStandardCatalogChildInfoSaveReq.getAbility());
             }
             bomanager.updateBusinessObject(rankStandardCatalog);

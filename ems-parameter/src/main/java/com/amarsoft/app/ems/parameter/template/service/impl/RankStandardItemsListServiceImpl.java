@@ -26,8 +26,6 @@ import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
-import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
-import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
 import com.amarsoft.app.ems.parameter.entity.RankStandardItems;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabel;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryReq;
@@ -91,6 +89,7 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
                 rankresponse.setParentNo(ranItems.getParentNo());
                 rankresponse.setRankNo(ranItems.getRankNo());
                 rankresponse.setLabelName(ranItems.getLabelName());
+                rankresponse.setLabelNo(ranItems.getLabelNo());
                 rankresponse.setLabelLevel(ranItems.getLabelLevel());
                 ranStandardItemsLists.add(rankresponse);
             }
