@@ -14,13 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.employee.employee.cs.dto.employeeabilitylabels.EmployeeAbilityLabelsReq;
 import com.amarsoft.app.ems.employee.employee.cs.dto.employeeabilitylabels.EmployeeAbilityLabelsRsp;
-import com.amarsoft.app.ems.employee.employee.cs.dto.employeeabilitylabels.LabelCatalog;
+import com.amarsoft.app.ems.employee.employee.cs.dto.employeeabilitylabels.LabelCatalogInfo;
 import com.amarsoft.app.ems.employee.entity.EmployeeRank;
+import com.amarsoft.app.ems.employee.entity.EmployeeRankRelabel;
 import com.amarsoft.app.ems.employee.service.EmployeeLabelService;
 
 
@@ -30,35 +32,35 @@ public class EmployeeLabelServiceImpl implements EmployeeLabelService{
 	
     /**
      * Description:员工对应历史职级标签查询<br>
-     * ${tags}
+     * @param EmployeeAbilityLabelsReq(employeeNo)
+     * @return EmployeeAbilityLabelsRsp(List<LabelCatalog>)
      * @see
      */
 	@Override
 	public EmployeeAbilityLabelsRsp employeeLabelQuery(@Valid EmployeeAbilityLabelsReq req) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
 		EmployeeAbilityLabelsRsp rsp = new EmployeeAbilityLabelsRsp();
-		List<LabelCatalog> labelList = new ArrayList<LabelCatalog>();
-		LabelCatalog label = new LabelCatalog();
+		List<LabelCatalogInfo> labelList = new ArrayList<LabelCatalogInfo>();
+		LabelCatalogInfo label = new LabelCatalogInfo();
 		List<EmployeeRank> rankList = bomanager.loadBusinessObjects(EmployeeRank.class,
 				"employeeNo=:employeeNo and rankVersion='1' order by changeDate", "employeeNo",
 				req.getEmployeeNo());
 		if (!StringUtils.isEmpty(rankList)) {//如果list不为空则是有历史职级，执行下一步
 			EmployeeRank employeeRank = rankList.get(0);//获取最新的历史职级
-			if (!StringUtils.isEmpty(employeeRank)) {//若为新员工则没有历史职级和对用标签，直接返回空
+			if (!StringUtils.isEmpty(employeeRank)) {//若为新员工则没有历史职级和对应标签，直接返回空
 				String rankNo = employeeRank.getSerialNo();
 		 		if (!StringUtils.isEmpty(rankNo)) {//获取员工历史最新职级，若不为空则查找对应的标签
+		 		    //获取标签掌握程度在了解或者一般以上的
 					List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-							"select serialNo,labelName from LableCatalog where serialNo in(select lable from EmployeeRankRelable where rankNo=:rankNo and level<>'1')",
+							"select labelNo from EmployeeRankRelabel where rankNo=:rankNo and level>'1'",
 							"rankNo", rankNo).getBusinessObjects();
-					if (!StringUtils.isEmpty(businessObjects)) {
-						for (BusinessObject businessObject : businessObjects) {
-							String serialNo = businessObject.getString("serialNo");
-							String labelName = businessObject.getString("labelName");
-							label.setSerialNo(serialNo);
-							label.setLabelName(labelName);
-							labelList.add(label);
-						}
-					}
+					List<String> serialNoList = new ArrayList<String>();
+					for (BusinessObject businessObject : businessObjects) {
+                        String serialNo = businessObject.getString("labelNo");
+                        serialNoList.add(serialNo);
+                    }
+					//TODO 调用参数服务的接口获取对应的指标名称						
+					
 				}
 			}
 		}
