@@ -1211,7 +1211,7 @@ public class OrgServiceImpl implements OrgService {
         List<SecondLevelDeptListDto> secondLevelDeptListDtos = new ArrayList<SecondLevelDeptListDto>(); //新建返回list
         //查询二级部门list
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-            "select UI.userName as deptManagerName,DT.deptName as deptName,DT.deptId as orgId from UserInfo UI, OrgInfo OI,Department DT where"
+            "select OI.status as status, UI.userName as deptManagerName,DT.deptName as deptName,DT.deptId as orgId from UserInfo UI, OrgInfo OI,Department DT where"
             + " UI.userId = DT.deptManager and DT.deptId = OI.orgId and OI.parentOrgId = :parentOrgId", "parentOrgId",orgInfo.getOrgId()
             ).getBusinessObjects();
         SecondLevelDeptListDto secondLevelDeptListDto = null;
@@ -1220,6 +1220,8 @@ public class OrgServiceImpl implements OrgService {
             secondLevelDeptListDto.setDeptName(businessObject.getString("deptName"));
             secondLevelDeptListDto.setDeptManager(businessObject.getString("deptManagerName"));
             secondLevelDeptListDto.setOrgId(businessObject.getString("orgId"));
+            //插入部门状态
+            secondLevelDeptListDto.setStatus(businessObject.getString("status"));
             List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId", businessObject.getString("orgId") + "%");
             secondLevelDeptListDto.setDeptUserNumber(String.valueOf(ubs.size()));
             secondLevelDeptListDtos.add(secondLevelDeptListDto);
