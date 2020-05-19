@@ -26,7 +26,6 @@ public enum RankStandard {
     _3("3","Band3"),
     _4("4","Band4"),
     _5("5","Band5"),
-    _6("6","Band6"),
     ;
     
     public final String id;
@@ -44,7 +43,7 @@ public enum RankStandard {
      * @return
      */
     public static boolean isExist(String id) {
-        return _1.id.equals(id) || _2.id.equals(id) || _3.id.equals(id) || _4.id.equals(id) || _5.id.equals(id) || _6.id.equals(id);
+        return _1.id.equals(id) || _2.id.equals(id) || _3.id.equals(id) || _4.id.equals(id) || _5.id.equals(id);
     }
 
     /**

@@ -13,7 +13,9 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -23,6 +25,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.parameter.constant.ChildRankNo;
+import com.amarsoft.aecd.parameter.constant.ManaRankName;
+import com.amarsoft.aecd.parameter.constant.ManaRankStandard;
 import com.amarsoft.aecd.parameter.constant.RankName;
 import com.amarsoft.aecd.parameter.constant.RankStandard;
 import com.amarsoft.amps.acsc.query.QueryProperties;
@@ -134,16 +138,50 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     @Transactional
     public RankStandardCatalogListQueryRsp rankStandardCatalogListQuery(@Valid RankStandardCatalogListQueryReq rankStandardCatalogListQueryReq) {
         RankStandardCatalogListQueryRsp rankStandardCatalogListQueryRsp = new RankStandardCatalogListQueryRsp();
-
         Query query = new RankStandardCatalogListReqQuery().apply(rankStandardCatalogListQueryReq);
         String fullsql = query.getSql();
-
         RankStandardCatalogListRspConvert convert = new RankStandardCatalogListRspConvert();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(rankStandardCatalogListQueryReq.getBegin(),
             rankStandardCatalogListQueryReq.getPageSize(), fullsql, query.getParam());
         List<BusinessObject> businessObjectList = boa.getBusinessObjects();
-
+        //为开发管理职等分别传入对应职等职级的枚举类
+        //1.职等枚举类用于a.查询条件 b.新增职等控制对应的职等下拉框
+        //2.职级的枚举类用于新增职等时反显对应的职级
+        List<Map<String,String>> rankStadardList=new ArrayList<Map<String,String>>();
+        List<Map<String,String>> rankNameList=new ArrayList<Map<String,String>>();
+        List<Map<String,String>> manaRankStadardList=new ArrayList<Map<String,String>>();
+        List<Map<String,String>> manaRankNameList=new ArrayList<Map<String,String>>();
+        Map<String,String> map1=null;
+        Map<String,String> map2=null;
+        for (RankStandard rankStandard : RankStandard.values()) {
+            map1=new HashMap<String, String>();
+            map1.put("value", rankStandard.id);
+            map1.put("text", rankStandard.name);
+            rankStadardList.add(map1);
+        }
+        for (RankName rankName : RankName.values()) {
+            map2=new HashMap<String, String>();
+            map2.put("value", rankName.id);
+            map2.put("text", rankName.name);
+            rankNameList.add(map2);
+        }
+        for (ManaRankStandard rankStandard : ManaRankStandard.values()) {
+            map1=new HashMap<String, String>();
+            map1.put("value", rankStandard.id);
+            map1.put("text", rankStandard.name);
+            manaRankStadardList.add(map1);
+        }
+        for (ManaRankName rankName : ManaRankName.values()) {
+            map2=new HashMap<String, String>();
+            map2.put("value", rankName.id);
+            map2.put("text", rankName.name);
+            manaRankNameList.add(map2);
+        }
+        rankStandardCatalogListQueryRsp.setRankNameList(rankNameList);
+        rankStandardCatalogListQueryRsp.setRankStandardList(rankStadardList);
+        rankStandardCatalogListQueryRsp.setManaRankStandardList(manaRankStadardList);
+        rankStandardCatalogListQueryRsp.setManaRankNameList(manaRankNameList);
         if (null != businessObjectList && !businessObjectList.isEmpty()) {
             List<RankStandardCatalogList> rankStandardCatalogLists = new ArrayList<RankStandardCatalogList>();
             for (BusinessObject bo : businessObjectList) {
@@ -153,7 +191,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             rankStandardCatalogListQueryRsp.setRankStandardCatalogLists(rankStandardCatalogLists);
         }
         rankStandardCatalogListQueryRsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
-
+        
         return rankStandardCatalogListQueryRsp;
     }
 

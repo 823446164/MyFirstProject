@@ -17,6 +17,7 @@ import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.arem.annotation.Description;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 〈职级标准列表查询响应实体类〉
@@ -36,4 +37,16 @@ public class RankStandardCatalogListQueryRsp implements Serializable {
 
     @Description("职级标准列表")
     private List<RankStandardCatalogList> rankStandardCatalogLists;
+    
+    @Description("开发职等列表")
+    private List<Map<String,String>> rankStandardList;
+    
+    @Description("开发职级列表")
+    private List<Map<String,String>> rankNameList;
+    
+    @Description("管理职等列表")
+    private List<Map<String,String>> manaRankStandardList;
+    
+    @Description("管理职级列表")
+    private List<Map<String,String>> manaRankNameList;
 }
