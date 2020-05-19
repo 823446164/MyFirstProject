@@ -1,5 +1,7 @@
 package com.amarsoft.app.ems.system.service;
 import javax.validation.Valid;
+
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.EmployeeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.EmployeeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
@@ -41,5 +43,13 @@ public interface TeamListDtoService {
      * @return rsp
      */
     public EmployeeQueryRsp employeeQuery(@Valid EmployeeQueryReq employeeQueryReq);
+    /**
+     * 
+     * 按条件查询团队信息
+     * @param request
+     * @return rsp
+     */
+	public TeamListDtoQueryRsp teamSearch(TeamListDtoQueryReq request);
+
 
 }

@@ -11,7 +11,6 @@
 package com.amarsoft.app.ems.system.cs.dto.teamlistdto;
 import java.io.Serializable;
 
-import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.arem.annotation.Description;
 

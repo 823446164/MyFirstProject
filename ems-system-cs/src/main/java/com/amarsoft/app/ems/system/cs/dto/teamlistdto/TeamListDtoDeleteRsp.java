@@ -23,9 +23,8 @@ import lombok.ToString;
 
 
 /**
- * 〈一句话功能简述〉 〈功能详细描述〉
- * 
- * @author amarsoft
+ * 删除响应体
+ * @author hpli
  * @version 2020年5月13日
  * @see TeamListDtoDeleteRsp
  * @since

@@ -36,16 +36,6 @@ import lombok.ToString;
 public class TeamListDtoQueryRoleRsp {
     private static final long serialVersionUID = 1L;
 
-    @Description("角色A")
-    @NotEmpty
-    private List<String> teamListRoleA;
 
-    @Description("角色B")
-    @NotEmpty
-    private List<String> teamListRoleB;
-
-    @Description("角色C")
-    @NotEmpty
-    private List<String> teamListRoleC;
 
 }

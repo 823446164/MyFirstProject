@@ -17,7 +17,6 @@ import java.util.List;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -37,7 +36,7 @@ public class EmployeeQueryRsp extends EmployeeInfoListDto implements Serializabl
     private static final long serialVersionUID = 1L;
     
     @Description("总笔数")
-    private Integer totalCount = 0;
+    private Integer totalCount;
     
     @Description("员工详情列表")
     private List<EmployeeInfoDto> employeeInfoList;

@@ -31,7 +31,6 @@ public class TeamListDtoQueryReq implements Serializable {
     @NotEmpty
     @QueryBegin
     private Integer begin;
-
     @Description("查询笔数")
     @Range(min=1,max=10)
     @NotEmpty

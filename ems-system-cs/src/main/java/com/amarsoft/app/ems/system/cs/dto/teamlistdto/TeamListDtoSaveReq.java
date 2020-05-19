@@ -22,10 +22,7 @@ public class TeamListDtoSaveReq implements Serializable {
     private List<TeamListDto> teamListDtos;
 
     @Description("总笔数")
-    private Integer totalCount = 0;
-   
-
-    
+    private Integer totalCount ;
    
     
 }
