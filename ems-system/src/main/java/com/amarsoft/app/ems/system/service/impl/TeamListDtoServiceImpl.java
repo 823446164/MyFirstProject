@@ -27,7 +27,6 @@ import com.amarsoft.amps.avts.query.RequestQuery;
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoListDtoClient;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
-
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.EmployeeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.EmployeeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDto;
@@ -308,7 +307,6 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     	  } else {
     		  throw new ALSException("901013");
     	  }
-    	
     	  return rsp;
 	}
 }

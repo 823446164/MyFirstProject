@@ -1,9 +1,10 @@
 package com.amarsoft.app.ems.system.service;
-
 import javax.validation.Valid;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryRsp;
 
 /**
  * 团队信息Service接口
@@ -31,6 +32,13 @@ public interface TeamInfoDtoService {
      * @return
      */
     public TeamInfoDtoQueryRsp updateStatus(@Valid TeamInfoDtoQueryReq teamInfoDtoQueryReq);
+    /**
+     * 查询部门下不是团队负责人的人员
+     * @param request
+     * @return
+     */
+
+	public TeamInfoUserQueryRsp teamUserId(TeamInfoUserQueryReq request);
     
 }
 

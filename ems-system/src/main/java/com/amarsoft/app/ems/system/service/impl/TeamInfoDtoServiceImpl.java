@@ -1,15 +1,16 @@
 package com.amarsoft.app.ems.system.service.impl;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.amps.arem.exception.ALSException;
@@ -17,12 +18,14 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoListDtoClient;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDto;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryRsp;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
-import com.amarsoft.app.ems.system.entity.UserTeam;
 import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +55,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class, "teamId", teamInfoDtoQueryReq.getTeamId());
         TeamInfoDtoQueryRsp teamInfoDto = new TeamInfoDtoQueryRsp();
+        
         if (teamInfo != null) {
             teamInfoDto.setTeamId(teamInfo.getTeamId());
             teamInfoDto.setTeamName(teamInfo.getTeamName());
@@ -59,7 +63,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
             teamInfoDto.setRoleB(teamInfo.getRoleB());
             teamInfoDto.setRoleC(teamInfo.getRoleC());
             teamInfoDto.setBelongOrgId(teamInfo.getBelongOrgId());
-            teamInfoDto.setStatus(teamInfo.getStatus());
+            teamInfoDto.setStatus(OrgStatus.getNameById(teamInfo.getStatus()));
             teamInfoDto.setTarget(teamInfo.getTarget());
             teamInfoDto.setDescription(teamInfo.getDescription());
             
@@ -97,7 +101,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
     @Transactional
     public void teamInfoDtoSaveAction(TeamInfoDto teamInfoDto) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if (teamInfoDto == null) {
+        if (ObjectUtils.isEmpty(teamInfoDto)) {
             throw new ALSException("EMS6022");
         }
         String teamId = teamInfoDto.getTeamId();
@@ -140,7 +144,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         // 根据部门编号查询团队状态
         TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamInfoDtoQueryReq.getTeamId());
-        if (teamInfo == null) {
+        if (ObjectUtils.isEmpty(teamInfo)) {
             // 不存在该团队
             throw new ALSException("EMS6022");
         }
@@ -151,12 +155,8 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
         TeamInfoDtoQueryRsp rsp = new TeamInfoDtoQueryRsp();
         // 判断完成 还是 停用 1:完成;2:停用 ;3.表示新增
         String status = teamInfoDtoQueryReq.getStatus();
-        //完成操作
-        if(OrgStatus.New.id.equals(status)||OrgStatus.Disabled.id.equals(status)) {
-        	
-        }else {
-        	 throw new ALSException("EMS6026");// 非完成状态的团队不予停用；
-        }
+       
+        
         if (OrgStatus.Disabled.id.equals(status)) { // 操作停用
             BusinessObjectAggregate<BusinessObject> userCount = bomanager.selectBusinessObjectsBySql(
                 "select count(1) as cnt from UserTeam where teamId=:teamId", "teamId", teamInfoDtoQueryReq.getTeamId());
@@ -167,6 +167,11 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
           if (OrgStatus.New.id.equals(teamStatus)) {
                 throw new ALSException("EMS6011");// 非完成状态的团队不予停用；
             }
+        }else{
+        	 //完成操作 完成状态不能在完成
+            if(OrgStatus.Completed.id .equals(teamStatus)) { // 完成操作
+            	throw new ALSException("EMS6028");	 //完成状态不在完成
+            } 
         }
         teamInfo.setStatus(teamInfoDtoQueryReq.getStatus());
         bomanager.updateBusinessObject(teamInfo);
@@ -176,6 +181,39 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
         return rsp;
 
     }
+    /**
+     *查询部门下不是团队负责人的人员
+     * 
+     * @param req
+     * @return rsp
+     */
+	@Override
+	@Transactional
+	public TeamInfoUserQueryRsp teamUserId(TeamInfoUserQueryReq req ) {
+	
+		  BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+		  TeamInfoUserQueryRsp  rsp =new TeamInfoUserQueryRsp ();
+		  List<UserInfo> userInfos =new ArrayList<>();
+		  UserInfo userInfo =new UserInfo();
+		  //查询部门下的人员，取出掉成为团队负责人
+		  List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql("select  UI.userId as userId , UI.userName as userName  "
+		  		+ "from  UserBelong UB, UserInfo UI  where UI.userId =UB.userId and  UB.orgId =:orgId and UB.userId not in("
+		  		+ " select roleA from  TeamInfo TI  where  TI.belongOrgId =:orgId) ","orgId", req .getOrgId()).getBusinessObjects();
+		  //判空
+		  if(!CollectionUtils.isEmpty(businessObjects)) {
+			  //遍历集合
+			  for(BusinessObject bos : businessObjects) {
+				  userInfo.setUserId(bos.getString("userId"));
+				  userInfo.setUserName(bos.getString("userName"));
+				  userInfos.add(userInfo);
+			  }
+			 
+			  rsp.setUserInfos(userInfos);
+		  }
+		  
+		  
+		  return rsp;
+	}
 
 }
 
