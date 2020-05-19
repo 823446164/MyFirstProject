@@ -1184,6 +1184,7 @@ public class OrgServiceImpl implements OrgService {
         rsp.setParentOrgName(orgInfoParent.getOrgName());
         rsp.setOrgName(orgInfo.getOrgName());
         rsp.setDeptManagerName(uInfo.getUserName());//获取部门经理姓名
+        rsp.setDeptManagerId(department.getDeptManager());//获取部门经理编号
         rsp.setDeptAddress(department.getDeptAddress());
         rsp.setRemark(department.getRemark());
         rsp.setDeptEquipment(department.getDeptEquipment());
@@ -1289,9 +1290,6 @@ public class OrgServiceImpl implements OrgService {
         //查询部门员工
         List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",
             orgInfo.getOrgId()+"%");  
-        if (CollectionUtils.isEmpty(ubs)) {//未查询到员工
-            throw new ALSException("EMS6014");
-        }
         //新建员工id的list
         List<String> ids = new ArrayList<String>();
         for(UserBelong oi : ubs) {
@@ -1315,9 +1313,6 @@ public class OrgServiceImpl implements OrgService {
             employeeInfoListDto.setSex(employeeInfoDto.getSex());
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
-            if (MapUtils.isEmpty(map)) {
-                throw new ALSException("EMS6014");
-            }
             String teamName = map.get("teamName");
             String orgName = map.get("orgName");
             employeeInfoListDto.setTeamName(teamName);
@@ -1378,9 +1373,6 @@ public class OrgServiceImpl implements OrgService {
             employeeInfoListDto.setSex(employeeInfoDto.getSex());
             //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
             Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
-            if (MapUtils.isEmpty(map)) {
-                throw new ALSException("EMS6014");
-            }
             String teamName = map.get("teamName");
             String orgName = map.get("orgName");
             employeeInfoListDto.setTeamName(teamName);
@@ -1405,9 +1397,6 @@ public class OrgServiceImpl implements OrgService {
             "select TI.teamName as teamName,OI.orgName as orgName from UserTeam UT,OrgInfo OI,TeamInfo TI,OrgTeam OT where OI.orgId = OT.orgId"
             + " and TI.teamId = UT.teamId and UT.teamId = OT.teamId and UT.userId= :userId","userId",employeeNo
             ).getBusinessObjects();
-        if (CollectionUtils.isEmpty(businessObjects)) {
-            throw new ALSException("EMS6014");
-        }
         String teamName = null;
         String orgName = null;
         for (BusinessObject businessObject : businessObjects) {
