@@ -1,4 +1,13 @@
-package com.amarsoft.app.ems.employee.template.cs.dto.employeerankinfodto;
+/*文件名：EmployeeRankRelabelListDto
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：点击员工职级,查询职级对应标签
+ * 修改人：dxiao
+ * 修改时间：2020/05/19
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新生成
+ */
+package com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto;
 
 import java.io.Serializable;
 import lombok.Getter;
@@ -11,96 +20,44 @@ import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
- * 员工职级Info
- * @author lding
+ * 员工职级标签关联
+ * @author dxiao
  */
 @Getter
 @Setter
 @ToString
-@TemplateHeader(id = "EmployeeRankInfoDto", name = "员工职级Info", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 1)
-public class EmployeeRankInfoDto implements Serializable {
+@TemplateHeader(id = "EmployeeRankRelabelListDto", name = "员工职级标签关联表List", type = com.amarsoft.aecd.common.constant.TemplateType.List, readOnly = false, span = 1)
+public class EmployeeRankRelabelListDto implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Description("职级编号")
+    @Description("流水编号")
     @Length(max=40)
-    @ActualColumn("ER.serialNo")
-    @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    @ActualColumn("ERR.serialNo")
+    @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String serialNo;
 
-    @Description("员工编号")
+    @Description("职级编号")
     @Length(max=40)
-    @ActualColumn("ER.employeeNo")
-    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String employeeNo;
+    @ActualColumn("ERR.rankNo")
+    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
+    private String rankNo;
 
-    @Description("分类")
+    @Description("标签")
     @Length(max=40)
-    @ActualColumn("ER.classify")
+    @ActualColumn("ER.labelNo")
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String classify;
+    private String labelNo;
 
-    @Description("目标日期")
+    @Description("掌握程度")
     @Length(max=10)
-    @ActualColumn("ER.goalDate")
-    @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String goalDate;
+    @ActualColumn("ER.level")
+    @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    private String level;
 
-    @Description("职级")
+
+    @Description("所属目录")
     @Length(max=40)
-    @ActualColumn("ER.rank")
-    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String rank;
+    @ActualColumn("ER.belongCatalog")
+    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
+    private String belongCatalog;
 
-    @Description("版本")
-    @Length(max=40)
-    @ActualColumn("ER.rankVersion")
-    @TemplateBody(sortNo = 5, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String rankVersion;
-
-    @Description("登记人")
-    @Length(max=40)
-    @ActualColumn("ER.inputUserId")
-    @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String inputUserId;
-
-    @Description("登记时间")
-    @Length(max=20)
-    @ActualColumn("ER.inputTime")
-    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String inputTime;
-
-    @Description("登记机构")
-    @Length(max=40)
-    @ActualColumn("ER.inputOrgId")
-    @TemplateBody(sortNo = 8, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String inputOrgId;
-
-    @Description("更新人")
-    @Length(max=40)
-    @ActualColumn("ER.updateUserId")
-    @TemplateBody(sortNo = 9, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String updateUserId;
-
-    @Description("更新时间")
-    @Length(max=20)
-    @ActualColumn("ER.updateTime")
-    @TemplateBody(sortNo = 10, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String updateTime;
-
-    @Description("更新机构")
-    @Length(max=40)
-    @ActualColumn("ER.updateOrgId")
-    @TemplateBody(sortNo = 11, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String updateOrgId;
-
-    @Description("是否正式")
-    @Length(max=10)
-    @ActualColumn("ER.rankIsFormal")
-    @TemplateBody(sortNo = 12, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String rankIsFormal;
-
-    @Description("实际调整日期")
-    @Length(max=10)
-    @ActualColumn("ER.changeDate")
-    @TemplateBody(sortNo = 13, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
-    private String changeDate;
 }
