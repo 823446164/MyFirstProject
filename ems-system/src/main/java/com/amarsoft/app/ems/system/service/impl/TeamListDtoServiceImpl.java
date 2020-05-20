@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import com.amarsoft.aecd.system.constant.ChangeEventType;
+import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
@@ -228,7 +229,7 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         //4.查询团队对应的部门Id
         OrgTeam orgTeam = bomanager.loadBusinessObject(OrgTeam.class, "teamId",req.getObjectNo());
         
-        if (!"2".equals(delTeam.getStatus())) {//5.若团队不为停用状态，不许操作
+        if (!OrgStatus.Disabled.id.equals(delTeam.getStatus())) {//5.若团队不为停用状态，不许操作
             throw new ALSException("EMS6030");
         }else if(!CollectionUtils.isEmpty(userTeams)) {//6.若团队下有员工，不许删除
             throw new ALSException("EMS6032");
