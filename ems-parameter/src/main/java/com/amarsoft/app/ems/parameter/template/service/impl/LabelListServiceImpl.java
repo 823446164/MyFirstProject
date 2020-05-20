@@ -104,15 +104,16 @@ public class LabelListServiceImpl implements LabelListService {
                 index.getSerialNo());
             LabelListDeleteReq labelDeleteReq = new LabelListDeleteReq();
             boolean isDelete = true;
-            LabelCatalog enabledLabel = null;
+            String alse="";
             for (LabelCatalog labelTemp : labels) {
                 if (LabelStatus.Enabled.id.equals(labelTemp.getLabelStatus())) {
-                    enabledLabel = labelTemp;
+                    alse+=labelTemp.getLabelName()+",";
                     isDelete = false;
                 }
             }
             if (false == isDelete) {
-                throw new ALSException("EMS2026", index.getLabelName(), enabledLabel.getLabelName());
+                alse = alse.substring(0, alse.length()-1);
+                throw new ALSException("EMS2026", index.getLabelName(), alse);
             }
             else {
                 for (LabelCatalog labelTemp : labels) {
