@@ -1,3 +1,13 @@
+/*
+ * 文件名：EmployeeRankChangeApplyInfoDtoControllerImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：员工职级调整申请InfoController实现类
+ * 修改人：xucheng
+ * 修改时间：2020/5/20
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.employee.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +28,6 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfo
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoSaveReq;
 
-/**
- * 员工职级调整申请详情InfoController实现类
- * @author xucheng
- */
 @Slf4j
 @RestController
 public class EmployeeRankChangeApplyInfoDtoControllerImpl implements EmployeeRankChangeApplyInfoDtoController {
