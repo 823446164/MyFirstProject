@@ -196,7 +196,7 @@ public interface OrgService {
      * @param request
      * @return
      */
-    EmployeeInfoListDtoQueryRsp employeeInfoListDtoQuery(EmployeeInfoListDtoSearchReq request);
+    EmployeeInfoListDtoQueryRsp employeeInfoListDtoSearch(EmployeeInfoListDtoSearchReq request);
 
     /**
      * 查询所有部门经理的userId

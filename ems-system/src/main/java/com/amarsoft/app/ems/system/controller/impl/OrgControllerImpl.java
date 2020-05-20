@@ -430,7 +430,7 @@ public class OrgControllerImpl implements OrgController {
         ResponseMessage<EmployeeInfoListDtoQueryRsp> rspMsg = null;
         try {
             EmployeeInfoListDtoSearchReq request = reqMsg.getMessage();
-            EmployeeInfoListDtoQueryRsp response = orgService.employeeInfoListDtoQuery(request);
+            EmployeeInfoListDtoQueryRsp response = orgService.employeeInfoListDtoSearch(request);
             rspMsg = new ResponseMessage<EmployeeInfoListDtoQueryRsp>(response);
             return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
