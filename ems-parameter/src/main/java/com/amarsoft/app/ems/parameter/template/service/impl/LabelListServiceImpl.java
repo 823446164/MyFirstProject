@@ -62,8 +62,6 @@ public class LabelListServiceImpl implements LabelListService {
     @Transactional
     public void labelDelete(@Valid LabelListDeleteReq labelListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        // LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class,
-        // labelListDeleteReq.getSerialNo());
         LabelCatalog labelCatalog = bomanager.loadBusinessObject(LabelCatalog.class, "serialNo", labelListDeleteReq.getSerialNo());
         if (LabelStatus.Enabled.id.equals(labelCatalog.getLabelStatus())) {
             throw new ALSException("EMS2027", labelCatalog.getLabelName());
