@@ -1,15 +1,18 @@
 package com.amarsoft.app.ems.employee.template.controller;
 
 import javax.validation.Valid;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.http.MediaType;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoStatusUpdateReq;
 
 /**
  * 员工信息InfoController接口
@@ -21,4 +24,7 @@ public interface EmployeeInfoDtoController {
 
     @PostMapping(value = "/employeeinfodto/save", name="员工信息Info保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoSave(@RequestBody @Valid RequestMessage<EmployeeInfoDtoSaveReq> reqMsg);
+    
+    @PostMapping(value = "/employeeinfodto/saveStatus", name="员工状态保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoStatusSave(@RequestBody @Valid RequestMessage<EmployeeInfoStatusUpdateReq> reqMsg);
 }

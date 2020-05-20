@@ -1,9 +1,11 @@
 package com.amarsoft.app.ems.employee.template.service;
 
 import javax.validation.Valid;
+
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoStatusUpdateReq;
 
 /**
  * 员工信息InfoService接口
@@ -23,4 +25,13 @@ public interface EmployeeInfoDtoService {
      * @return
      */
     public void employeeInfoDtoSave(@Valid EmployeeInfoDtoSaveReq employeeInfoDtoSaveReq);
+    
+    /**
+     * 员工状态保存
+     * @param request
+     * @return
+     */
+    public void employeeInfoDtoStatusSave(@Valid EmployeeInfoStatusUpdateReq EmployeeInfoStatusUpdateReq);
+
+    
 }

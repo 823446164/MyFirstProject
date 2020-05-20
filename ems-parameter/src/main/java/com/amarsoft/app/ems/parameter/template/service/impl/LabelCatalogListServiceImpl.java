@@ -34,6 +34,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCata
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloglist.LabelCatalogListQueryRsp;
+import com.amarsoft.app.ems.parameter.template.cs.dto.labellist.LabelListDeleteReq;
 
 
 /**
@@ -72,10 +73,7 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
         LabelCatalogListQueryRsp labelCatalogListQueryRsp =new LabelCatalogListQueryRsp();
         labelCatalogListQueryRsp.setLableCatalogInfos(labelCatalogInfos);
         return labelCatalogListQueryRsp;
-    }
-    
-    
-    
+    }            
     
     /**
      * 标签目录树图删除
@@ -87,12 +85,27 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
     @Transactional
     public void labelCatalogListDelete(@Valid LabelCatalogListDeleteReq labelCatalogListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        LabelListServiceImpl labelListServiceImpl = new LabelListServiceImpl();
         boolean isNotHaveStatusOk = selectLabelByLabelCatalog(labelCatalogListDeleteReq.getSerialNo());
         //isNotHaveStatusOk 为true则说明有生效标签，不能删除   false为没有生效标签，可以删除
         if (!isNotHaveStatusOk) {
+            //获得目录实体类删除
             LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogListDeleteReq.getSerialNo());
-            bomanager.deleteBusinessObject(labelCatalog);
+            bomanager.deleteBusinessObject(labelCatalog);                       
             bomanager.updateDB();
+            //获得该目录下所有指标和标签
+            List<LabelCatalog> childrenCatalogs = queryChildrenCatalog(bomanager,labelCatalogListDeleteReq.getSerialNo());
+            for (LabelCatalog labelCatalogTemp : childrenCatalogs) {
+                if(LabelType._2.id.equals(labelCatalogTemp.getLabelType() )){//执行指标删除方法(删除指标方法包括删除标签)
+                    LabelListDeleteReq labelListDeleteReq = new LabelListDeleteReq();
+                    labelListDeleteReq.setLabelType(labelCatalogTemp.getLabelType());  
+                    labelListDeleteReq.setSerialNo(labelCatalogTemp.getSerialNo());
+                    labelListServiceImpl.indexDelete(labelListDeleteReq);
+                }else {//删除该目录下的其他目录
+                    bomanager.deleteBusinessObject(labelCatalogTemp);                       
+                    bomanager.updateDB();
+                }                
+            }
         }
         else {
             throw new ALSException("EMS2010");
@@ -119,7 +132,7 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
     
     /**
      * 判断标签目录能否删除标签目录树图 
-     * 标签目录树图(若该目录下有已经生效的标签，则不能删除，返回false。若可以删除，返回true)
+     * 标签目录树图(若该目录下有已经生效的标签，则不能删除，返回true。若可以删除，返回false)
      * @param serialNo
      * @return isNotHaveStatusOk
      */
@@ -133,6 +146,5 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
             } 
         }
         return isHaveStatusOk;
-
     }
 }
