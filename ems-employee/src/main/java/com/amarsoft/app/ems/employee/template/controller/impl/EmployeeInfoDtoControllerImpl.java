@@ -16,7 +16,6 @@ import com.amarsoft.app.ems.employee.template.controller.EmployeeInfoDtoControll
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoSaveReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoStatusUpdateReq;
 import com.amarsoft.app.ems.employee.template.service.EmployeeInfoDtoService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -79,25 +78,5 @@ public class EmployeeInfoDtoControllerImpl implements EmployeeInfoDtoController 
         }
     }
 
-	@Override
-    @Transactional
-    //员工状态保存
-	public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoStatusSave(
-			@RequestBody @Valid RequestMessage<EmployeeInfoStatusUpdateReq> reqMsg) {
-		ResponseMessage<Object> rspMsg = null;
-        try {
-        	EmployeeInfoStatusUpdateReq request = reqMsg.getMessage();
-            employeeInfoDtoServiceImpl.employeeInfoDtoStatusSave(request);
-            rspMsg = new ResponseMessage<Object>();
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("员工状态保存："+ reqMsg.toString(), e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1007",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-	}
+
 }

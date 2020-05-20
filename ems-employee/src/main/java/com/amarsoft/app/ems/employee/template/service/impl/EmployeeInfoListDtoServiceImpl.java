@@ -34,6 +34,7 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.Employe
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoStatusUpdateReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.Filter;
@@ -110,6 +111,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             temp.setGraduatedSchool(bo.getString("GraduatedSchool"));
             temp.setMajor(bo.getString("Major"));
             temp.setHomeTown(bo.getString("HomeTown"));
+            temp.setEmployeePay(bo.getString("EmployeePay"));
             temp.setInputUserId(bo.getString("InputUserId"));
             temp.setInputTime(bo.getString("InputTime"));
             temp.setInputOrgId(bo.getString("InputOrgId"));
@@ -194,7 +196,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         ResponseEntity<ResponseMessage<UserRoleQueryRsp>> userRoleQuery = roleClient.userRoleQuery(reqMsg);
         List<UserAndRole> userRoles = userRoleQuery.getBody().getMessage().getUserRoles();
 
-        if (StringUtils.isEmpty(userRoles)) {//4.为空则说明没有权限
+        if (CollectionUtils.isEmpty(userRoles)) {//4.为空则说明没有权限
             throw new ALSException("EMS1008");
         }
         UserAndRole userAndRole = userRoles.get(0); //5.获取用户的最高权限（099、110、210）
@@ -309,6 +311,32 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         return rsp;
     }
     
+    /**
+     * 员工Info员工状态更新
+     * 
+     * @param
+     * @return
+     */
+    @Override
+    public void employeeInfoDtoStatusSave(@Valid EmployeeInfoStatusUpdateReq employeeInfoStatusUpdateReq) {
+        employeeInfoDtoStatusSaveAction(employeeInfoStatusUpdateReq);
+    }
+
+    @Transactional
+    public void employeeInfoDtoStatusSaveAction(EmployeeInfoDto employeeInfoDto) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        if (employeeInfoDto != null) {
+            //根据员工编号查询员工信息
+            EmployeeInfo employeeInfo = bomanager.keyLoadBusinessObject(EmployeeInfo.class,
+                    employeeInfoDto.getEmployeeNo());
+            
+            System.out.println(employeeInfo);
+            //更新员工状态
+            employeeInfo.setEmployeeStatus(employeeInfoDto.getEmployeeStatus());
+            bomanager.updateBusinessObject(employeeInfo);
+        }
+        bomanager.updateDB();
+    }
 
     @Override
     public void employeeInfoListDtoSave(@Valid EmployeeInfoListDtoSaveReq employeeInfoListDtoSaveReq) {

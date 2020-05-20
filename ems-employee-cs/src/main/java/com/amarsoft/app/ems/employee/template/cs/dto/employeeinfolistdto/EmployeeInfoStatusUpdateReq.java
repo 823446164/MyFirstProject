@@ -1,4 +1,13 @@
-package com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto;
+/*文件名：EmployeeInfoStatusUpdateReq
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：员工状态请求体
+ * 修改人：dxiao
+ * 修改时间：2020/05/20
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：新生成
+ */
+package com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto;
 
 import java.io.Serializable;
 
@@ -7,6 +16,7 @@ import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 
 import lombok.Getter;
 import lombok.Setter;
