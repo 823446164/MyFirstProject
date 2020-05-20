@@ -71,6 +71,10 @@ public class EmployeeRankApply extends BusinessObject {
     @Description("发起时间") 
     @Column(name = "beginTime",length=20) 
     private LocalDateTime beginTime;
+    
+    @Description("计划考核时间") 
+    @Column(name = "rankTime",length=20) 
+    private LocalDateTime rankTime;
       
     @Description("变更理由") 
     @Column(name = "changeReason",length=2000) 
@@ -112,5 +116,10 @@ public class EmployeeRankApply extends BusinessObject {
     public String getUpdateTime() {
         DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
         return updateTime.format(sdf);
+    }
+    
+    public String getRankTime() {
+        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        return rankTime.format(sdf);
     }
 }
