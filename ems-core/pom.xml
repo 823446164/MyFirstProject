@@ -8,4 +8,39 @@
   <artifactId>ems-core</artifactId>
   <name>ems-core</name>
   <description>员工管理公共工程</description>
+  
+  <dependencies>
+  	<dependency>
+            <groupId>com.amarsoft.a3.amps</groupId>
+            <artifactId>bpm-cs</artifactId>
+            <version>2.0.0.RELEASE</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/bpm-cs-2.0.0.RELEASE.jar</systemPath>
+    </dependency>
+    <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+         <groupId>com.amarsoft.a3.amps</groupId>
+         <artifactId>arpe</artifactId>
+         <version>${base.version}</version>
+     </dependency>
+     <dependency>
+         <groupId>com.amarsoft.a3.amps</groupId>
+         <artifactId>acs</artifactId>
+         <version>${base.version}</version>
+     </dependency>
+     <dependency>
+         <groupId>com.amarsoft.a3.amps</groupId>
+         <artifactId>mscr</artifactId>
+         <version>${base.version}</version>
+     </dependency>
+     <dependency>
+         <groupId>com.amarsoft.a3.amps</groupId>
+         <artifactId>avts</artifactId>
+         <version>${base.version}</version>
+         <optional>true</optional>
+     </dependency>
+  </dependencies>
 </project>
