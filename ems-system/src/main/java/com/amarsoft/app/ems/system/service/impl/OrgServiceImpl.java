@@ -1338,34 +1338,24 @@ public class OrgServiceImpl implements OrgService {
 
         String eNo = null;
         String eName = null;
-        if (req.getFilters() == null) {
-            OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
-            //查询部门员工
-            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",
-                orgInfo.getOrgId()+"%");  
-            //新建员工id的list
-            for(UserBelong oi : ubs) {
-                ids.add(oi.getUserId()); 
+        for (Filter filter : req.getFilters()) {// 获取前段传递的filter数组，遍历获取employeeNo,employeeName
+            if ("employeeNo".equals(filter.getName())) {
+                eNo = filter.getValue()[0];
             }
-        }else{
-            for (Filter filter : req.getFilters()) {//获取前段传递的filter数组，遍历获取employeeNo,employeeName
-                if ("employeeNo".equals(filter.getName())) {
-                    eNo = filter.getValue()[0];
-                }else if ("employeeName".equals(filter.getName())) {
-                    eName = filter.getValue()[0];
-                }
+            else if ("employeeName".equals(filter.getName())) {
+                eName = filter.getValue()[0];
             }
-            //模糊搜索 
-            String userId = StringUtils.isEmpty(eNo) ? "%" : eNo+"%";// 模糊查询用户编号
-            String userName = StringUtils.isEmpty(eName) ? "%" : eName+"%";// 模糊查询用户名字
-            //查询当前部门下指定员工的userId
-            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-                "select UB.userId as userId from UserBelong UB,UserInfo UI where userName like :userName and "
-                + " userId like :userId and UI.userId = UB.userId UB.orgId = :orgId ","orgId",req.getOrgId(),"userName", userName, "userId", userId
-                ).getBusinessObjects();
-            for (BusinessObject businessObject : businessObjects) {
-                ids.add(businessObject.getString("userId"));
-                }
+        }
+        // 模糊搜索
+        String userId = StringUtils.isEmpty(eNo) ? "%" : eNo + "%";// 模糊查询用户编号
+        String userName = StringUtils.isEmpty(eName) ? "%" : eName + "%";// 模糊查询用户名字
+        // 查询当前部门下指定员工的userId
+        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+            "select UB.userId as userId from UserBelong UB,UserInfo UI where userName like :userName and "
+                                                                                    + " userId like :userId and UI.userId = UB.userId UB.orgId = :orgId ",
+            "orgId", req.getOrgId(), "userName", userName, "userId", userId).getBusinessObjects();
+        for (BusinessObject businessObject : businessObjects) {
+            ids.add(businessObject.getString("userId"));
         }
         
         //根据ids调用获取员工List
