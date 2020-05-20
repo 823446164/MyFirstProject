@@ -1,5 +1,7 @@
 package com.amarsoft.app.ems.system.service;
 
+import javax.validation.Valid;
+
 import com.amarsoft.app.ems.system.cs.dto.addmenu.AddMenuReq;
 import com.amarsoft.app.ems.system.cs.dto.deletemenu.DeleteMenuReq;
 import com.amarsoft.app.ems.system.cs.dto.menuallquery.MenuAllQueryRsp;
@@ -11,6 +13,9 @@ import com.amarsoft.app.ems.system.cs.dto.menuquery.MenuQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.menutreequery.MenuTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.menutreequery.MenuTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updatemenu.UpdateMenuReq;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoSaveReq;
 
 /**
  * 菜单权限服务的接口
@@ -79,5 +84,17 @@ public interface MenuService {
      * @return
      */
     public MenuAllQueryRsp getMenuList();
-
+    /**
+     * 菜单详情Info保存
+     * @param request
+     * @return
+     */
+    public void sysMenuInfoDtoSave(SysMenuInfoDtoSaveReq sysMenuInfoDtoSaveReq);
+    /**
+     * 根据菜单编号查询此菜单下已、未配置用户
+     * @param request
+     * @return
+     */
+    public SysMenuInfoDtoQueryRsp queryRoleByMenuId(String id);
+    
 }
