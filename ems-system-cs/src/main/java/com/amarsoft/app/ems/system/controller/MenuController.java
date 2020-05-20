@@ -25,6 +25,9 @@ import com.amarsoft.app.ems.system.cs.dto.menuquery.MenuQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.menutreequery.MenuTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.menutreequery.MenuTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updatemenu.UpdateMenuReq;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoSaveReq;
 
 public interface MenuController {
     @PostMapping(value = "/menu/menuauth", name="菜单权限管理", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -45,4 +48,9 @@ public interface MenuController {
     public ResponseEntity<ResponseMessage<MenuIdQueryRsp>> menuIdQuery(@RequestBody @Valid RequestMessage<MenuIdQueryReq> reqMsg);
     @PostMapping(value = "/menu/getmenutree", name="查询菜单树图", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<MenuTreeQueryRsp>> menuTreeQuery(@RequestBody @Valid RequestMessage<MenuTreeQueryReq> req);
+    /**jcli2**/
+    @PostMapping(value = "/menu/infosave", name="菜单详情保存、已选择角色保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> sysMenuInfoDtoSave(@RequestBody @Valid RequestMessage<SysMenuInfoDtoSaveReq> reqMsg);
+    @PostMapping(value = "/menu/queryexistrole", name="根据菜单编号查询此菜单下已配置用户", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<SysMenuInfoDtoQueryRsp>> queryRoleByMenuId(@RequestBody @Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg);
 }
