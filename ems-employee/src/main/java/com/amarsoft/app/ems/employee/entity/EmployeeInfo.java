@@ -2,7 +2,6 @@
 package com.amarsoft.app.ems.employee.entity;
 
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -139,15 +138,15 @@ public class EmployeeInfo extends BusinessObject {
     @Description("员工现工资")
     @Column(name = "employeePay")
     @Digits(length = 24,scale = 2)
-    private BigDecimal employeePay;
+    private double employeePay;
     
-    public double getEmployeePay() {
-        return employeePay == null ? 0.00 : employeePay.doubleValue();
-    }
-    
-    public void setEmployeePay(double employeePay) {
-        this.employeePay = BigDecimal.valueOf(employeePay);
-    }
+//    public double getEmployeePay() {
+//        return employeePay == null ? 0.00 : employeePay.doubleValue();
+//    }
+//    
+//    public void setEmployeePay(double employeePay) {
+//        this.employeePay = BigDecimal.valueOf(employeePay);
+//    }
 
     public String getRntryTime() {
         DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateFormat.format);

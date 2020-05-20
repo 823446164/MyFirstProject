@@ -34,7 +34,6 @@ import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
 import com.amarsoft.app.ems.employee.entity.EmployeeRank;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDto;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoDeleteReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoSaveReq;
@@ -83,6 +82,7 @@ public class EmployeeRankListDtoServiceImpl implements EmployeeRankListDtoServic
             temp.setClassify(bo.getString("Classify"));
             temp.setGoalDate(bo.getString("GoalDate"));
             temp.setRank(bo.getString("Rank"));
+            temp.setRank(bo.getString("Direction"));
             temp.setRankVersion(bo.getString("RankVersion"));
             temp.setInputUserId(bo.getString("InputUserId"));
             temp.setInputTime(bo.getString("InputTime"));

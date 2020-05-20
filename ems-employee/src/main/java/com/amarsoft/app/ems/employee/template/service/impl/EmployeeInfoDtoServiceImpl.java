@@ -17,7 +17,6 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInf
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoSaveReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoStatusUpdateReq;
 import com.amarsoft.app.ems.employee.template.service.EmployeeInfoDtoService;
 import com.amarsoft.app.ems.system.cs.client.TeamClient;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
@@ -118,28 +117,5 @@ public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService {
 		bomanager.updateDB();
 	}
 
-	/**
-	 * 员工Info员工状态更新
-	 * 
-	 * @param
-	 * @return
-	 */
-	@Override
-	public void employeeInfoDtoStatusSave(@Valid EmployeeInfoStatusUpdateReq employeeInfoStatusUpdateReq) {
-		employeeInfoDtoStatusSaveAction(employeeInfoStatusUpdateReq);
-	}
 
-	@Transactional
-	public void employeeInfoDtoStatusSaveAction(EmployeeInfoDto employeeInfoDto) {
-		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-		if (employeeInfoDto != null) {
-			//根据员工编号查询员工信息
-			EmployeeInfo employeeInfo = bomanager.keyLoadBusinessObject(EmployeeInfo.class,
-					employeeInfoDto.getEmployeeNo());
-			//更新员工状态
-			employeeInfo.setEmployeeStatus(employeeInfoDto.getEmployeeStatus());
-			bomanager.updateBusinessObject(employeeInfo);
-		}
-		bomanager.updateDB();
-	}
 }
