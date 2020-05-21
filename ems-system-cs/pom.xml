@@ -21,6 +21,11 @@
             <artifactId>acsc</artifactId>
             <version>${base.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.amarsoft.app.ems</groupId>
+            <artifactId>ems-employee-cs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         
         <dependency>
             <groupId>com.amarsoft.app.ems</groupId>
