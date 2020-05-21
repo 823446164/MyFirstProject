@@ -15,6 +15,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.amps.arem.annotation.Description;
@@ -119,7 +120,10 @@ public class EmployeeRankApply extends BusinessObject {
     }
     
     public String getRankTime() {
-        DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+        if(!StringUtils.isEmpty(rankTime)) {
+             DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
         return rankTime.format(sdf);
+        }
+        return null;
     }
 }
