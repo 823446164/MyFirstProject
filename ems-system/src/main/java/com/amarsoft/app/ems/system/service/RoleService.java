@@ -1,5 +1,7 @@
 package com.amarsoft.app.ems.system.service;
 
+import javax.validation.Valid;
+
 import com.amarsoft.app.ems.system.cs.dto.addrole.AddRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.deleterole.DeleteRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.levelrolequery.LevelRoleQueryReq;
@@ -14,6 +16,11 @@ import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updaterole.UpdateRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoSaveReq;
+import com.amarsoft.app.ems.system.template.cs.dto.rolelistdto.RoleListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.rolelistdto.RoleListDtoQueryRsp;
 
 /**
  * 角色服务的接口
@@ -88,4 +95,33 @@ public interface RoleService {
      * @see
      */
     public UserRoleQueryRsp userRoleQuery(UserRoleQueryReq req);
+    
+    /**
+     * 
+     * Description: 角色信息List查询
+     * 1、…<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * @param roleListDtoQueryReq
+     * @return
+     * @see
+     */
+    public RoleListDtoQueryRsp roleListDtoQuery(@Valid RoleListDtoQueryReq roleListDtoQueryReq);
+    
+    /**
+     * 角色信息Info查询
+     * @param request
+     * @return
+     */
+    public RoleInfoDtoQueryRsp roleInfoDtoQuery(@Valid RoleInfoDtoQueryReq roleInfoDtoQueryReq);
+
+    /**
+     * 角色信息Info保存
+     * @param request
+     * @return
+     */
+    public void roleInfoDtoSave(@Valid RoleInfoDtoSaveReq roleInfoDtoSaveReq);
 }
