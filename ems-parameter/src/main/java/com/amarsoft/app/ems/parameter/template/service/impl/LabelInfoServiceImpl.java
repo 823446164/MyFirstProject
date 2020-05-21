@@ -406,19 +406,6 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         bomanager.updateDB();
     }
 
-//    /**
-//     * 标签或指标失效时需要校验是否被引用
-//     * 
-//     * @param bomanager
-//     * @param serialNo
-//     */
-//    @Transactional
-//    public List<RankStandardItems> isCited(BusinessObjectManager bomanager, String serialNo) {
-//        List<RankStandardItems> rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class, "labelNo=:serialNo", "serialNo",
-//            serialNo);
-//            return rankStandardItems;
-//    }
-
     /**
      * 标签目录新增判重 标签目录新增时判断名称是否重复
      * 

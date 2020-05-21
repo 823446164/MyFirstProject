@@ -6,15 +6,11 @@
 package com.amarsoft.app.ems.system.cs.dto.orgtreequery;
 
 import java.io.Serializable;
+import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.arem.annotation.Description;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import com.amarsoft.amps.arem.annotation.Description;
-import javax.validation.Valid;
-
-import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
-import java.util.List;
 
 @Getter
 @Setter
@@ -26,7 +22,4 @@ public class OrgTreeQueryReq implements Serializable{
     @Length(max=40)
     private String param;
     
-    @Description("树图搜索部门名称")
-    @Length(max=40)
-    private String orgName;
 }

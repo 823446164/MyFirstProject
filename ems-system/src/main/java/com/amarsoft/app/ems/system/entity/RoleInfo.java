@@ -136,5 +136,22 @@ public class RoleInfo extends BusinessObject {
         this.updateUserId = updateUserId;
     }
 
+	public LocalDateTime getInputTime() {
+		return inputTime;
+	}
+
+	public void setInputTime(LocalDateTime inputTime) {
+		this.inputTime = inputTime;
+	}
+
+	public LocalDateTime getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(LocalDateTime updateTime) {
+		this.updateTime = updateTime;
+	}
+    
+
 }
 

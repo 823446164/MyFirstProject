@@ -15,13 +15,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.validation.Valid;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import com.amarsoft.aecd.parameter.constant.ChildRankNo;
 import com.amarsoft.aecd.parameter.constant.ManaRankName;
 import com.amarsoft.aecd.parameter.constant.RankName;
@@ -38,7 +35,6 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildin
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoQueryRsq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoSaveReq;
 import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogInfoService;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -67,15 +63,19 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         RankStandardCatalogChildInfoQueryRsq rankInfo = new RankStandardCatalogChildInfoQueryRsq();
         RankStandardCatalog rankStandardCatalog = bomanager.loadBusinessObject(RankStandardCatalog.class, "serialNo",
             rankStandardCatalogChildInfoQueryReq.getSerialNo());
-        RankStandardCatalogChildInfo rankStandardCatalogInfo=new RankStandardCatalogChildInfo();
-        String rankStandard=rankStandardCatalogChildInfoQueryReq.getRankStandard();
-        List<Map<String,String>> rankList=new ArrayList<Map<String,String>>();
-        Map<String,String> map1=new HashMap<String, String>();
-        Map<String,String> map2=new HashMap<String, String>();
-        Map<String,String> map3=new HashMap<String, String>();
-        //TODO xphe 优化代码－改为code_library传list
-        if(!StringUtils.isEmpty(rankStandard)) {
-            if(RankStandard._1.name.equals(rankStandard)) {
+        BusinessObjectAggregate<BusinessObject> count = bomanager.selectBusinessObjectsBySql(
+            "select count(1) as cnt from RankStandardCatalog where parentRankNo=:serialNo", "serialNo",
+            rankStandardCatalogChildInfoQueryReq.getSerialNo());
+        int childCount = count.getBusinessObjects().get(0).getInt("cnt");
+        RankStandardCatalogChildInfo rankStandardCatalogInfo = new RankStandardCatalogChildInfo();
+        String rankStandard = rankStandardCatalogChildInfoQueryReq.getRankStandard();
+        List<Map<String, String>> rankList = new ArrayList<Map<String, String>>();
+        Map<String, String> map1 = new HashMap<String, String>();
+        Map<String, String> map2 = new HashMap<String, String>();
+        Map<String, String> map3 = new HashMap<String, String>();
+        // TODO xphe 优化代码－改为code_library传list
+        if (!StringUtils.isEmpty(rankStandard)) {
+            if (RankStandard._1.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B1_1.id);
                 map1.put("text", ChildRankNo.B1_1.name);
                 rankList.add(map1);
@@ -86,7 +86,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 map3.put("text", ChildRankNo.B1_3.name);
                 rankList.add(map3);
             }
-            if(RankStandard._2.name.equals(rankStandard)) {
+            if (RankStandard._2.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B2_1.id);
                 map1.put("text", ChildRankNo.B2_1.name);
                 rankList.add(map1);
@@ -97,7 +97,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 map3.put("text", ChildRankNo.B2_3.name);
                 rankList.add(map3);
             }
-            if(RankStandard._3.name.equals(rankStandard)) {
+            if (RankStandard._3.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B3_1.id);
                 map1.put("text", ChildRankNo.B3_1.name);
                 rankList.add(map1);
@@ -108,7 +108,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 map3.put("text", ChildRankNo.B3_3.name);
                 rankList.add(map3);
             }
-            if(RankStandard._4.name.equals(rankStandard)) {
+            if (RankStandard._4.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B4_1.id);
                 map1.put("text", ChildRankNo.B4_1.name);
                 rankList.add(map1);
@@ -119,7 +119,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 map3.put("text", ChildRankNo.B4_3.name);
                 rankList.add(map3);
             }
-            if(RankStandard._5.name.equals(rankStandard)) {
+            if (RankStandard._5.name.equals(rankStandard)) {
                 map1.put("value", ChildRankNo.B5_1.id);
                 map1.put("text", ChildRankNo.B5_1.name);
                 rankList.add(map1);
@@ -135,8 +135,13 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             rankStandardCatalogInfo.setSerialNo(rankStandardCatalogChildInfoQueryReq.getSerialNo());
             rankStandardCatalogInfo.setBelongTeam(rankStandardCatalog.getBelongTeam());
             rankStandardCatalogInfo.setRankType(rankStandardCatalog.getRankType());
-            rankStandardCatalogInfo.setRankStandard(rankStandardCatalog.getRankStandard());
-            rankStandardCatalogInfo.setRankName(rankStandardCatalog.getRankName());
+            rankStandardCatalogInfo.setRankStandard(RankStandard.getNameById(rankStandardCatalog.getRankStandard()));
+            if ("1".equals(rankStandardCatalog.getRankType())) {
+                rankStandardCatalogInfo.setRankName(RankName.getNameById(rankStandardCatalog.getRankName()));
+            }
+            else {
+                rankStandardCatalogInfo.setRankName(ManaRankName.getNameById(rankStandardCatalog.getRankName()));
+            }
             rankStandardCatalogInfo.setChildRankNo(rankStandardCatalog.getChildRankNo());
             rankStandardCatalogInfo.setRankDescribe(rankStandardCatalog.getRankDescribe());
             rankStandardCatalogInfo.setResponeDescribe(rankStandardCatalog.getResponeDescribe());
@@ -144,8 +149,10 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             rankStandardCatalogInfo.setAbility(rankStandardCatalog.getAbility());
             rankInfo.setInfo(rankStandardCatalogInfo);
             rankInfo.setList(rankList);
+            rankInfo.setChildCount(childCount);
             return rankInfo;
-        }else {
+        }
+        else {
             rankInfo.setInfo(rankStandardCatalogInfo);
             rankInfo.setList(rankList);
             return rankInfo;
@@ -166,38 +173,43 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         // 定义业务对象管理容器
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if (rankStandardCatalogChildInfoSaveReq != null) {
-            //为界面传过来的职级枚举类转换id
-            String rankNamaId=null;
-            if(StringUtils.isEmpty(RankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName()))) {
-                rankNamaId=ManaRankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName());
-            }else {
-                rankNamaId=RankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName());
+            // 为界面传过来的职级枚举类转换id
+            String rankNamaId = null;
+            if (StringUtils.isEmpty(RankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName()))) {
+                rankNamaId = ManaRankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName());
+            }
+            else {
+                rankNamaId = RankName.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankName());
             }
             // 根据主键获取实体类信息
             RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class,
                 rankStandardCatalogChildInfoSaveReq.getSerialNo());
             // 空判断
             if (rankStandardCatalog == null) {
+                // 新增职等/职级
+                rankStandardCatalog = new RankStandardCatalog();
+                rankStandardCatalog.generateKey();
                 String childRankNo = rankStandardCatalogChildInfoSaveReq.getChildRankNo();
                 String rankStandard = rankStandardCatalogChildInfoSaveReq.getRankStandard();
                 String rankName = rankStandardCatalogChildInfoSaveReq.getRankName();
                 if (!StringUtils.isEmpty(childRankNo)) {
-                    // 职级保存校验－重复性校验
-                    if (childSaveValidate(childRankNo, rankStandard) == false) {
-                        throw new ALSException("EMS2002", childRankNo, rankStandard);
+                    // 子职级保存校验－重复性校验
+                    if (childSaveValidate(childRankNo, RankStandard.getIdByName(rankStandard),
+                        rankStandardCatalogChildInfoSaveReq.getParentRankNo()) == false) {
+                        throw new ALSException("EMS2002", ChildRankNo.getNameById(childRankNo), rankStandard);
                     }
+                    rankStandardCatalog.setRankStandard(RankStandard.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankStandard()));
                 }
                 else {
                     // 职等保存校验－重复性校验
-                    if (saveValidate(rankName, rankStandard) == false) {
-                        throw new ALSException("EMS2001", rankName, rankStandard);
+                    if (saveValidate(rankNamaId, rankStandard,
+                        rankStandardCatalogChildInfoSaveReq.getBelongTeam(), rankStandardCatalogChildInfoSaveReq.getRankType()) == false) {
+                        throw new ALSException("EMS2001", rankName, RankStandard.getNameById((rankStandard)));
                     }
+                    rankStandardCatalog.setRankStandard(rankStandardCatalogChildInfoSaveReq.getRankStandard());
                 }
-                rankStandardCatalog = new RankStandardCatalog();
-                rankStandardCatalog.generateKey();
                 rankStandardCatalog.setInputOrgId(GlobalShareContextHolder.getOrgId());
                 rankStandardCatalog.setParentRankNo(rankStandardCatalogChildInfoSaveReq.getParentRankNo());
-                rankStandardCatalog.setRankStandard(RankStandard.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankStandard()));
                 rankStandardCatalog.setRankName(rankNamaId);
                 rankStandardCatalog.setRankDescribe(rankStandardCatalogChildInfoSaveReq.getRankDescribe());
                 rankStandardCatalog.setAbilityDescribe(rankStandardCatalogChildInfoSaveReq.getAbilityDescribe());
@@ -208,13 +220,33 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
                 rankStandardCatalog.setRankType(rankStandardCatalogChildInfoSaveReq.getRankType());
             }
             else {
+                // 更新下的职等/职级信息
                 rankStandardCatalog.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
-                rankStandardCatalog.setRankStandard(RankStandard.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankStandard()));
+                if (!StringUtils.isEmpty(rankStandardCatalogChildInfoSaveReq.getChildRankNo())) {
+                    // 子职级保存校验－重复性校验
+                    if (childSaveValidate(rankStandardCatalogChildInfoSaveReq.getChildRankNo(),
+                        RankStandard.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankStandard()),
+                        rankStandardCatalogChildInfoSaveReq.getParentRankNo()) == false) {
+                        throw new ALSException("EMS2002", ChildRankNo.getNameById(rankStandardCatalogChildInfoSaveReq.getChildRankNo()),
+                            rankStandardCatalogChildInfoSaveReq.getRankStandard());
+                    }
+                    // 子职级下的更新
+                    rankStandardCatalog.setRankStandard(RankStandard.getIdByName(rankStandardCatalogChildInfoSaveReq.getRankStandard()));
+                }
+                else {
+                    // 职等保存校验－重复性校验
+                    if (saveValidate(rankNamaId, rankStandardCatalogChildInfoSaveReq.getRankStandard(),
+                        rankStandardCatalogChildInfoSaveReq.getBelongTeam(), rankStandardCatalogChildInfoSaveReq.getRankType()) == false) {
+                        throw new ALSException("EMS2001", rankStandardCatalogChildInfoSaveReq.getRankName(),
+                            RankStandard.getNameById(rankStandardCatalogChildInfoSaveReq.getRankStandard()));
+                    }
+                    rankStandardCatalog.setRankStandard(rankStandardCatalogChildInfoSaveReq.getRankStandard());
+                }
                 rankStandardCatalog.setRankName(rankNamaId);
                 rankStandardCatalog.setRankDescribe(rankStandardCatalogChildInfoSaveReq.getRankDescribe());
                 rankStandardCatalog.setAbilityDescribe(rankStandardCatalogChildInfoSaveReq.getAbilityDescribe());
                 rankStandardCatalog.setResponeDescribe(rankStandardCatalogChildInfoSaveReq.getResponeDescribe());
-                rankStandardCatalog.setChildRankNo(ChildRankNo.getIdByName(rankStandardCatalogChildInfoSaveReq.getChildRankNo()));
+                rankStandardCatalog.setChildRankNo(rankStandardCatalogChildInfoSaveReq.getChildRankNo());
                 rankStandardCatalog.setAbility(rankStandardCatalogChildInfoSaveReq.getAbility());
             }
             bomanager.updateBusinessObject(rankStandardCatalog);
@@ -237,10 +269,12 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
      * @return　boolean
      * @see
      */
-    public boolean saveValidate(String rankName, String rankStandard) {
+    public boolean saveValidate(String rankName, String rankStandard, String belongTeam, String rankType) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        List<RankStandardCatalog> rankStandardCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
-            "rankName=:rankName and rankStandard=:rankStandard", "rankName", rankName, "rankStandard", rankStandard);
+        List<RankStandardCatalog> rankStandardCatalogs = new ArrayList<RankStandardCatalog>();
+        rankStandardCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
+            "rankName=:rankName and rankStandard=:rankStandard and belongTeam=:belongTeam and rankType=:rankType", "rankName", rankName,
+            "rankStandard", rankStandard, "belongTeam", belongTeam, "rankType", rankType);
         if (rankStandardCatalogs.isEmpty()) {
             return true;
         }
@@ -259,10 +293,12 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
      * @return　boolean
      * @see
      */
-    public boolean childSaveValidate(String childRankNo, String rankStandard) {
+    public boolean childSaveValidate(String childRankNo, String rankStandard, String parentNo) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        List<RankStandardCatalog> rankStandardCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
-            "childRankNo=:childRankNo and rankStandard=:rankStandard", "childRankNo", childRankNo, "rankStandard", rankStandard);
+        List<RankStandardCatalog> rankStandardCatalogs = new ArrayList<RankStandardCatalog>();
+        rankStandardCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
+            "childRankNo=:childRankNo and rankStandard=:rankStandard and parentRankNo=:parentNo", "childRankNo", childRankNo,
+            "rankStandard", rankStandard, "parentNo", parentNo);
         if (rankStandardCatalogs.isEmpty()) {
             return true;
         }
