@@ -32,6 +32,11 @@ import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.RoleService;
+import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoSaveReq;
+import com.amarsoft.app.ems.system.template.cs.dto.rolelistdto.RoleListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.rolelistdto.RoleListDtoQueryRsp;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -198,6 +203,84 @@ public class RoleControllerImpl implements RoleController {
             //TODO
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<UserRoleQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * 角色信息List查询
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<RoleListDtoQueryRsp>> roleListDtoQuery(@RequestBody @Valid RequestMessage<RoleListDtoQueryReq> reqMsg){
+        ResponseMessage<RoleListDtoQueryRsp> rspMsg = null;
+        try {
+            RoleListDtoQueryReq request = reqMsg.getMessage();
+            
+            RoleListDtoQueryRsp response = roleService.roleListDtoQuery(request);
+            rspMsg = new ResponseMessage<RoleListDtoQueryRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<RoleListDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("角色信息List查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<RoleListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * 角色信息Info查询
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<RoleInfoDtoQueryRsp>> roleInfoDtoQuery(@RequestBody @Valid RequestMessage<RoleInfoDtoQueryReq> reqMsg){
+        ResponseMessage<RoleInfoDtoQueryRsp> rspMsg = null;
+        try {
+            RoleInfoDtoQueryReq request = reqMsg.getMessage();
+            
+            RoleInfoDtoQueryRsp response = roleService.roleInfoDtoQuery(request);
+            rspMsg = new ResponseMessage<RoleInfoDtoQueryRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<RoleInfoDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("角色信息Info查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<RoleInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 角色信息Info保存
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> roleInfoDtoSave(@RequestBody @Valid RequestMessage<RoleInfoDtoSaveReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            RoleInfoDtoSaveReq request = reqMsg.getMessage();
+            
+            roleService.roleInfoDtoSave(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("角色信息Info保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
