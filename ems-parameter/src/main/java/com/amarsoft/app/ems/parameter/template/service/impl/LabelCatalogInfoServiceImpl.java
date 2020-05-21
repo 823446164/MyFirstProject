@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.amarsoft.aecd.employee.constant.ParentNo;
 import com.amarsoft.aecd.parameter.constant.LabelType;
+import com.amarsoft.aecd.system.constant.LabelStatus;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
@@ -61,6 +62,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
         if (labelCatalog != null) {
             LabelCatalogInfoQueryRsp labelCatalogInfo = new LabelCatalogInfoQueryRsp();
             labelCatalogInfo.setSerialNo(labelCatalog.getSerialNo());
+            labelCatalogInfo.setLabelType(labelCatalog.getLabelType());
             labelCatalogInfo.setLabelName(labelCatalog.getLabelName());
             labelCatalogInfo.setParentNo(labelCatalog.getParentNo());
             labelCatalogInfo.setCatalogRemark(labelCatalog.getCatalogRemark());
@@ -175,6 +177,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
                             lc = new LabelCatalog();
                             lc.generateKey();
                             lc.setLabelType(labelCatalogInfo.getLabelType());
+                            lc.setLabelStatus(LabelStatus.New.id);
                             lc.setInputTime(LocalDateTime.now());
                             lc.setInputOrgId(GlobalShareContextHolder.getOrgId());
                             lc.setInputUserId(GlobalShareContextHolder.getUserId());
@@ -190,11 +193,11 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
                     }
                     // 如果未抛过异常，则说明没有问题
                     if (true == a) {
-                        BeanUtils.copyProperties(labelCatalogInfo, lc);
+                        lc.setLabelName(labelCatalogInfo.getLabelName());
+                        lc.setCatalogRemark(labelCatalogInfo.getCatalogRemark());
                         lc.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
                         lc.setUpdateTime(LocalDateTime.now());
                         lc.setUpdateUserId(GlobalShareContextHolder.getUserId());
-                        lc.setParentNo(labelCatalogInfo.getParentNo());
                         lc.setParentNo(labelCatalogInfo.getParentNo());
                         lc.setRootNo(parentLc.getRootNo());
                         bomanager.updateBusinessObject(lc);

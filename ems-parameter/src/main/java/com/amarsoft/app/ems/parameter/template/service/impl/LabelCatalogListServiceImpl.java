@@ -95,8 +95,10 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
                 isNotHaveStatusOk=false;
             } 
         }
+        if(enabledIndexs.length()>0) {
         //得到该目录下所有生效的指标
         enabledIndexs = enabledIndexs.substring(0, enabledIndexs.length()-1);
+        }
         //isNotHaveStatusOk 为true则说明有生效标签，不能删除   false为没有生效标签，可以删除
         if (isNotHaveStatusOk) {
             //获得目录实体类删除
