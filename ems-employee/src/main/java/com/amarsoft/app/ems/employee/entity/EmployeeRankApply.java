@@ -76,6 +76,10 @@ public class EmployeeRankApply extends BusinessObject {
     @Column(name = "rankTime",length=20) 
     private LocalDateTime rankTime;
       
+    @Description("审批状态") 
+    @Column(name = "approveStatus",length=40) 
+    private String approveStatus;
+    
     @Description("变更理由") 
     @Column(name = "changeReason",length=2000) 
     private String changeReason;
