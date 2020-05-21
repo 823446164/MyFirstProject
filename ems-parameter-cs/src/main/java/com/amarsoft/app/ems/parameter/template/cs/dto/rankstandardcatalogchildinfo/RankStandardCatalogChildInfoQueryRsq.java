@@ -20,7 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * 〈子职级info界面查询响应〉
+ * 〈职等/子职级info界面查询响应〉
  * @author xphe
  * @version 2020年5月9日
  * @see RankStandardCatalogChildInfoQueryRsq
@@ -31,6 +31,10 @@ import lombok.ToString;
 @ToString
 public class RankStandardCatalogChildInfoQueryRsq  implements Serializable {
     private static final long serialVersionUID = 1L;
+    //职级info信息
     private RankStandardCatalogChildInfo info;
+    //不同职等下的对应子职级枚举类list
     private List<Map<String,String>> list;
+    //子职级个数
+    private int childCount;
 }
