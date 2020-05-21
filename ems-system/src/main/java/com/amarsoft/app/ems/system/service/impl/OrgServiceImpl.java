@@ -74,7 +74,6 @@ import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQu
 import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
 import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
-import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSearchReq;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.oneleveldeptdto.OneLevelDeptDtoSaveReq;
@@ -1285,16 +1284,41 @@ public class OrgServiceImpl implements OrgService {
     public EmployeeInfoListDtoQueryRsp employeeInfoListDtoQuery(EmployeeInfoListDtoQueryReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
-
-        OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
-        //查询部门员工
-        List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",
-            orgInfo.getOrgId()+"%");  
         //新建员工id的list
         List<String> ids = new ArrayList<String>();
-        for(UserBelong oi : ubs) {
-            ids.add(oi.getUserId()); 
+        
+        if (CollectionUtils.isEmpty(req.getFilters())) {
+            OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
+            //查询部门员工
+            List<UserBelong> ubs = bomanager.loadBusinessObjects(UserBelong.class, "orgId like :orgId", "orgId",
+                orgInfo.getOrgId()+"%");  
+            for(UserBelong oi : ubs) {
+                ids.add(oi.getUserId()); 
+            }
+        }else {
+            String eNo = null;
+            String eName = null;
+            for (Filter filter : req.getFilters()) {// 获取前段传递的filter数组，遍历获取employeeNo,employeeName
+                if ("employeeNo".equals(filter.getName())) {
+                    eNo = filter.getValue()[0];
+                }else if ("employeeName".equals(filter.getName())) {
+                    eName = filter.getValue()[0];
+                }
+            }
+            // 模糊搜索
+            String userId = StringUtils.isEmpty(eNo) ? "%" : eNo + "%";// 模糊查询用户编号
+            String userName = StringUtils.isEmpty(eName) ? "%" : eName + "%";// 模糊查询用户名字
+            // 查询当前部门下指定员工的userId
+            List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
+                "select UB.userId as userId from UserBelong UB,UserInfo UI where UI.userName like :userName and "
+                + " UI.userId like :userId and UI.userId = UB.userId and UB.orgId = :orgId ",
+                "orgId", req.getOrgId(), "userName", userName, "userId", userId).getBusinessObjects();
+            for (BusinessObject businessObject : businessObjects) {
+                ids.add(businessObject.getString("userId"));
+            }
         }
+
+        
         //给id的list，返回员工对象List
         //根据返回list循环 新建dto对象　赋值
         EmployeeListByEmplNoReq  elbNoReq = new EmployeeListByEmplNoReq();
@@ -1304,67 +1328,6 @@ public class OrgServiceImpl implements OrgService {
         List<EmployeeInfoDto> employeeInfoDtos = response.getMessage().getEmployeeInfoList();
         EmployeeInfoListDto employeeInfoListDto = null;
         for (EmployeeInfoDto employeeInfoDto : employeeInfoDtos) {
-            employeeInfoListDto = new EmployeeInfoListDto();
-            employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
-            employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
-            employeeInfoListDto.setEmployeeNo(employeeInfoDto.getEmployeeNo());
-            employeeInfoListDto.setEmployeeRank(employeeInfoDto.getNowRank());
-            employeeInfoListDto.setRntryTime(employeeInfoDto.getRntryTime());
-            employeeInfoListDto.setSex(employeeInfoDto.getSex());
-            //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
-            Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
-            String teamName = map.get("teamName");
-            String orgName = map.get("orgName");
-            employeeInfoListDto.setTeamName(teamName);
-            employeeInfoListDto.setOrgName(orgName);
-            employeeInfoListDtos.add(employeeInfoListDto);
-        }
-        rsp.setTotalCount(employeeInfoListDtos.size());
-        rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
-        return rsp;
-    }
-
-    /**
-     * Description: 搜索二级部门员工List
-     * @param req
-     * @return  rsp
-     * @see
-     */
-    @Override
-    public EmployeeInfoListDtoQueryRsp employeeInfoListDtoSearch(EmployeeInfoListDtoSearchReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
-        List<String> ids = new ArrayList<String>();
-
-        String eNo = null;
-        String eName = null;
-        for (Filter filter : req.getFilters()) {// 获取前段传递的filter数组，遍历获取employeeNo,employeeName
-            if ("employeeNo".equals(filter.getName())) {
-                eNo = filter.getValue()[0];
-            }
-            else if ("employeeName".equals(filter.getName())) {
-                eName = filter.getValue()[0];
-            }
-        }
-        // 模糊搜索
-        String userId = StringUtils.isEmpty(eNo) ? "%" : eNo + "%";// 模糊查询用户编号
-        String userName = StringUtils.isEmpty(eName) ? "%" : eName + "%";// 模糊查询用户名字
-        // 查询当前部门下指定员工的userId
-        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-            "select UB.userId as userId from UserBelong UB,UserInfo UI where userName like :userName and "
-                                                                                    + " userId like :userId and UI.userId = UB.userId UB.orgId = :orgId ",
-            "orgId", req.getOrgId(), "userName", userName, "userId", userId).getBusinessObjects();
-        for (BusinessObject businessObject : businessObjects) {
-            ids.add(businessObject.getString("userId"));
-        }
-        
-        //根据ids调用获取员工List
-        EmployeeListByEmplNoReq  elbNoReq = new EmployeeListByEmplNoReq();
-        ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
-        List<EmployeeInfoListDto> employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
-        List<EmployeeInfoDto> list = response.getMessage().getEmployeeInfoList();
-        EmployeeInfoListDto employeeInfoListDto = null;
-        for (EmployeeInfoDto employeeInfoDto : list) {
             employeeInfoListDto = new EmployeeInfoListDto();
             employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
             employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
