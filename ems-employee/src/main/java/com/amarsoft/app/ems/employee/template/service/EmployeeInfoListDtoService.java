@@ -1,17 +1,19 @@
+
 package com.amarsoft.app.ems.employee.template.service;
 
 import javax.validation.Valid;
 
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoDeleteReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoStatusUpdateReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoDeleteReq;
 
 /**
  * 员工信息ListService接口
@@ -52,5 +54,12 @@ public interface EmployeeInfoListDtoService {
      * @see
      */
     public EmployeeListByEmplNoRsp employeeListByEmployeeNo(@RequestBody @Valid EmployeeListByEmplNoReq req);
+
+    /**
+     * 员工状态置为离职
+     * @param request
+     * @return
+     */
+    public void employeeInfoDtoStatusSave(@Valid EmployeeInfoStatusUpdateReq EmployeeInfoStatusUpdateReq);
 
 }

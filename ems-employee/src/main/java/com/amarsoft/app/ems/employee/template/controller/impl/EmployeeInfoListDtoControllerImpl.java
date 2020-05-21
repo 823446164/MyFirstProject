@@ -18,6 +18,7 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.Employe
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfolistdto.EmployeeInfoStatusUpdateReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.EmployeeListByUserQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
@@ -165,4 +166,26 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
             return new ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }    
+    
+    @Override
+    @Transactional
+    //员工状态保存
+    public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoStatusSave(
+            @RequestBody @Valid RequestMessage<EmployeeInfoStatusUpdateReq> reqMsg) {
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            EmployeeInfoStatusUpdateReq request = reqMsg.getMessage();
+            employeeInfoListDtoServiceImpl.employeeInfoDtoStatusSave(request);
+            rspMsg = new ResponseMessage<Object>();
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("员工状态保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1007",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

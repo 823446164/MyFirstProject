@@ -3,16 +3,20 @@ package com.amarsoft.app.ems.system.service.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import com.amarsoft.aecd.system.constant.ChangeEventType;
 import com.amarsoft.aecd.system.constant.OrgStatus;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
@@ -33,7 +37,9 @@ import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDto;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
 import com.amarsoft.app.ems.system.entity.ChangeEvent;
+import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
+import com.amarsoft.app.ems.system.entity.UserTeam;
 import com.amarsoft.app.ems.system.service.TeamListDtoService;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
 
@@ -191,45 +197,49 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
     }
 
     /**
-     * 删除团队信息
-     * 
-     * @param request
-     * @return
+     * Description: 删除团队<br>
+     * 1、删除团队和关联表信息<br>
+     * 2、增加变更记录表信息<br>
+     * @param DeleteInfoDtoQueryReq
+     * 修改人:xszhou
+     * @see
      */
     @Transactional
     @Override
     public void teamListDtoDelete(@Valid DeleteInfoDtoQueryReq req) {
-    	//TODO  未完成删除团队操作
+        //获取全局变量
+    	String userId = GlobalShareContextHolder.getUserId();
+    	String orgId = GlobalShareContextHolder.getOrgId();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-       
+        //1.查询需要删除的团队信息
+        TeamInfo delTeam = bomanager.keyLoadBusinessObject(TeamInfo.class, req.getObjectNo());
         ChangeEvent ch = new ChangeEvent();
-        // 填写变更理由
+        //2.填写变更理由表信息
         ch.generateKey();
         ch.setObjectNo(req.getObjectNo());
         ch.setObjectType(ChangeEventType.Delete.id);
-        ch.setChangeContext("删除团队信息:" + req.getObjectNo());
-        ch.setInputDate(LocalDateTime.now());
+        ch.setChangeContext("删除团队:" + delTeam.getTeamName());
+        ch.setInputUserId(userId);
+        ch.setInputOrgId(orgId);    
         ch.setOccurDate(LocalDateTime.now());
         ch.setRemark(req.getRemark());
-    
-        List<BusinessObject> bos= bomanager.selectBusinessObjectsBySql("select  UT.userId as userId,TI.status as status ,  TI.teamId from  TeamInfo TI,  UserTeam UT   where  TI.teamId=UT.teamId and teamId =:objectNO","objectNO" ,req.getObjectNo()).getBusinessObjects();
-        if ( bos  == null) {
-            throw new ALSException("901007");
-        }
-        if(!CollectionUtils.isEmpty(bos)) {
-        	for(BusinessObject bo :bos) {
-        		  // 团队下存员工
-        		if(!StringUtils.isEmpty(bo.getString("userId"))) {
-        			 throw new ALSException("EMS6008");
-        		}
-				/*
-				 * //停用的状态不予删除 if(!StringUtils.isEmpty(OrgStatus.Disabled.id)) { throw new
-				 * ALSException("EMS6008"); }
-				 */
-        		 bomanager.deleteBusinessObject(bo);
-        	}
-        	
-        	
+
+        //3.根据传入参数确认团队下员工信息
+        List<UserTeam> userTeams = bomanager.loadBusinessObjects(UserTeam.class, "teamId=:teamId","teamId",req.getObjectNo());
+        //4.查询团队对应的部门Id
+        OrgTeam orgTeam = bomanager.loadBusinessObject(OrgTeam.class, "teamId",req.getObjectNo());
+        
+        if (!OrgStatus.Disabled.id.equals(delTeam.getStatus())) {//5.若团队不为停用状态，不许操作
+            throw new ALSException("EMS6030");
+        }else if(!CollectionUtils.isEmpty(userTeams)) {//6.若团队下有员工，不许删除
+            throw new ALSException("EMS6032");
+        }else if(!StringUtils.isEmpty(delTeam.getRoleA())) {//7.若团队有负责人，不许删除
+            throw new ALSException("EMS6031");
+        }else {//8.可删除校验成功,执行删除操作
+            bomanager.deleteBusinessObject(delTeam);
+            if (!ObjectUtils.isEmpty(orgTeam)) {
+                bomanager.deleteObjectBySql(OrgTeam.class, "teamId=:teamId and orgId=:orgId", "teamId",delTeam.getTeamId(),"orgId",orgTeam.getOrgId());
+            }
         }
        
         bomanager.updateBusinessObject(ch);

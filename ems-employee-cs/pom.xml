@@ -34,7 +34,6 @@
             <version>${base.version}</version>
             <optional>true</optional>
         </dependency>
-        
         <dependency>
             <groupId>com.amarsoft.a3.amps</groupId>
             <artifactId>arpe</artifactId>

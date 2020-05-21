@@ -1,5 +1,6 @@
 package com.amarsoft.app.ems.system.entity;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,13 +15,19 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.amarsoft.amps.acsc.annotation.Enum;
+import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.aecd.system.constant.SystemStatus;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
+
+import lombok.Getter;
+import lombok.Setter;
 /**
  * 菜单信息
  */
 @Entity
+@Getter
+@Setter
 @Description("菜单信息表")
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "SYS_MENU_INFO")
@@ -93,125 +100,13 @@ public class MenuInfo extends BusinessObject {
     @LastModifiedDate
     private LocalDateTime updateTime;
 
-    public String getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(String menuId) {
-        this.menuId = menuId;
-    }
-
-    public String getSortNo() {
-        return sortNo;
-    }
-
-    public void setSortNo(String sortNo) {
-        this.sortNo = sortNo;
-    }
-
-    public String getMenuName() {
-        return menuName;
-    }
-
-    public void setMenuName(String menuName) {
-        this.menuName = menuName;
-    }
-
-    public String getMenuEnName() {
-        return menuEnName;
-    }
-
-    public void setMenuEnName(String menuEnName) {
-        this.menuEnName = menuEnName;
-    }
-
-    public String getMenuTwName() {
-        return menuTwName;
-    }
-
-    public void setMenuTwName(String menuTwName) {
-        this.menuTwName = menuTwName;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getUrlParam() {
-        return urlParam;
-    }
-
-    public void setUrlParam(String urlParam) {
-        this.urlParam = urlParam;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-
-    public String getMenuAuth() {
-        return menuAuth;
-    }
-
-    public void setMenuAuth(String menuAuth) {
-        this.menuAuth = menuAuth;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getInputUserId() {
-        return inputUserId;
-    }
-
-    public void setInputUserId(String inputUserId) {
-        this.inputUserId = inputUserId;
-    }
-
-    public String getUpdateUserId() {
-        return updateUserId;
-    }
-
-    public void setUpdateUserId(String updateUserId) {
-        this.updateUserId = updateUserId;
-    }
-
-    public LocalDateTime getInputTime() {
-        return inputTime;
-    }
-
-    public void setInputTime(LocalDateTime inputTime) {
-        this.inputTime = inputTime;
-    }
-
-    public LocalDateTime getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(LocalDateTime updateTime) {
-        this.updateTime = updateTime;
+    public String getInputTime() {
+    	if(inputTime!=null){
+    		DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+    		return inputTime.format(sdf);    		
+    	}else {
+    		return "";
+    	}
     }
     
 }

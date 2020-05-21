@@ -12,7 +12,6 @@ import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDtoSaveReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoStatusUpdateReq;
 
 /**
  * 员工信息InfoController接口
@@ -24,7 +23,5 @@ public interface EmployeeInfoDtoController {
 
     @PostMapping(value = "/employeeinfodto/save", name="员工信息Info保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoSave(@RequestBody @Valid RequestMessage<EmployeeInfoDtoSaveReq> reqMsg);
-    
-    @PostMapping(value = "/employeeinfodto/saveStatus", name="员工状态保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoStatusSave(@RequestBody @Valid RequestMessage<EmployeeInfoStatusUpdateReq> reqMsg);
+   
 }

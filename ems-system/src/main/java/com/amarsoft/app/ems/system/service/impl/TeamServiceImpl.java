@@ -389,33 +389,39 @@ public class TeamServiceImpl implements TeamService {
     }
     /**
      * Description: 删除团队信息<br>
-     *<br>
+     *@param DeleteTeamReq(teamId)
      * ${tags}
      * @see
      */
     @Override
-    public DeleteTeamRsp deleteTeam(DeleteTeamReq req) {
+    public DeleteTeamRsp deleteTeam(@RequestBody @Valid DeleteTeamReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo deleteTeam = bomanager.keyLoadBusinessObject(TeamInfo.class, req.getTeamId());
-        BusinessObjectAggregate<BusinessObject>  userTeamBo= bomanager.selectBusinessObjectsBySql("select UT.userId as userId,TI.status as status from TeamInfo TI,UserTeam UT where"
-            + " TI.teamId=UT.teamId and UT.teamId =:teamId", "teamId",req.getTeamId());
-        List<BusinessObject> businessObjects = userTeamBo.getBusinessObjects();
-        DeleteTeamRsp deleteTeamRsp =new   DeleteTeamRsp ();
-        if(businessObjects!=null&&businessObjects.size()>0) {
+        TeamInfo delTeam = bomanager.keyLoadBusinessObject(TeamInfo.class, req.getTeamId());
+        //1.根据传入参数确认团队下员工信息
+        List<UserTeam> userTeams = bomanager.loadBusinessObjects(UserTeam.class, "teamId=:teamId","teamId",req.getTeamId());
+        DeleteTeamRsp deleteTeamRsp =new DeleteTeamRsp ();
+        //2.查询团队对应的部门Id
+        OrgTeam orgTeam = bomanager.loadBusinessObject(OrgTeam.class, "teamId",req.getTeamId());
+        
+        if (!"2".equals(delTeam.getStatus())) {//3.若团队不为停用状态，不许操作
+            deleteTeamRsp.setIsExit(true);
+            deleteTeamRsp.setMeassage("团队非停用状态");
+        }else if(!CollectionUtils.isEmpty(userTeams)) {//4.若团队下有员工，不许删除
             deleteTeamRsp.setIsExit(true);
             deleteTeamRsp.setMeassage("团队下存在员工，请勿删除");
-        }
-        if(deleteTeam.getRoleA()!=null||deleteTeam.getStatus()=="1" ) {
+        }else if(!StringUtils.isEmpty(delTeam.getRoleA())) {//5.若团队有负责人，不许删除
             deleteTeamRsp.setIsExit(true);
             deleteTeamRsp.setMeassage("该团队存在负责人，请核实后再操作！"); 
+        }else {//6.可删除校验成功,执行删除操作
+            bomanager.deleteBusinessObject(delTeam);
+            if (!ObjectUtils.isEmpty(orgTeam)) {
+                bomanager.deleteObjectBySql(OrgTeam.class, "teamId=:teamId and orgId=:orgId", "teamId",delTeam.getTeamId(),"orgId",orgTeam.getOrgId());
+            }
         }
-       
-        if (deleteTeam == null) {
-            throw new ALSException("901007");
-        }
-        bomanager.deleteBusinessObject(deleteTeam);
+
         bomanager.updateDB();
         return deleteTeamRsp;
+        
     }
 
   
