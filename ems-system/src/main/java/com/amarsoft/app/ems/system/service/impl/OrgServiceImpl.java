@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.common.constant.YesNo;
@@ -1212,14 +1213,19 @@ public class OrgServiceImpl implements OrgService {
         List<SecondLevelDeptListDto> secondLevelDeptListDtos = new ArrayList<SecondLevelDeptListDto>(); //新建返回list
         //查询二级部门list
         List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-            "select OI.status as status, UI.userName as deptManagerName,DT.deptName as deptName,DT.deptId as orgId from UserInfo UI, OrgInfo OI,Department DT where"
-            + " UI.userId = DT.deptManager and DT.deptId = OI.orgId and OI.parentOrgId = :parentOrgId", "parentOrgId",orgInfo.getOrgId()
+            "select OI.status as status, DT.deptManager as deptManagerId,DT.deptName as deptName,DT.deptId as orgId from OrgInfo OI,Department DT where"
+            + " DT.deptId = OI.orgId and OI.parentOrgId = :parentOrgId", "parentOrgId",orgInfo.getOrgId()
             ).getBusinessObjects();
         SecondLevelDeptListDto secondLevelDeptListDto = null;
         for (BusinessObject businessObject : businessObjects) {
             secondLevelDeptListDto = new SecondLevelDeptListDto();
             secondLevelDeptListDto.setDeptName(businessObject.getString("deptName"));
-            secondLevelDeptListDto.setDeptManager(businessObject.getString("deptManagerName"));
+            UserInfo userInfo = bomanager.keyLoadBusinessObject(UserInfo.class, businessObject.getString("deptManagerId"));
+            if (ObjectUtils.isEmpty(userInfo)) {
+                secondLevelDeptListDto.setDeptManager("");
+            }else {
+                secondLevelDeptListDto.setDeptManager(userInfo.getUserName());
+            } 
             secondLevelDeptListDto.setOrgId(businessObject.getString("orgId"));
             //插入部门状态
             secondLevelDeptListDto.setStatus(businessObject.getString("status"));
@@ -1286,7 +1292,6 @@ public class OrgServiceImpl implements OrgService {
         EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
         //新建员工id的list
         List<String> ids = new ArrayList<String>();
-        
         if (CollectionUtils.isEmpty(req.getFilters())) {
             OrgInfo orgInfo = bomanager.keyLoadBusinessObject(OrgInfo.class, req.getOrgId());
             //查询部门员工

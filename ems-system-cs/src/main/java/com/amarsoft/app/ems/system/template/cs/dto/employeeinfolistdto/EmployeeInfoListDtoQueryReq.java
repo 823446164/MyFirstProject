@@ -37,10 +37,11 @@ public class EmployeeInfoListDtoQueryReq implements Serializable {
     @QueryOrderBy
     private String[] orderBy;
     
+    @Description("filterLIst")
+    private List<Filter> filters;
+    
     @Description("部门编号")
     @Length(max=80)
     private String orgId;
     
-    @Description("filterLIst")
-    private List<Filter> filters;
 }
