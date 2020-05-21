@@ -200,16 +200,16 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             throw new ALSException("EMS1008");
         }
         UserAndRole userAndRole = userRoles.get(0); //5.获取用户的最高权限（099、110、210）
-        if (UserRoles.Admin.id.equals(userAndRole.getRoleId())) {//6.如果用户为系统管理员，展示所有员工
-            String id = "";
-            rsp = showList(userAndRole.getRoleId(), id,filters);
-         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId()) || UserRoles.DeputyManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员或者部门副经理，展示所在部门所有员工
-             rsp = showList(userAndRole.getRoleId(), orgId,filters);
-         }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
-             rsp = showList(userAndRole.getRoleId(), userId,filters);
-         }else {//９．如果不是这些角色，则提示权限不足
-             throw new ALSException("EMS1008");
-        }
+//        if (UserRoles.Admin.id.equals(userAndRole.getRoleId())) {//6.如果用户为系统管理员，展示所有员工
+//            String id = "";
+//            rsp = showList(userAndRole.getRoleId(), id,filters);
+//         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId()) || UserRoles.DeputyManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员或者部门副经理，展示所在部门所有员工
+//             rsp = showList(userAndRole.getRoleId(), orgId,filters);
+//         }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
+//             rsp = showList(userAndRole.getRoleId(), userId,filters);
+//         }else {//９．如果不是这些角色，则提示权限不足
+//             throw new ALSException("EMS1008");
+//        }
         return rsp; 
     }
    
