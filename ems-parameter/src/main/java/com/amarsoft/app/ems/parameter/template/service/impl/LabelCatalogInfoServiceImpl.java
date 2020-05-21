@@ -143,8 +143,8 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
         LabelCatalog parentLc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogInfo.getParentNo());
 
         // 判断其父目录下是否有指标，如果有，则父目录不能拥有子目录
-        List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:serialNO", "serialNo",
-            parentLc.getSerialNo());
+        List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class, "parentNo=:parentNo and labelType=:labelType", "parentNo",
+            labelCatalogInfo.getParentNo(),"labelType",LabelType._2.id);
         boolean add = true;
         for (LabelCatalog labelCatalogTemp : labelCatalogs) {
             if (LabelType._2.id.equals(labelCatalogTemp.getLabelType())) {
