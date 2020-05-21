@@ -1,15 +1,16 @@
 package com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto;
 
 import java.io.Serializable;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.Filter;
 import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
-import com.amarsoft.amps.acsc.annotation.Range;
 import com.amarsoft.amps.acsc.query.annotation.QueryPageSize;
 import com.amarsoft.amps.acsc.query.annotation.QueryOrderBy;
 
@@ -39,4 +40,7 @@ public class EmployeeInfoListDtoQueryReq implements Serializable {
     @Description("部门编号")
     @Length(max=80)
     private String orgId;
+    
+    @Description("filterLIst")
+    private List<Filter> filters;
 }
