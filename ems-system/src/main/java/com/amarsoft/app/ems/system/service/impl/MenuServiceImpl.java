@@ -115,49 +115,62 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public MenuQueryRsp getMenu(MenuQueryReq req) {
-		  String[] searchAttributes = {"roleId","roleName"};//查询条件
-		  BusinessObjectManager bomanager =
-		  BusinessObjectManager.createBusinessObjectManager(); MenuInfo mi =
-		  bomanager.keyLoadBusinessObject(MenuInfo.class, req.getMenuId());
-		  MenuQueryRsp rsp = new MenuQueryRsp(); 
-		  rsp.setRoles(new ArrayList<com.amarsoft.app.ems.system.cs.dto.userrole.Role>());
-		  if(mi != null) { rsp.setMenuId(mi.getMenuId());
-		  rsp.setMenuName(mi.getMenuName()); rsp.setMenuEnName(mi.getMenuEnName());
-		  rsp.setMenuTwName(mi.getMenuTwName()); rsp.setMenuAuth(mi.getMenuAuth());
-		  rsp.setSortNo(mi.getSortNo()); rsp.setIcon(mi.getIcon());
-		  rsp.setUrl(mi.getUrl()); rsp.setUrlParam(mi.getUrlParam());
-		  rsp.setParentId(mi.getParentId()); MenuInfo pmi =
-		  bomanager.keyLoadBusinessObject(MenuInfo.class,mi.getParentId()); if
-		  (mi.getParentId().equals(ROOT_MENU_PARENTID)) { rsp.setParentName(""); }else
-		  { rsp.setParentName(pmi.getMenuName()); } rsp.setStatus(mi.getStatus());
-		  
-		  List<RoleAuth> roleAuths = bomanager.loadBusinessObjects(RoleAuth.class, 0,
-		  Integer.MAX_VALUE,
-		  "authType =:authType and authNo = :authNo order by authNo",
-		  "authType",AuthType.MENU.id,"authNo",mi.getMenuId()).getBusinessObjects(); if
-		  (StringUtils.isEmpty(req.getSearchAttribute()) &&
-		  StringUtils.isEmpty(req.getSearchContent())) {//不走查询条件
-		  roleAuths.forEach(roleAuth -> { com.amarsoft.app.ems.system.cs.dto.userrole.Role role = new com.amarsoft.app.ems.system.cs.dto.userrole.Role();
-		  role.setRoleId(roleAuth.getRoleId()); RoleInfo r =
-		  bomanager.keyLoadBusinessObject(RoleInfo.class, roleAuth.getRoleId());
-		  OrgInfo org = bomanager.keyLoadBusinessObject(OrgInfo.class,
-		  r.getBelongRootOrg()); role.setRoleName(r.getRoleName());
-		  role.setBelongOrgLevel(r.getBelongOrgLevel());
-		  role.setBelongOrgType(org.getOrgType());
-		  role.setBelongRootOrg(r.getBelongRootOrg()); rsp.getRoles().add(role); });
-		  }else { if (Stream.of(searchAttributes).anyMatch(searchAttribute ->
-		  searchAttribute.equalsIgnoreCase(req.getSearchAttribute()))) {//验证查询条件
-		  roleAuths.forEach(roleAuth ->{ com.amarsoft.app.ems.system.cs.dto.userrole.Role role = new com.amarsoft.app.ems.system.cs.dto.userrole.Role();
-		  role.setRoleId(roleAuth.getRoleId()); RoleInfo r =
-		  bomanager.keyLoadBusinessObject(RoleInfo.class, roleAuth.getRoleId());
-		  OrgInfo org = bomanager.keyLoadBusinessObject(OrgInfo.class,
-		  r.getBelongRootOrg()); role.setRoleName(r.getRoleName());
-		  role.setBelongOrgLevel(r.getBelongOrgLevel());
-		  role.setBelongOrgType(org.getOrgType());
-		  role.setBelongRootOrg(r.getBelongRootOrg()); rsp.getRoles().add(role); }); }
-		  } }
-        return null;
+    public MenuQueryRsp getMenu(MenuQueryReq req) { 
+    	String[] searchAttributes = {"roleId","roleName"};//查询条件
+	    BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+	    MenuInfo mi = bomanager.keyLoadBusinessObject(MenuInfo.class, req.getMenuId());
+	    MenuQueryRsp rsp = new MenuQueryRsp();
+	    rsp.setRoles(new ArrayList<com.amarsoft.app.ems.system.cs.dto.userrole.Role>());
+	    if(mi != null) {
+	        rsp.setMenuId(mi.getMenuId());
+	        rsp.setMenuName(mi.getMenuName());
+	        rsp.setMenuEnName(mi.getMenuEnName());
+	        rsp.setMenuTwName(mi.getMenuTwName());
+	        rsp.setMenuAuth(mi.getMenuAuth());
+	        rsp.setSortNo(mi.getSortNo());
+	        rsp.setIcon(mi.getIcon());
+	        rsp.setUrl(mi.getUrl());
+	        rsp.setUrlParam(mi.getUrlParam());
+	        rsp.setParentId(mi.getParentId());
+	        MenuInfo pmi = bomanager.keyLoadBusinessObject(MenuInfo.class,mi.getParentId());
+	        if (mi.getParentId().equals(ROOT_MENU_PARENTID)) {
+	            rsp.setParentName("");
+	        }else {
+	            rsp.setParentName(pmi.getMenuName());
+	        }
+	        rsp.setStatus(mi.getStatus());
+	        
+	        List<RoleAuth> roleAuths = bomanager.loadBusinessObjects(RoleAuth.class, 0, Integer.MAX_VALUE, "authType =:authType and authNo = :authNo order by authNo",
+	                "authType",AuthType.MENU.id,"authNo",mi.getMenuId()).getBusinessObjects();
+	        if (StringUtils.isEmpty(req.getSearchAttribute()) && StringUtils.isEmpty(req.getSearchContent())) {//不走查询条件
+	            roleAuths.forEach(roleAuth -> {
+	            	com.amarsoft.app.ems.system.cs.dto.userrole.Role role = new com.amarsoft.app.ems.system.cs.dto.userrole.Role();
+	                role.setRoleId(roleAuth.getRoleId());
+	                RoleInfo r = bomanager.keyLoadBusinessObject(RoleInfo.class, roleAuth.getRoleId());
+	                OrgInfo org = bomanager.keyLoadBusinessObject(OrgInfo.class, r.getBelongRootOrg());
+	                role.setRoleName(r.getRoleName());
+	                role.setBelongOrgLevel(r.getBelongOrgLevel());
+	                role.setBelongOrgType(org.getOrgType());
+	                role.setBelongRootOrg(r.getBelongRootOrg());
+	                rsp.getRoles().add(role);
+	            });
+	        }else {
+	            if (Stream.of(searchAttributes).anyMatch(searchAttribute -> searchAttribute.equalsIgnoreCase(req.getSearchAttribute()))) {//验证查询条件
+	                roleAuths.forEach(roleAuth ->{
+	                	com.amarsoft.app.ems.system.cs.dto.userrole.Role role = new com.amarsoft.app.ems.system.cs.dto.userrole.Role();
+	                    role.setRoleId(roleAuth.getRoleId());
+	                    RoleInfo r = bomanager.keyLoadBusinessObject(RoleInfo.class, roleAuth.getRoleId());
+	                    OrgInfo org = bomanager.keyLoadBusinessObject(OrgInfo.class, r.getBelongRootOrg());
+	                    role.setRoleName(r.getRoleName());
+	                    role.setBelongOrgLevel(r.getBelongOrgLevel());
+	                    role.setBelongOrgType(org.getOrgType());
+	                    role.setBelongRootOrg(r.getBelongRootOrg());
+	                    rsp.getRoles().add(role);
+	                });
+	            }
+	        }
+	    }
+	    return rsp;
     }
 
     @Override
