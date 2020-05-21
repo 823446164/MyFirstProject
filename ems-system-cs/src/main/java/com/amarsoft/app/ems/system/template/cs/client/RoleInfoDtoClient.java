@@ -10,7 +10,7 @@ import com.amarsoft.app.ems.system.template.controller.RoleInfoDtoController;
  * @author cmhuang
  */
 @Component
-@FeignClient(value = "system-server")
-@RequestMapping("/system")
+@FeignClient(value = "asms-server")
+@RequestMapping("/asms")
 public interface RoleInfoDtoClient extends RoleInfoDtoController {
 }
