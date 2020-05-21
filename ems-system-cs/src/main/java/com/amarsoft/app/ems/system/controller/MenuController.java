@@ -1,7 +1,12 @@
-/**
- * 菜单权限管理
- * @Author xxu1
- * 根据接口定义的excel文档自动生成实体，由AutoCreateCoder.class的test方法批量生成。
+/*
+ * 文件名：MenuController.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：菜单contoller接口类
+ * 修改人：jcli2
+ * 修改时间：2020年5月21日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
  */
 package com.amarsoft.app.ems.system.controller;
 

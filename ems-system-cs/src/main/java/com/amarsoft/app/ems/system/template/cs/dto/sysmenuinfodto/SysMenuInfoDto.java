@@ -1,3 +1,13 @@
+/*
+ * 文件名：SysMenuInfoDto.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：菜单dto类
+ * 修改人：jcli2
+ * 修改时间：2020年5月21日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto;
 
 import java.io.Serializable;
