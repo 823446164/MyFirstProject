@@ -1,7 +1,9 @@
 package com.amarsoft.app.ems.employee.template.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -14,7 +16,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.amarsoft.aecd.system.constant.UserRoles;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
@@ -200,16 +201,16 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             throw new ALSException("EMS1008");
         }
         UserAndRole userAndRole = userRoles.get(0); //5.获取用户的最高权限（099、110、210）
-        if (UserRoles.Admin.id.equals(userAndRole.getRoleId())) {//6.如果用户为系统管理员，展示所有员工
-            String id = "";
-            rsp = showList(userAndRole.getRoleId(), id,filters);
-         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId()) || UserRoles.DeputyManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员或者部门副经理，展示所在部门所有员工
-             rsp = showList(userAndRole.getRoleId(), orgId,filters);
-         }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
-             rsp = showList(userAndRole.getRoleId(), userId,filters);
-         }else {//９．如果不是这些角色，则提示权限不足
-             throw new ALSException("EMS1008");
-        }
+//        if (UserRoles.Admin.id.equals(userAndRole.getRoleId())) {//6.如果用户为系统管理员，展示所有员工
+//            String id = "";
+//            rsp = showList(userAndRole.getRoleId(), id,filters);
+//         }else if (UserRoles.DeptManager.id.equals(userAndRole.getRoleId()) || UserRoles.DeputyManager.id.equals(userAndRole.getRoleId())) {//7.如果用户为部门管理员或者部门副经理，展示所在部门所有员工
+//             rsp = showList(userAndRole.getRoleId(), orgId,filters);
+//         }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
+//             rsp = showList(userAndRole.getRoleId(), userId,filters);
+//         }else {//９．如果不是这些角色，则提示权限不足
+//             throw new ALSException("EMS1008");
+//        }
         return rsp; 
     }
    
@@ -277,16 +278,17 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         //获取查询条件
         if (!CollectionUtils.isEmpty(req.getFilters())) {//判断查询条件是否为空，为空则不获取值
             for (Filter  filter : req.getFilters()) {
-                if ("employeeNo".equals(filter.getName())) {
+                if("employeeNo".equals(filter.getName())) {
                     eNo = filter.getValue()[0];
-                }else if ("employeeName".equals(filter.getName())) {
+                }
+                if("employeeName".equals(filter.getName())) {
                     eName = filter.getValue()[0];
                 }
             }
         }
         
         String employeeId = StringUtils.isEmpty(eNo)? "%":eNo+"%";
-        String employeeName = StringUtils.isEmpty(eNo)?"%":eName+"%";
+        String employeeName = StringUtils.isEmpty(eName)?"%":eName+"%";
         
         List<EmployeeInfoDto> employeeDtoList = new ArrayList<EmployeeInfoDto>();
         String userList = "";
@@ -312,30 +314,63 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     }
     
     /**
-     * 员工Info员工状态更新
-     * 
-     * @param
-     * @return
+     * Description: 离职员工状态更新为实习或者是正式<br>
+     * @param EI.employeeNo
+     * @param EI.employeeStatus
+     * @return Y  
+     * @see
      */
     @Override
-    public void employeeInfoDtoStatusSave(@Valid EmployeeInfoStatusUpdateReq employeeInfoStatusUpdateReq) {
-        employeeInfoDtoStatusSaveAction(employeeInfoStatusUpdateReq);
+    public Map<String,String> employeeInfoDtoStatusUpdate(@Valid EmployeeInfoStatusUpdateReq employeeInfoStatusUpdateReq) {
+        return employeeInfoDtoStatusUpdateAction(employeeInfoStatusUpdateReq);
     }
 
     @Transactional
-    public void employeeInfoDtoStatusSaveAction(EmployeeInfoDto employeeInfoDto) {
+    public Map<String,String> employeeInfoDtoStatusUpdateAction(EmployeeInfoDto employeeInfoDto) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         if (employeeInfoDto != null) {
             //根据员工编号查询员工信息
             EmployeeInfo employeeInfo = bomanager.keyLoadBusinessObject(EmployeeInfo.class,
                     employeeInfoDto.getEmployeeNo());
-            
-            System.out.println(employeeInfo);
+            //TODO dxiao 没加校验
             //更新员工状态
             employeeInfo.setEmployeeStatus(employeeInfoDto.getEmployeeStatus());
             bomanager.updateBusinessObject(employeeInfo);
         }
-        bomanager.updateDB();
+        //定义一个map封装返回信息 - 判断是否更新成功
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("status", "Y");
+        return map;
+    }
+    
+    /**
+     * Description: 员工状态更改为离职<br>
+     * @param EI.employeeNo
+     * @param EI.employeeStatus
+     * @return Y 
+     * @see
+     */
+    @Override
+    public Map<String,String> employeeInfoDtoStatusSave(@Valid EmployeeInfoStatusUpdateReq employeeInfoStatusUpdateReq) {
+        return employeeInfoDtoStatusSaveAction(employeeInfoStatusUpdateReq);
+    }
+
+    @Transactional
+    public Map<String,String> employeeInfoDtoStatusSaveAction(EmployeeInfoDto employeeInfoDto) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        if (employeeInfoDto != null) {
+            //根据员工编号查询员工信息
+            EmployeeInfo employeeInfo = bomanager.keyLoadBusinessObject(EmployeeInfo.class,
+                    employeeInfoDto.getEmployeeNo());
+            //TODO dxiao 待调试
+            //更新员工状态-4
+            employeeInfo.setEmployeeStatus(employeeInfoDto.getEmployeeStatus());
+            bomanager.updateBusinessObject(employeeInfo);
+        }
+        //定义一个map封装返回信息 - 判断是否更新成功
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("status", "Y");
+        return map;
     }
 
     @Override
