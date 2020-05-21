@@ -1,6 +1,8 @@
 
 package com.amarsoft.app.ems.employee.template.service;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,10 +58,17 @@ public interface EmployeeInfoListDtoService {
     public EmployeeListByEmplNoRsp employeeListByEmployeeNo(@RequestBody @Valid EmployeeListByEmplNoReq req);
 
     /**
-     * 员工状态置为离职
-     * @param request
-     * @return
+     * Description: 员工状态置为离职<br>
+     * ${tags}
+     * @see
      */
-    public void employeeInfoDtoStatusSave(@Valid EmployeeInfoStatusUpdateReq EmployeeInfoStatusUpdateReq);
+    public Map<String,String> employeeInfoDtoStatusSave(@Valid EmployeeInfoStatusUpdateReq EmployeeInfoStatusUpdateReq);
+
+    /**
+     * Description: 将离职员工更改为实习或者是使用<br>
+     * ${tags}
+     * @see
+     */
+    public Map<String,String> employeeInfoDtoStatusUpdate(@Valid EmployeeInfoStatusUpdateReq EmployeeInfoStatusUpdateReq);
 
 }
