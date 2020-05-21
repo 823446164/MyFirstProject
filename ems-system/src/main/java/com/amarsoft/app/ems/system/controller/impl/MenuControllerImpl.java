@@ -30,6 +30,9 @@ import com.amarsoft.app.ems.system.cs.dto.menutreequery.MenuTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updatemenu.UpdateMenuReq;
 import com.amarsoft.app.ems.system.service.MenuService;
 import com.amarsoft.app.ems.system.service.OrgService;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoSaveReq;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -195,4 +198,56 @@ public class MenuControllerImpl implements MenuController {
             return new ResponseEntity<ResponseMessage<MenuAllQueryRsp>>(hrb,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+	@Override
+	@CodeQuery
+	@Transactional
+	public ResponseEntity<ResponseMessage<Object>> sysMenuInfoDtoSave(@RequestBody
+			@Valid RequestMessage<SysMenuInfoDtoSaveReq> reqMsg) {
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            SysMenuInfoDtoSaveReq request = reqMsg.getMessage();
+            
+            menuService.sysMenuInfoDtoSave(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("菜单详情Info保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseMessage<SysMenuInfoDtoQueryRsp>> queryRoleByMenuId(@RequestBody
+			@Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg) {
+
+        ResponseMessage<SysMenuInfoDtoQueryRsp> rspMsg = null;
+        try {
+            String id = reqMsg.getMessage().getMenuId();
+            
+            SysMenuInfoDtoQueryRsp response = menuService.queryRoleByMenuId(id);
+            rspMsg = new ResponseMessage<SysMenuInfoDtoQueryRsp>(response);
+
+            return new ResponseEntity<ResponseMessage<SysMenuInfoDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("菜单详情Info查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<SysMenuInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    
+	}
 }

@@ -1,5 +1,6 @@
 package com.amarsoft.app.ems.system.entity;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,9 +21,15 @@ import com.amarsoft.aecd.system.constant.SystemStatus;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.arpe.annotation.EntityRelationShip;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
+import com.amarsoft.app.ems.system.cs.dto.usermenu.Menu;
+
+import lombok.Getter;
+import lombok.Setter;
 /**
  * 访问权限控制表
  */
+@Getter
+@Setter
 @Entity
 @Description("访问权限控制表")
 @EntityListeners(AuditingEntityListener.class)
@@ -77,62 +84,6 @@ public class RoleAuth extends BusinessObject {
     @Column(name = "UPDATETIME")
     @LastModifiedDate
     private LocalDateTime updateTime;
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getAuthType() {
-        return authType;
-    }
-
-    public void setAuthType(String authType) {
-        this.authType = authType;
-    }
-
-    public String getAuthNo() {
-        return authNo;
-    }
-
-    public void setAuthNo(String authNo) {
-        this.authNo = authNo;
-    }
-
-    public String getAuthName() {
-        return authName;
-    }
-
-    public void setAuthName(String authName) {
-        this.authName = authName;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
-    public String getInputUserId() {
-        return inputUserId;
-    }
-
-    public void setInputUserId(String inputUserId) {
-        this.inputUserId = inputUserId;
-    }
-
-    public String getUpdateUserId() {
-        return updateUserId;
-    }
-
-    public void setUpdateUserId(String updateUserId) {
-        this.updateUserId = updateUserId;
-    }
 
 }
 

@@ -386,11 +386,12 @@ public class LabelInfoServiceImpl implements LabelInfoService {
                 throw new ALSException("EMS2008");
             }
         }
-        else {
+        else {                      
             if (LabelStatus.Enabled.id.equals(lc.getLabelStatus())) {
-                boolean isCited = isCited(bomanager, lc.getSerialNo());
+                List<RankStandardItems> rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class, "labelNo=:serialNo", "serialNo",
+                    lc.getSerialNo());
                 //判断此标签或指标是否已被引用，已被引用则不可置位失效
-                if (isCited) {
+                if (CollectionUtils.isEmpty(rankStandardItems)) {
                     lc.setLabelStatus(LabelStatus.Disabled.id);
                     bomanager.updateBusinessObject(lc);
                 }
@@ -405,21 +406,18 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         bomanager.updateDB();
     }
 
-    /**
-     * 标签或指标失效时需要校验是否被引用
-     * 
-     * @param bomanager
-     * @param serialNo
-     */
-    @Transactional
-    public boolean isCited(BusinessObjectManager bomanager, String serialNo) {
-        List<RankStandardItems> rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class, "labelNo=:serialNo", "serialNo",
-            serialNo);
-        if (CollectionUtils.isEmpty(rankStandardItems)) {
-            return true;
-        }
-        return false;
-    }
+//    /**
+//     * 标签或指标失效时需要校验是否被引用
+//     * 
+//     * @param bomanager
+//     * @param serialNo
+//     */
+//    @Transactional
+//    public List<RankStandardItems> isCited(BusinessObjectManager bomanager, String serialNo) {
+//        List<RankStandardItems> rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class, "labelNo=:serialNo", "serialNo",
+//            serialNo);
+//            return rankStandardItems;
+//    }
 
     /**
      * 标签目录新增判重 标签目录新增时判断名称是否重复

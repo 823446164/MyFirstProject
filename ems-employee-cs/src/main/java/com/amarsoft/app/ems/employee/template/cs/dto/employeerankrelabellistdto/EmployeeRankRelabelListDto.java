@@ -16,9 +16,10 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.aecd.employee.constant.MasteryOne;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
-
+import com.amarsoft.amps.acsc.annotation.Enum;
 /**
  * 员工职级标签关联
  * @author dxiao
@@ -41,23 +42,30 @@ public class EmployeeRankRelabelListDto implements Serializable {
     @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String rankNo;
 
-    @Description("标签")
+    @Description("标签编号")
     @Length(max=40)
     @ActualColumn("ER.labelNo")
-    @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String labelNo;
+    
+    @Description("标签名称")
+    @Length(max=40)
+    @ActualColumn("LC.labelName")
+    @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    private String labelName;
 
     @Description("掌握程度")
+    @Enum(MasteryOne.class)
     @Length(max=10)
     @ActualColumn("ER.level")
-    @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String level;
 
 
     @Description("所属目录")
     @Length(max=40)
     @ActualColumn("ER.belongCatalog")
-    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 5, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String belongCatalog;
 
 }

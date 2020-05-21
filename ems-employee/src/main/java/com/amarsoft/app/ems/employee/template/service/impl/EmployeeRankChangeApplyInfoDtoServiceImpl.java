@@ -1,3 +1,12 @@
+/*文件名：EmployeeRankChangeApplyInfoDtoServiceImpl 
+ * 版权：Copyright by www.amarsoft.com
+ * 描述： 员工职级调整申请详情InfoService实现类
+ * 修改人：xucheng 
+ * 修改时间：2020/05/20
+ * 跟踪单号： 
+ * 修改单号： 
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.employee.template.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +15,6 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.employee.template.service.EmployeeRankChangeApplyInfoDtoService;
-import com.amarsoft.aecd.common.constant.FormatType;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
@@ -21,12 +29,7 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfo
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDto;
 import com.amarsoft.app.ems.employee.entity.EmployeeRankApply;
-import com.amarsoft.amps.arpe.util.DateHelper;
 
-/**
- * 员工职级调整申请详情InfoService实现类
- * @author xucheng
- */
 @Slf4j
 @Service
 public class EmployeeRankChangeApplyInfoDtoServiceImpl implements EmployeeRankChangeApplyInfoDtoService{

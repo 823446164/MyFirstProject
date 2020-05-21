@@ -86,15 +86,24 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
     public void labelCatalogListDelete(@Valid LabelCatalogListDeleteReq labelCatalogListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         LabelListServiceImpl labelListServiceImpl = new LabelListServiceImpl();
-        boolean isNotHaveStatusOk = selectLabelByLabelCatalog(labelCatalogListDeleteReq.getSerialNo());
+        boolean isNotHaveStatusOk = true;
+        List<LabelCatalog> childrenCatalogs = queryChildrenCatalog(bomanager,labelCatalogListDeleteReq.getSerialNo());
+        String enabledIndexs = "";
+        for (LabelCatalog labelCatalogTemp : childrenCatalogs) {
+            if(LabelStatus.Enabled.id.equals(labelCatalogTemp.getLabelStatus())&&LabelType._2.id.equals(labelCatalogTemp.getLabelType())) {
+                enabledIndexs += labelCatalogTemp.getLabelName()+",";
+                isNotHaveStatusOk=false;
+            } 
+        }
+        //得到该目录下所有生效的指标
+        enabledIndexs = enabledIndexs.substring(0, enabledIndexs.length()-1);
         //isNotHaveStatusOk 为true则说明有生效标签，不能删除   false为没有生效标签，可以删除
-        if (!isNotHaveStatusOk) {
+        if (isNotHaveStatusOk) {
             //获得目录实体类删除
             LabelCatalog labelCatalog = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogListDeleteReq.getSerialNo());
             bomanager.deleteBusinessObject(labelCatalog);                       
             bomanager.updateDB();
             //获得该目录下所有指标和标签
-            List<LabelCatalog> childrenCatalogs = queryChildrenCatalog(bomanager,labelCatalogListDeleteReq.getSerialNo());
             for (LabelCatalog labelCatalogTemp : childrenCatalogs) {
                 if(LabelType._2.id.equals(labelCatalogTemp.getLabelType() )){//执行指标删除方法(删除指标方法包括删除标签)
                     LabelListDeleteReq labelListDeleteReq = new LabelListDeleteReq();
@@ -108,7 +117,7 @@ public class LabelCatalogListServiceImpl implements LabelCatalogListService {
             }
         }
         else {
-            throw new ALSException("EMS2010");
+            throw new ALSException("EMS2010",enabledIndexs);
         }
     }
          

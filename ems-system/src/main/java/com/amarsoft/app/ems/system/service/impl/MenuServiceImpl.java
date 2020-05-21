@@ -1,10 +1,13 @@
 package com.amarsoft.app.ems.system.service.impl;
 
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -12,8 +15,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.aecd.common.constant.Language;
@@ -24,6 +29,7 @@ import com.amarsoft.amps.arem.util.SpringHelper;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
+import com.amarsoft.amps.arpe.util.DateHelper;
 import com.amarsoft.app.ems.system.cs.dto.addmenu.AddMenuReq;
 import com.amarsoft.app.ems.system.cs.dto.deletemenu.DeleteMenuReq;
 import com.amarsoft.app.ems.system.cs.dto.menuallquery.MenuAllQueryRsp;
@@ -35,8 +41,9 @@ import com.amarsoft.app.ems.system.cs.dto.menuquery.MenuQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.menutreequery.MenuTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.menutreequery.MenuTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.menutreequery.Tree;
+import com.amarsoft.app.ems.system.cs.dto.roleallquery.Role;
 import com.amarsoft.app.ems.system.cs.dto.updatemenu.UpdateMenuReq;
-import com.amarsoft.app.ems.system.cs.dto.userrole.Role;
+
 import com.amarsoft.app.ems.system.entity.MenuInfo;
 import com.amarsoft.app.ems.system.entity.OrgInfo;
 import com.amarsoft.app.ems.system.entity.RoleAuth;
@@ -44,6 +51,10 @@ import com.amarsoft.app.ems.system.entity.RoleInfo;
 import com.amarsoft.app.ems.system.service.MenuService;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.RoleService;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDto;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoQueryRsp;
+import com.amarsoft.app.ems.system.template.cs.dto.sysmenuinfodto.SysMenuInfoDtoSaveReq;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -549,4 +560,110 @@ public class MenuServiceImpl implements MenuService {
         }
         return rsp;
     }
+
+
+	@Override
+	@Transactional
+	public void sysMenuInfoDtoSave(SysMenuInfoDtoSaveReq sysMenuInfoDto) {
+		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+		
+        if(sysMenuInfoDto!=null){
+        	String menuid = sysMenuInfoDto.getMenuId();
+        	String menuName = sysMenuInfoDto.getMenuName();
+        	String inputUserId=GlobalShareContextHolder.getUserId();
+        	LocalDateTime now = LocalDateTime.now();
+        	/**保存已选择角色**/
+        	List<Role> existlist = sysMenuInfoDto.getExistlist();
+        	if(!CollectionUtils.isEmpty(existlist)) {
+        		RoleAuth roleAuth =null;
+        		for (int i = 0; i < existlist.size(); i++) {
+        			Role role = existlist.get(i);
+        			roleAuth= new RoleAuth();
+        			roleAuth.setRoleId(role.getRoleId());
+        			roleAuth.setAuthType("1");
+        			roleAuth.setAuthNo(menuid);
+        			roleAuth.setAuthName(menuName);
+        			roleAuth.setStatus("1");
+        			roleAuth.setInputUserId(inputUserId);
+        			roleAuth.setInputTime(now);
+        			roleAuth.setUpdateUserId(inputUserId);
+        			roleAuth.setUpdateTime(now);
+        			bomanager.updateBusinessObject(roleAuth);
+        		}
+        	}
+        	/**保存info数据**/
+            MenuInfo menuInfo = bomanager.keyLoadBusinessObject(MenuInfo.class,menuid);
+            if(menuInfo==null){
+                menuInfo = new MenuInfo();
+                menuInfo.generateKey();
+            }
+            menuInfo.setMenuName(menuName);
+            menuInfo.setMenuTwName(sysMenuInfoDto.getMenuTwName());
+            menuInfo.setUrl(sysMenuInfoDto.getUrl());
+            menuInfo.setUrlParam(sysMenuInfoDto.getUrlParam());
+            menuInfo.setIcon(sysMenuInfoDto.getIcon());
+            menuInfo.setStatus(sysMenuInfoDto.getStatus());
+            bomanager.updateBusinessObject(menuInfo);
+        }
+        bomanager.updateDB();
+		
+	}
+
+	@Override
+	@Transactional
+	public SysMenuInfoDtoQueryRsp queryRoleByMenuId(String id) {
+		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+		SysMenuInfoDtoQueryRsp rsp=new SysMenuInfoDtoQueryRsp();
+		/**塞值**/
+		sysMenuInfoDtoQuery(rsp,id,bomanager);
+		
+		rsp.setExistlist(new ArrayList<Role>());
+		rsp.setNotexistlist(new ArrayList<Role>());
+
+		String existsql="SELECT b.roleId,b.roleName FROM RoleAuth a inner join RoleInfo b on a.roleId=b.roleId where a.authNo=:id";
+		String notexistsql="select roleId,roleName from RoleInfo where roleId not in " + 
+				"(SELECT b.roleId FROM RoleAuth a inner join RoleInfo b on a.roleId=b.roleId where a.authNo=:id)";
+		List<BusinessObject> exists = bomanager.selectBusinessObjectsBySql(existsql, "id",id).getBusinessObjects();
+		List<BusinessObject> notexists = bomanager.selectBusinessObjectsBySql(notexistsql, "id",id).getBusinessObjects();
+		
+		 if (!CollectionUtils.isEmpty(exists)) {
+			 Role existDto=null;
+			 for (int i = 0; i < exists.size(); i++) {
+				 existDto= new Role();
+				 BusinessObject exist = exists.get(i);
+				 existDto.setRoleId(exist.getString("b.ROLEID"));
+				 existDto.setRoleName(exist.getString("b.roleName"));
+				 rsp.getExistlist().add(existDto);
+			}
+		 }
+		 if (!CollectionUtils.isEmpty(notexists)) {
+			 Role notexistDto=null;
+			 for (int i = 0; i < notexists.size(); i++) {
+				 notexistDto= new Role();
+				 BusinessObject notexist = notexists.get(i);
+				 notexistDto.setRoleId(notexist.getString("roleId"));
+				 notexistDto.setRoleName(notexist.getString("roleName"));
+				 rsp.getNotexistlist().add(notexistDto);
+			}
+		 }
+
+		return rsp;
+	}
+
+	private void sysMenuInfoDtoQuery(SysMenuInfoDtoQueryRsp rsp,String id,BusinessObjectManager bomanager) {
+        
+        MenuInfo menuInfo = bomanager.loadBusinessObject(MenuInfo.class,"menuId",id);
+        if(menuInfo!=null){
+        	rsp.setMenuId(menuInfo.getMenuId());
+        	rsp.setSortNo(menuInfo.getSortNo());
+        	rsp.setMenuName(menuInfo.getMenuName());
+        	rsp.setMenuTwName(menuInfo.getMenuTwName());
+        	rsp.setUrl(menuInfo.getUrl());
+        	rsp.setUrlParam(menuInfo.getUrlParam());
+        	rsp.setIcon(menuInfo.getIcon());
+        	rsp.setStatus(menuInfo.getStatus());
+        	rsp.setInputUserId(menuInfo.getInputUserId());
+        	rsp.setInputTime(menuInfo.getInputTime());
+        }
+	}
 }

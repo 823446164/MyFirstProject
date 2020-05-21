@@ -340,7 +340,7 @@ public class TeamControllerImpl implements TeamController {
 			// 事务回滚
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "901007", e.getMessage());
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6033", e.getMessage());
 			return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

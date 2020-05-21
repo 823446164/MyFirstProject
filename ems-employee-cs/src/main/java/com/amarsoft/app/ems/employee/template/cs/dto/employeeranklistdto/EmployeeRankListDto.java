@@ -9,9 +9,10 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.aecd.employee.constant.RankVersion;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
-
+import com.amarsoft.amps.acsc.annotation.Enum;
 /**
  * 员工职级List
  * @author lding
@@ -59,9 +60,10 @@ public class EmployeeRankListDto implements Serializable {
     private String direction;
     
     @Description("版本")
+    @Enum(RankVersion.class)
     @Length(max=40)
     @ActualColumn("ER.rankVersion")
-    @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
+    @TemplateBody(sortNo = 6, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = true, isSorted = false, isFilter = false, isSum = false, filterType = {com.amarsoft.aecd.common.constant.QueryFilterType.EQUALS, com.amarsoft.aecd.common.constant.QueryFilterType.STARTSWITH, }, groupIndex = -1)
     private String rankVersion;
 
     @Description("登记人")
