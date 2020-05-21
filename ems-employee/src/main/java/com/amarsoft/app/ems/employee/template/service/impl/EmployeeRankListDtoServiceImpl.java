@@ -82,7 +82,7 @@ public class EmployeeRankListDtoServiceImpl implements EmployeeRankListDtoServic
             temp.setClassify(bo.getString("Classify"));
             temp.setGoalDate(bo.getString("GoalDate"));
             temp.setRank(bo.getString("Rank"));
-            temp.setRank(bo.getString("Direction"));
+            temp.setDirection(bo.getString("Direction"));
             temp.setRankVersion(bo.getString("RankVersion"));
             temp.setInputUserId(bo.getString("InputUserId"));
             temp.setInputTime(bo.getString("InputTime"));
