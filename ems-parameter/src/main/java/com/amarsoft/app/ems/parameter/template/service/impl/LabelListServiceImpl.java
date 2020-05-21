@@ -106,7 +106,7 @@ public class LabelListServiceImpl implements LabelListService {
             boolean isDelete = true;
             String alse="";
             for (LabelCatalog labelTemp : labels) {
-                if (LabelStatus.Enabled.id.equals(labelTemp.getLabelStatus())) {
+                if (LabelStatus.Enabled.id.equals(labelTemp.getLabelStatus())&&LabelType._2.id.equals(labelTemp.getLabelType())) {
                     alse+=labelTemp.getLabelName()+",";
                     isDelete = false;
                 }
