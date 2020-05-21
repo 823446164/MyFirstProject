@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.amarsoft.aecd.system.constant.LabelStatus;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
@@ -93,9 +94,10 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
                 rankresponse.setLabelLevel(ranItems.getLabelLevel());
                 ranStandardItemsLists.add(rankresponse);
             }
+            rankQueryRsp.setTotalCount(ranStandardItemsLists.size());
         }
         rankQueryRsp.setRankStandardItemsList(ranStandardItemsLists);
-        rankQueryRsp.setTotalCount(rankQueryRsp.getRankStandardItemsList().size());
+       
         return rankQueryRsp;
     }
 
@@ -114,10 +116,10 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
         
          // 1.点击子节点获取当前节点下的标签 // 
         List<BusinessObject> labelCatalogs =
-          bomanager.selectBusinessObjectsBySql(  "select LC.serialNo,LC.labelName,LC.parentNo    from LabelCatalog LC "
-              + "where  LC.parentNo=:serialNo  "
-              + "and    LC.serialNo not in (select  RSI.labelNo from RankStandardItems RSI where   RSI.rankNo=:rankNo)", "serialNo", 
-          treeQueryReq.getSerialNo(),"rankNo",treeQueryReq.getRankNo()).getBusinessObjects();
+          bomanager.selectBusinessObjectsBySql(  "select LC.serialNo as serialNo,LC.labelName as labelName,LC.parentNo as   parentNo  from LabelCatalog LC "
+              + "where  LC.parentNo=:serialNo and LC.labelStatus=:labelStatus"
+              + " and    LC.serialNo not in (select  RSI.labelNo from RankStandardItems RSI where   RSI.rankNo=:rankNo)", "serialNo", 
+          treeQueryReq.getSerialNo(),"labelStatus",LabelStatus.Enabled.id,"rankNo",treeQueryReq.getRankNo()).getBusinessObjects();
         TreeLabelQueryRsp response = new TreeLabelQueryRsp();
         List<TreeLabel> labelLists = null;
         if (!CollectionUtils.isEmpty(labelCatalogs)) {
