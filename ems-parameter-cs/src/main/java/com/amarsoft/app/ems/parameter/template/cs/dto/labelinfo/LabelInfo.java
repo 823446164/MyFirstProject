@@ -18,6 +18,7 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.aecd.parameter.constant.LabelType;
 import com.amarsoft.aecd.system.constant.ApplyType;
 import com.amarsoft.aecd.system.constant.LabelStatus;
@@ -31,7 +32,7 @@ import com.amarsoft.amps.avta.annotation.TemplateBody;
 @Getter
 @Setter
 @ToString
-@TemplateHeader(id = "LabelInfo", name = "标签Info", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 1)
+@TemplateHeader(id = "LabelInfo", name = "标签Info", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span =2)
 public class LabelInfo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("标签编号")
@@ -40,6 +41,7 @@ public class LabelInfo implements Serializable {
     @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String serialNo;
 
+    @NotEmpty
     @Description("标签名称")
     @Length(max=80)
     @ActualColumn("LC.labelName")
@@ -71,6 +73,13 @@ public class LabelInfo implements Serializable {
     @TemplateBody(sortNo = 5, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String rootNo;
     
+    @Enum(LabelType.class)
+    @Description("标签类型")
+    @Length(max=40)
+    @ActualColumn("LC.labelType")
+    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Radio, htmlStyle = "", isVisible = true, isReadOnly = true, span = 2, groupIndex = -1)
+    private String labelType;
+    
     @Enum(ApplyType.class)
     @Description("适用要求类别")
     @Length(max=10)
@@ -81,7 +90,7 @@ public class LabelInfo implements Serializable {
     @Description("标签说明")
     @Length(max=2000)
     @ActualColumn("LC.labelDescribe")
-    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly = false, span = 2, groupIndex = -1)
+    @TemplateBody(sortNo = 16, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly = false, span = 2, groupIndex = -1)
     private String labelDescribe;
 
     @Description("版本")
@@ -137,13 +146,6 @@ public class LabelInfo implements Serializable {
     @ActualColumn("LC.updateOrgId")
     @TemplateBody(sortNo = 16, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String LC_UpdateOrgId;
-
-    @Enum(LabelType.class)
-    @Description("标签类型")
-    @Length(max=40)
-    @ActualColumn("LC.labelType")
-    @TemplateBody(sortNo = 16, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Radio, htmlStyle = "", isVisible = true, isReadOnly = true, span = 2, groupIndex = -1)
-    private String labelType;
     
     @Description("登记人")
     @Length(max=40)
