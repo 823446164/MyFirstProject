@@ -78,7 +78,6 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             QueryProperties queryProperties = DTOHelper.getQueryProperties(rankStandardCatalogListQueryReq, RankStandardCatalogList.class);
             String sql =null;
             String rankStandard=rankStandardCatalogListQueryReq.getRankStandard();
-            String search=RankStandard.getIdByName(rankStandard);
                if(StringUtils.isEmpty(rankStandard)) {
                    sql = "select RSC.serialNo as serialNo,RSC.rankStandard as rankStandard,RSC.rankName as rankName,RSC.parentRankNo as parentRankNo,RSC.ability as ability,RSC.rankDescribe as rankDescribe,RSC.responeDescribe as responeDescribe,"
                        + "RSC.abilityDescribe as abilityDescribe,RSC.belongTeam as belongTeam,RSC.rankType as rankType,RSC.inputUserId as inputUserId,RSC.inputTime as inputTime,RSC.inputOrgId as inputOrgId,RSC.updateUserId as updateUserId,"
@@ -92,7 +91,7 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
                          + "RSC.updateTime as updateTime,RSC.updateOrgId as updateOrgId" + " from RANK_STANDARD_CATALOG RSC"
                          + " where 1=1  and RSC.rankType=:rankType and RSC.belongTeam= :belongTeam and RSC.rankStandard like :search and RSC.parentRankNo is null ";
             return queryProperties.assembleSql(sql, "belongTeam", rankStandardCatalogListQueryReq.getBelongTeam(), "rankType",
-                rankStandardCatalogListQueryReq.getRankType(),"search","%"+search+"%");
+                rankStandardCatalogListQueryReq.getRankType(),"search","%"+rankStandard+"%");
                }
         }
     }
@@ -112,7 +111,11 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
             // 查询到的数据转换为响应实体
             temp.setSerialNo(bo.getString("SerialNo"));
             temp.setRankStandard(RankStandard.getNameById(bo.getString("RankStandard")));
-            temp.setRankName(RankName.getNameById(bo.getString("RankName")));
+            if("1".equals(bo.getString("RankType"))){
+                temp.setRankName(RankName.getNameById(bo.getString("RankName")));
+            }else {
+                temp.setRankName(ManaRankName.getNameById(bo.getString("RankName")));
+            }
             temp.setParentRankNo(bo.getString("ParentRankNo"));
             temp.setRankDescribe(bo.getString("RankDescribe"));
             temp.setResponeDescribe(bo.getString("ResponeDescribe"));
@@ -208,6 +211,8 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
     @Transactional
     public RankStandardCatalogChildQueryRsq rankStandardCatalogChildQuery(@Valid RankStandardCatalogChildQueryReq rankStandardCatalogChildQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        RankStandardCatalog parentRank=bomanager.keyLoadBusinessObject(RankStandardCatalog.class, rankStandardCatalogChildQueryReq.getSerialNo());
+        String rankType=parentRank.getRankType();
         // 1.获取职级List对象
         List<RankStandardCatalog> ranCatalogs = bomanager.loadBusinessObjects(RankStandardCatalog.class,
             "parentRankNo=:parentRankNo or serialNo=:parentRankNo order by parentRankNo", "parentRankNo",
@@ -224,7 +229,11 @@ public class RankStandardCatalogListServiceImpl implements RankStandardCatalogLi
                 rankresponse = new RankStandardCatalogList();
                 rankresponse.setSerialNo(rank.getSerialNo());
                 rankresponse.setRankStandard(RankStandard.getNameById(rank.getRankStandard()));
-                rankresponse.setRankName(RankName.getNameById(rank.getRankName()));
+                if("1".equals(rankType)){
+                    rankresponse.setRankName(RankName.getNameById(rank.getRankName()));
+                }else {
+                    rankresponse.setRankName(ManaRankName.getNameById(rank.getRankName()));
+                }
                 rankresponse.setChildRankNo(ChildRankNo.getNameById(rank.getChildRankNo()));
                 rankresponse.setAbility(rank.getAbility());
                 rankresponse.setRankDescribe(rank.getRankDescribe());
