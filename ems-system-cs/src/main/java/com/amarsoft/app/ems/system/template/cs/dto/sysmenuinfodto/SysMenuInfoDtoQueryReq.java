@@ -25,4 +25,8 @@ public class SysMenuInfoDtoQueryReq implements Serializable {
     @NotEmpty
     @ActualColumn("MI.menuId")
     private String menuId;
+    @Description("状态")
+    @Length(max=1)
+    @ActualColumn("MI.status")
+    private String status;
 }

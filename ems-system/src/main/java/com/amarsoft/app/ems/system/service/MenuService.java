@@ -96,5 +96,17 @@ public interface MenuService {
      * @return
      */
     public SysMenuInfoDtoQueryRsp queryRoleByMenuId(String id);
-    
+    /**
+     * 根据菜单编号更新菜单状态
+     * @param request
+     * @return
+     */
+	public void updateStatus(SysMenuInfoDtoQueryReq sysMenuInfoDtoSaveReq);
+	/**
+     * 根据菜单编号删除菜单
+     * @param request
+     * @return
+     */
+	public void deleteMenuByid(String menuId);
+
 }

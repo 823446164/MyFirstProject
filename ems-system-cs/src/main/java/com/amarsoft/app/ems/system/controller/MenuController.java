@@ -44,13 +44,17 @@ public interface MenuController {
     public ResponseEntity<ResponseMessage<MenuAllQueryRsp>> menuAllQuery();
     @PostMapping(value = "/menu/getmenulist", name="查询菜单列表", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<MenuAllQueryRsp>> menuListQuery();
-    @PostMapping(value = "/menu/getmenuid", name="获取菜单编号", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<MenuIdQueryRsp>> menuIdQuery(@RequestBody @Valid RequestMessage<MenuIdQueryReq> reqMsg);
     @PostMapping(value = "/menu/getmenutree", name="查询菜单树图", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<MenuTreeQueryRsp>> menuTreeQuery(@RequestBody @Valid RequestMessage<MenuTreeQueryReq> req);
     /**jcli2**/
     @PostMapping(value = "/menu/infosave", name="菜单详情保存、已选择角色保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> sysMenuInfoDtoSave(@RequestBody @Valid RequestMessage<SysMenuInfoDtoSaveReq> reqMsg);
-    @PostMapping(value = "/menu/queryexistrole", name="根据菜单编号查询此菜单下已配置用户", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/menu/queryexistrole", name="根据菜单编号查询此菜单详情 与 已配置用户", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<SysMenuInfoDtoQueryRsp>> queryRoleByMenuId(@RequestBody @Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg);
+    @PostMapping(value = "/menu/updatestatus", name="更新菜单状态", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> updateMenuStatus(@RequestBody @Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg);
+    @PostMapping(value = "/menu/deletemenubyid", name="根据菜单编号删除菜单", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> deleteMenuById(@RequestBody @Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg);
+    @PostMapping(value = "/menu/getmenuid", name="获取菜单编号", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<MenuIdQueryRsp>> menuIdQuery(@RequestBody @Valid RequestMessage<MenuIdQueryReq> reqMsg);
 }

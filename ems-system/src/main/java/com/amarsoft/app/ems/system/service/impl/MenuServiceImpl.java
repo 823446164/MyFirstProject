@@ -508,34 +508,6 @@ public class MenuServiceImpl implements MenuService {
         }
     }
 
-    @Override
-    public synchronized MenuIdQueryRsp getMenuId(MenuIdQueryReq req) {
-        MenuIdQueryRsp rsp = new MenuIdQueryRsp();
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        BusinessObjectAggregate<BusinessObject> menuIdAggregate = bomanager.selectBusinessObjectsBySql("select max(menuId) as menuId from MenuInfo where parentId = :parentId", "parentId",req.getParentId());
-        
-        if (!CollectionUtils.isEmpty(menuIdAggregate.getBusinessObjects()) && !StringUtils.isEmpty(menuIdAggregate.getBusinessObjects().get(0).getString("menuId"))) {
-            String menuId = menuIdAggregate.getBusinessObjects().get(0).getString("menuId");
-            int subMenuId =Integer.parseInt(menuId.substring(menuId.length()-menuDefaultLength))+1;//机构编号最后几位数值截取加一
-
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < menuDefaultLength; i++) {
-                sb.append("0");
-            }
-            DecimalFormat decimalformat = new DecimalFormat(sb.toString());
-            rsp.setMenuId(menuId.substring(0, menuId.length()-menuDefaultLength) + decimalformat.format(subMenuId));
-        }else {
-            //新增
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < menuDefaultLength - 1; i++) {
-                sb.append("0");
-            }
-            String menuId = req.getParentId() + sb.append("1").toString();
-            rsp.setMenuId(menuId);
-        }
-
-        return rsp;
-    }
 
     @Override
     public MenuAllQueryRsp getMenuList() {
@@ -562,48 +534,74 @@ public class MenuServiceImpl implements MenuService {
     }
 
 
+    /**
+     * 新增，查看详情更新 共用方法
+     * jcli2
+     */
 	@Override
 	@Transactional
 	public void sysMenuInfoDtoSave(SysMenuInfoDtoSaveReq sysMenuInfoDto) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
 		
         if(sysMenuInfoDto!=null){
+        	/**菜单编号**/
         	String menuid = sysMenuInfoDto.getMenuId();
-        	String menuName = sysMenuInfoDto.getMenuName();
-        	String inputUserId=GlobalShareContextHolder.getUserId();
-        	LocalDateTime now = LocalDateTime.now();
-        	/**保存已选择角色**/
-        	List<Role> existlist = sysMenuInfoDto.getExistlist();
-        	if(!CollectionUtils.isEmpty(existlist)) {
-        		RoleAuth roleAuth =null;
-        		for (int i = 0; i < existlist.size(); i++) {
-        			Role role = existlist.get(i);
-        			roleAuth= new RoleAuth();
-        			roleAuth.setRoleId(role.getRoleId());
-        			roleAuth.setAuthType("1");
-        			roleAuth.setAuthNo(menuid);
-        			roleAuth.setAuthName(menuName);
-        			roleAuth.setStatus("1");
-        			roleAuth.setInputUserId(inputUserId);
-        			roleAuth.setInputTime(now);
-        			roleAuth.setUpdateUserId(inputUserId);
-        			roleAuth.setUpdateTime(now);
-        			bomanager.updateBusinessObject(roleAuth);
-        		}
-        	}
-        	/**保存info数据**/
-            MenuInfo menuInfo = bomanager.keyLoadBusinessObject(MenuInfo.class,menuid);
+        	/**获取当前登录用户**/
+        	String inputUserId=GlobalShareContextHolder.getUserId(); 
+        	/**获取当前时间**/
+        	LocalDateTime now = LocalDateTime.now(); 
+        	/**判断新增or更新**/
+        	MenuInfo menuInfo = bomanager.keyLoadBusinessObject(MenuInfo.class,menuid);
             if(menuInfo==null){
                 menuInfo = new MenuInfo();
-                menuInfo.generateKey();
-            }
-            menuInfo.setMenuName(menuName);
-            menuInfo.setMenuTwName(sysMenuInfoDto.getMenuTwName());
-            menuInfo.setUrl(sysMenuInfoDto.getUrl());
-            menuInfo.setUrlParam(sysMenuInfoDto.getUrlParam());
-            menuInfo.setIcon(sysMenuInfoDto.getIcon());
-            menuInfo.setStatus(sysMenuInfoDto.getStatus());
-            bomanager.updateBusinessObject(menuInfo);
+                menuInfo.setMenuId(menuid);
+                menuInfo.setSortNo(sysMenuInfoDto.getSortNo());
+                menuInfo.setMenuName(sysMenuInfoDto.getMenuName());
+                menuInfo.setMenuTwName(sysMenuInfoDto.getMenuTwName());
+                menuInfo.setUrl(sysMenuInfoDto.getUrl());
+                menuInfo.setUrlParam(sysMenuInfoDto.getUrlParam());
+                menuInfo.setIcon(sysMenuInfoDto.getIcon());
+                menuInfo.setStatus("3");
+                if (menuid.length() == 3) {
+                	menuInfo.setParentId(ROOT_MENU_PARENTID);
+				}else {
+					menuInfo.setParentId(menuid.substring(0, menuid.length()-3));
+				}
+                menuInfo.setInputUserId(inputUserId);
+                menuInfo.setInputTime(now);
+                bomanager.updateBusinessObject(menuInfo);
+                
+            }else {
+            	/**更新所填数据**/
+            	menuInfo.setMenuName(sysMenuInfoDto.getMenuName());
+                menuInfo.setMenuTwName(sysMenuInfoDto.getMenuTwName());
+                menuInfo.setUrl(sysMenuInfoDto.getUrl());
+                menuInfo.setUrlParam(sysMenuInfoDto.getUrlParam());
+                menuInfo.setIcon(sysMenuInfoDto.getIcon());
+                bomanager.updateBusinessObject(menuInfo);
+                
+                /**保存已选择角色之前 删除此菜单编号下所有的已配置角色 防止主键冲突**/
+            	bomanager.deleteObjectBySql(RoleAuth.class, "authNo=:menuid","menuid",menuid);
+            	/**获取前端所选 角色list、遍历新增**/
+            	List<Role> existlist = sysMenuInfoDto.getExistlist();
+            	if(!CollectionUtils.isEmpty(existlist)) {
+            		RoleAuth roleAuth =null;
+            		for (int i = 0; i < existlist.size(); i++) {
+            			Role role = existlist.get(i);
+            			roleAuth= new RoleAuth();
+            			roleAuth.setRoleId(role.getRoleId());
+            			roleAuth.setAuthType("1");
+            			roleAuth.setAuthNo(menuid);
+            			roleAuth.setAuthName(sysMenuInfoDto.getMenuName());
+            			roleAuth.setStatus("1");
+            			roleAuth.setInputUserId(inputUserId);
+            			roleAuth.setInputTime(now);
+            			roleAuth.setUpdateUserId(inputUserId);
+            			roleAuth.setUpdateTime(now);
+            			bomanager.updateBusinessObject(roleAuth);
+            		}
+            	}
+			}   
         }
         bomanager.updateDB();
 		
@@ -666,4 +664,82 @@ public class MenuServiceImpl implements MenuService {
         	rsp.setInputTime(menuInfo.getInputTime());
         }
 	}
+
+	@Override
+	@Transactional
+	public void updateStatus(SysMenuInfoDtoQueryReq req) {
+		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+		String menuId = req.getMenuId();
+		String status = req.getStatus();
+		//如果是停用操作
+		if (status.equals("2")) {
+			String sql = "Select menuId,status from MenuInfo where menuId like:id";
+			List<BusinessObject> list = bomanager.
+					selectBusinessObjectsBySql(sql, "id",menuId+"%").getBusinessObjects();
+			if (!CollectionUtils.isEmpty(list)) {
+				MenuInfo menuInfo = null;
+				for (int i = 0; i < list.size(); i++) {
+					menuInfo = new MenuInfo();
+					menuInfo.setMenuId(menuId);
+					menuInfo.setStatus(status);
+					bomanager.updateBusinessObject(menuInfo);
+				}
+			}
+		}
+		//如果是启用操作
+		if (status.equals("1")) {
+			MenuInfo menuInfo = new MenuInfo();
+			menuInfo.setMenuId(menuId);
+			menuInfo.setStatus(status);
+			bomanager.updateBusinessObject(menuInfo);
+		}
+		bomanager.updateDB();
+	}
+
+	@Override
+	@Transactional
+	public void deleteMenuByid(String menuId) {
+		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+		/**删除此菜单  以及下面的子菜单**/
+		String deleteMenu = "delete from MenuInfo where menuId like: id";
+		/**  删除 此菜单、子菜单有关联的角色**/
+		String deleteRoleAuth = "delete from RoleAuth where authNo in (" + 
+							"select menuId from MenuInfo where menuId like: id)";
+		
+		bomanager.deleteObjectByNativeSql(deleteRoleAuth, "id",menuId+"%");
+		
+		bomanager.deleteObjectByNativeSql(deleteMenu, "id",menuId+"%");
+		
+		bomanager.updateDB();
+	}
+	
+	@Override
+    @Transactional
+    public synchronized MenuIdQueryRsp getMenuId(MenuIdQueryReq req) {
+        MenuIdQueryRsp rsp = new MenuIdQueryRsp();
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        BusinessObjectAggregate<BusinessObject> menuIdAggregate = bomanager.selectBusinessObjectsBySql("select max(menuId) as menuId from MenuInfo where parentId = :parentId", "parentId",req.getParentId());
+        
+        if (!CollectionUtils.isEmpty(menuIdAggregate.getBusinessObjects()) && !StringUtils.isEmpty(menuIdAggregate.getBusinessObjects().get(0).getString("menuId"))) {
+            String menuId = menuIdAggregate.getBusinessObjects().get(0).getString("menuId");
+            int subMenuId =Integer.parseInt(menuId.substring(menuId.length()-menuDefaultLength))+1;//机构编号最后几位数值截取加一
+
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < menuDefaultLength; i++) {
+                sb.append("0");
+            }
+            DecimalFormat decimalformat = new DecimalFormat(sb.toString());
+            rsp.setMenuId(menuId.substring(0, menuId.length()-menuDefaultLength) + decimalformat.format(subMenuId));
+        }else {
+            //新增
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < menuDefaultLength - 1; i++) {
+                sb.append("0");
+            }
+            String menuId = req.getParentId() + sb.append("1").toString();
+            rsp.setMenuId(menuId);
+        }
+
+        return rsp;
+    }
 }

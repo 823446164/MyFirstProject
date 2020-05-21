@@ -11,7 +11,10 @@ import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.aecd.system.constant.MenuStatus;
+import com.amarsoft.aecd.system.constant.OrgStatus;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 
 /**
@@ -31,11 +34,11 @@ public class SysMenuInfoDto implements Serializable {
     @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String menuId;
 
-    @Description("排序编号")
+    @Description("排序号")
     @Length(max=40)
     @NotEmpty
     @ActualColumn("MI.sortNo")
-    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String sortNo;
 
     @Description("菜单名称")
@@ -73,8 +76,9 @@ public class SysMenuInfoDto implements Serializable {
     @Description("菜单状态")
     @Length(max=1)
     @NotEmpty
+    @Enum(MenuStatus.class)
     @ActualColumn("MI.status")
-    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Radio, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 7, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Radio, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String status;
 
     @Description("登记人")
@@ -90,5 +94,12 @@ public class SysMenuInfoDto implements Serializable {
     @ActualColumn("MI.inputTime")
     @TemplateBody(sortNo = 9, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String inputTime;
+    
+    @Description("上级菜单编号")
+    @Length(max=40)
+    @NotEmpty
+    @ActualColumn("MI.parentId")
+    @TemplateBody(sortNo = 10, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
+    private String parentId;
     
 }

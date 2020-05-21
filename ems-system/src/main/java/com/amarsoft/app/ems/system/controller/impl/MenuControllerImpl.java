@@ -170,20 +170,7 @@ public class MenuControllerImpl implements MenuController {
         }
     }
 
-    @Override
-    public ResponseEntity<ResponseMessage<MenuIdQueryRsp>> menuIdQuery(@RequestBody @Valid RequestMessage<MenuIdQueryReq> reqMsg){
-        ResponseMessage<MenuIdQueryRsp> rspMsg = null;
-        try {
-            MenuIdQueryRsp rsp = menuService.getMenuId(reqMsg.getMessage());
-            return new ResponseEntity<ResponseMessage<MenuIdQueryRsp>>(new ResponseMessage<MenuIdQueryRsp>(rsp), HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("获取菜单编号请求报文："+ reqMsg.toString(), e);
-            }
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "900726",e.getMessage());
-            return new ResponseEntity<ResponseMessage<MenuIdQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    
 
     @Override
     public ResponseEntity<ResponseMessage<MenuAllQueryRsp>> menuListQuery() {
@@ -250,4 +237,71 @@ public class MenuControllerImpl implements MenuController {
         }
     
 	}
+
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseMessage<Object>> updateMenuStatus(@RequestBody
+			@Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg) {
+        ResponseMessage<Object> rspMsg = null;
+        try {
+        	SysMenuInfoDtoQueryReq request = reqMsg.getMessage();
+        	
+            menuService.updateStatus(request);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("菜单详情Info保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseMessage<Object>> deleteMenuById(@RequestBody
+			@Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg) {
+
+        ResponseMessage<Object> rspMsg = null;
+        try {
+        	String menuId = reqMsg.getMessage().getMenuId();
+        	
+            menuService.deleteMenuByid(menuId);
+            rspMsg = new ResponseMessage<Object>();
+
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("菜单详情Info保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+	}
+
+	@Override
+	@Transactional
+    public ResponseEntity<ResponseMessage<MenuIdQueryRsp>> menuIdQuery(@RequestBody @Valid RequestMessage<MenuIdQueryReq> reqMsg){
+        ResponseMessage<MenuIdQueryRsp> rspMsg = null;
+        try {
+            MenuIdQueryRsp rsp = menuService.getMenuId(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<MenuIdQueryRsp>>(new ResponseMessage<MenuIdQueryRsp>(rsp), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("获取菜单编号请求报文："+ reqMsg.toString(), e);
+            }
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "900726",e.getMessage());
+            return new ResponseEntity<ResponseMessage<MenuIdQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+	
 }
