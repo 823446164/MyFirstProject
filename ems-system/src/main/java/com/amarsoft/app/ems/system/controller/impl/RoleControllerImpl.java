@@ -212,14 +212,16 @@ public class RoleControllerImpl implements RoleController {
                 log.error("查询用户角色请求报文："+ reqMsg.toString(), e);
             }
             //事务回滚
-            //TODO
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<UserRoleQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
     /**
-     * 角色信息List查询
+     * Description:角色信息List查询<br>
+     * ${tags}
+     * 
+     * @see
      */
     @Override
     @Transactional
@@ -238,14 +240,16 @@ public class RoleControllerImpl implements RoleController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6037",e.getMessage());
             return new ResponseEntity<ResponseMessage<RoleListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
     /**
-     * 角色信息Info查询
+     * Description:角色信息Info查询<br>
+     * ${tags}
+     * 
+     * @see
      */
     @Override
     @Transactional
@@ -264,14 +268,16 @@ public class RoleControllerImpl implements RoleController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6038",e.getMessage());
             return new ResponseEntity<ResponseMessage<RoleInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * 角色信息Info保存
+     * Description: 角色信息Info保存<br>
+     * ${tags}
+     * 
+     * @see
      */
     @Override
     @Transactional
@@ -290,14 +296,16 @@ public class RoleControllerImpl implements RoleController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6039",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * 用户待引入的list查询接口
+     * Description: 用户待引入的list查询接口<br>
+     * ${tags}
+     * 
+     * @see
      */
 	@Override
 	@Transactional
@@ -313,15 +321,18 @@ public class RoleControllerImpl implements RoleController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6040",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 
+
 	/**
-	 * 用户已引入的list查询接口
-	 */
+     * Description: 用户已引入的list查询接口<br>
+     * ${tags}
+     * 
+     * @see
+     */
 	@Override
 	@Transactional
 	public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> RoleUserIntroducedListDtoQuery(@RequestBody
@@ -337,15 +348,17 @@ public class RoleControllerImpl implements RoleController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6040",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 
 	/**
-	 * 用户引入的多记录保存接口
-	 */
+     * Description: 用户引入的多记录保存接口<br>
+     * ${tags}
+     * 
+     * @see
+     */
 	@Override
 	@Transactional
 	public ResponseEntity<ResponseMessage<Object>> roleUserListDtoSave(@RequestBody
@@ -367,8 +380,11 @@ public class RoleControllerImpl implements RoleController {
 	}
 
 	/**
-	 * 用户引入的多记录删除接口
-	 */
+     * Description: 用户引入的多记录删除接口<br>
+     * ${tags}
+     * 
+     * @see
+     */
 	@Override
 	@Transactional
 	public ResponseEntity<ResponseMessage<Object>> roleUserListDtoDelete(@RequestBody
