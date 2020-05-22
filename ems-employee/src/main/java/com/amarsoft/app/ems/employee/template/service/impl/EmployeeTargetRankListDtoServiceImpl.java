@@ -39,8 +39,8 @@ public class EmployeeTargetRankListDtoServiceImpl implements EmployeeTargetRankL
             
             String sql = "select ETR.serialNo as serialNo,ETR.rankSerialNo as rankSerialNo,ETR.employeeNo as employeeNo,ETR.employeeName as employeeName,ETR.rankName as rankName,ETR.evaluationRank as evaluationRank,ETR.targetRank as targetRank,ETR.targetRecord as targetRecord,ETR.evaluationRankTime as evaluationRankTime,ETR.label as label,ETR.grade as grade,ETR.masteryDegree as masteryDegree,ETR.changeReason as changeReason,ETR.opinion as opinion,ETR.teamManager as teamManager,ETR.inputUserId as inputUserId,ETR.inputTime as inputTime,ETR.inputOrgId as inputOrgId,ETR.updateUserId as updateUserId,ETR.updateTime as updateTime,ETR.updateOrgId as updateOrgId"
                 +" from EMPLOYEE_TARGET_RANK ETR"
-                +" where 1=1 and ETR.employeeNo = :employeeNo";
-            return queryProperties.assembleSql(sql,"employeeNo",employeeTargetRankListDtoQueryReq.getEmployeeNo());
+                +" where 1=1 and ETR.approveStatus = :approveStatus";
+            return queryProperties.assembleSql(sql,"approveStatus",employeeTargetRankListDtoQueryReq.getApproveStatus());
         }
     }
 

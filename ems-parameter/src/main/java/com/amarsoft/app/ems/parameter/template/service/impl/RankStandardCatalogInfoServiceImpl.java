@@ -15,19 +15,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import com.amarsoft.aecd.parameter.constant.ChildRankNo;
 import com.amarsoft.aecd.parameter.constant.ManaRankName;
 import com.amarsoft.aecd.parameter.constant.RankName;
 import com.amarsoft.aecd.parameter.constant.RankStandard;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.acsc.rpc.RequestMessage;
+import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
+import com.amarsoft.app.ems.employee.template.cs.client.EmployeeRankApplyInfoDtoClient;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankapplyinfodto.RankDeleteValidateReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankapplyinfodto.RankDeleteValidateRsp;
 import com.amarsoft.app.ems.parameter.entity.RankStandardCatalog;
 import com.amarsoft.app.ems.parameter.entity.RankStandardItems;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfo;
@@ -35,6 +45,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildin
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoQueryRsq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandardcatalogchildinfo.RankStandardCatalogChildInfoSaveReq;
 import com.amarsoft.app.ems.parameter.template.service.RankStandardCatalogInfoService;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -48,7 +59,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogInfoService {
-
+        
+    @Autowired
+    EmployeeRankApplyInfoDtoClient employeeRankApplyInfoDtoClient;
     /**
      * 
      * Description: 职级/子职级标准详情查询
@@ -150,6 +163,16 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             rankInfo.setInfo(rankStandardCatalogInfo);
             rankInfo.setList(rankList);
             rankInfo.setChildCount(childCount);
+            //如果是子职级，则需要传当前处于审批的个数
+            if(!StringUtils.isEmpty(rankStandardCatalog.getParentRankNo())) {
+                RankDeleteValidateReq rankDeleteValidateReq=new RankDeleteValidateReq();
+                rankDeleteValidateReq.setRankNo(rankStandardCatalogChildInfoQueryReq.getSerialNo());
+                RequestMessage<RankDeleteValidateReq> reqMsg = new RequestMessage<RankDeleteValidateReq>();
+                reqMsg.setMessage(rankDeleteValidateReq);
+                ResponseEntity<ResponseMessage<RankDeleteValidateRsp>> employeeRankApplyInfoExist = employeeRankApplyInfoDtoClient.employeeRankApplyInfoExist(reqMsg);
+                RankDeleteValidateRsp message = employeeRankApplyInfoExist.getBody().getMessage();
+                rankInfo.setFlowCount(message.getRecordCount());
+            }
             return rankInfo;
         }
         else {
@@ -308,7 +331,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
     }
 
     // 删除校验,待做
-    // TODO xphe 删除校验－－－输入：所属团队 当前时间（本月内）团队的职级体系是否有人在申请（目标申请表，状态审批中，待处理）
+    // TODO xphe 删除校验－－－输入：所属团队 当前时间（本月内）团队的职级体系是否有人在申请（员工申请表，状态审批中，待处理）
     public boolean checkDeleteRandStand(String belongTeam, String type) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         // TeamInfo teaminfo = bomanager.keyLoadBusinessObject(TeamInfo.class, belongTeam);
@@ -348,16 +371,33 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         // 根据主键匹配主表信息
         RankStandardCatalog rankStandardCatalog = bomanager.keyLoadBusinessObject(RankStandardCatalog.class, serialNo);
+        String parentNo=rankStandardCatalog.getParentRankNo();
+        int flowcount=0;
         if (null == rankStandardCatalog) {
-            if (log.isErrorEnabled()) {
+            if(log.isErrorEnabled()) {
                 log.error(serialNo + "此职级不存在!");
             }
             throw new ALSException("EMS2003");
         }
-        // 删除对应职等及子职级
-        bomanager.deleteObjectBySql(RankStandardCatalog.class, "serialNo=:serialNo or parentRankNo=:serialNo", "serialNo", serialNo);
-        // 删除对应职级指标
-        bomanager.deleteObjectBySql(RankStandardItems.class, "rankNo=:serialNo", "serialNo", serialNo);
+        if(!StringUtils.isEmpty(parentNo)) {
+            RankDeleteValidateReq rankDeleteValidateReq=new RankDeleteValidateReq();
+            rankDeleteValidateReq.setRankNo(rankStandardCatalogChildInfoQueryReq.getSerialNo());
+            RequestMessage<RankDeleteValidateReq> reqMsg = new RequestMessage<RankDeleteValidateReq>();
+            reqMsg.setMessage(rankDeleteValidateReq);
+            ResponseEntity<ResponseMessage<RankDeleteValidateRsp>> employeeRankApplyInfoExist = employeeRankApplyInfoDtoClient.employeeRankApplyInfoExist(reqMsg);
+            RankDeleteValidateRsp message = employeeRankApplyInfoExist.getBody().getMessage();
+            flowcount=message.getRecordCount();
+        }
+
+        if(flowcount==0) {
+            // 删除对应职等及子职级
+            bomanager.deleteObjectBySql(RankStandardCatalog.class, "serialNo=:serialNo or parentRankNo=:serialNo", "serialNo", serialNo);
+            // 删除对应职级指标
+            bomanager.deleteObjectBySql(RankStandardItems.class, "rankNo=:serialNo", "serialNo", serialNo);
+        }else {
+            //TODO xphe 抛出无法删除的原因
+            throw new ALSException("EMS2003");
+        }
         bomanager.updateDB();
     }
 

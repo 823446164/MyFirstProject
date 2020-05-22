@@ -10,9 +10,11 @@
  */
 package com.amarsoft.app.ems.system.cs.dto.teamlistdto;
 import java.io.Serializable;
+import java.util.List;
 
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeelistbyuser.Filter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,4 +34,7 @@ public class EmployeeQueryReq  implements Serializable{
     @Description("团队编号")
     @Length(max=40)
     private String teamId;
+    
+    @Description("查询条件")
+    private List<Filter> filters;
 }

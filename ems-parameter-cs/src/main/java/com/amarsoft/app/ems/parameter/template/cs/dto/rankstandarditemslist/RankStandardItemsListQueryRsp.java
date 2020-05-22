@@ -36,4 +36,7 @@ public class RankStandardItemsListQueryRsp   implements Serializable {
 
     @Description("职级指标列表")
     private List<RankStandardItemsList> rankStandardItemsList;
+    
+    //子职级下的处理审批中或者要审批的当月流程个数
+    private int flowCount;
 }
