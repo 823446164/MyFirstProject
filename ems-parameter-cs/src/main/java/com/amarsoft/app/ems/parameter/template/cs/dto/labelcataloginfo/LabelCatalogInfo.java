@@ -47,7 +47,6 @@ public class LabelCatalogInfo  implements Serializable {
 
     @Description("标签名称")
     @Length(max=80)
-    @NotEmpty
     @ActualColumn("LC.labelName")
     @TemplateBody(sortNo = 1, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String labelName;
@@ -75,7 +74,7 @@ public class LabelCatalogInfo  implements Serializable {
     @Description("目录备注")
     @Length(max=2000)
     @ActualColumn("LC.catalogRemark")
-    @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.TextArea, htmlStyle = "", isVisible = true, isReadOnly = false, span = 2, groupIndex = -1)
     private String catalogRemark;
 
     @Description("版本")

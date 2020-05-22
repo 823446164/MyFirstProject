@@ -13,17 +13,30 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.employee.constant.ParentNo;
 import com.amarsoft.aecd.parameter.constant.LabelType;
+import com.amarsoft.aecd.system.constant.UserRoles;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.acsc.rpc.RequestMessage;
+import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcatalogtreequery.LabelCatalogTreeQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcatalogtreequery.Tree;
 import com.amarsoft.app.ems.parameter.template.service.LabelCatalogTreeService;
+import com.amarsoft.app.ems.system.controller.RoleController;
+import com.amarsoft.app.ems.system.cs.client.RoleClient;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserAndRole;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -38,7 +51,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class LabelCatalogTreeServiceImpl implements LabelCatalogTreeService {
-
+    @Autowired 
+    RoleClient roleController;  
+    
     /**
      * 查询出所有目录列表
      * 通过递归的方法，查询出所有的标签目录
@@ -143,7 +158,30 @@ public class LabelCatalogTreeServiceImpl implements LabelCatalogTreeService {
                 rsp.getTrees().add(rootNode);
             }
             // end
-        }
+        }  
+        rsp.setPower(powerToLabel());
         return rsp;
+    }
+    
+    /**
+     * 判断当前用户的权限是否可维护标签
+     * 
+     * @return power 
+     */
+    public boolean powerToLabel() {
+        boolean power = false; 
+        //跨服务调用方法：按用户查找角色
+        RequestMessage<UserRoleQueryReq> reqMsg =new RequestMessage<>();
+        UserRoleQueryReq req = new UserRoleQueryReq();
+        req.setUserId(GlobalShareContextHolder.getUserId());
+        reqMsg.setMessage(req);
+        ResponseEntity<ResponseMessage<UserRoleQueryRsp>> roles = roleController.userRoleQuery(reqMsg);
+        List<UserAndRole> userRoles = roles.getBody().getMessage().getUserRoles();
+        for (UserAndRole userAndRole : userRoles) {
+            if(UserRoles.Admin.id.equals(userAndRole.getRoleId())) {
+                power = true;
+            }            
+        }
+        return power;       
     }
 }

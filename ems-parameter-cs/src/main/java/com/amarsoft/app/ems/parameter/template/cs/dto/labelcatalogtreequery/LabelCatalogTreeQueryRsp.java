@@ -25,8 +25,13 @@ import java.util.List;
 public class LabelCatalogTreeQueryRsp implements Serializable{
     private static final long serialVersionUID = 1L;
 
-    @Description(" 树图信息组")
+    @Description("树图信息组")
     @Valid
     @NotEmpty
     private List<Tree> trees;
+    
+    @Description("用户权限")
+    @NotEmpty
+    @Valid
+    private boolean power;
 }

@@ -41,7 +41,6 @@ public class LabelInfo implements Serializable {
     @TemplateBody(sortNo = 0, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String serialNo;
 
-    @NotEmpty
     @Description("标签名称")
     @Length(max=80)
     @ActualColumn("LC.labelName")
