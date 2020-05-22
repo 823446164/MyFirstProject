@@ -37,4 +37,6 @@ public class RankStandardCatalogChildInfoQueryRsq  implements Serializable {
     private List<Map<String,String>> list;
     //子职级个数
     private int childCount;
+    //子职级下的处理审批中或者要审批的当月流程个数
+    private int flowCount;
 }
