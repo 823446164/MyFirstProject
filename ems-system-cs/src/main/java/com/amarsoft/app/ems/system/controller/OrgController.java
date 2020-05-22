@@ -36,6 +36,8 @@ import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgManagerQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgManagerQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.deleteinfodto.DeleteInfoDtoQueryReq;
@@ -91,4 +93,6 @@ public interface OrgController {
     public ResponseEntity<ResponseMessage<OrgUserQueryRsp>> orgUserQuery(@RequestBody @Valid RequestMessage<OrgUserQueryReq> reqMsg);
     @PostMapping(value = "/system/getdeptmanagerall", name="查询所有不是部门经理的userId", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>> getDeptManagerAll(@RequestBody @Valid RequestMessage<DeptManagerUserQueryReq> reqMsg);
+    @PostMapping(value = "/system/getdeptManagerbyuserId", name="根据员工id查询所属部门", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<OrgManagerQueryRsp>> orgManagerQuery(@RequestBody @Valid RequestMessage<OrgManagerQueryReq> reqMsg);
 }
