@@ -1,7 +1,12 @@
-/**
- * 查询机构用户
- * @Author hzhang23
- * 根据接口定义的excel文档自动生成实体，由AutoCreateCoder.class的test方法批量生成。
+/*
+ * 文件名：OrgManagerQueryRsp.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：zcluo
+ * 修改时间：2020年5月22日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
  */
 package com.amarsoft.app.ems.system.cs.dto.orguserquery;
 
