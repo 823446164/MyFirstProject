@@ -10,6 +10,7 @@
  */
 package com.amarsoft.app.ems.system.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.system.constant.OrgStatus;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
@@ -98,6 +101,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 					String userNameb = UserHelper.getUserName(roleblist[i]);
 					userBName += userNameb + ",";
 				}
+                userBName = userBName.substring(0,userBName.length()-1);
 			}
 			if (roleC != "" && roleC != null) {
 				String[] roleclist = roleC.split(",");
@@ -105,7 +109,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 					String userNamec = UserHelper.getUserName(roleclist[i]);
 					userCName += userNamec + ",";
 				}
-
+				userCName = userCName.substring(0, userCName.length()-1);
 			}
 
 			teamInfoDto.setRoleBName(userBName);
@@ -149,22 +153,39 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 	public void teamInfoDtoSaveAction(TeamInfoDtoSaveReq req) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
 		TeamInfo team = null;
-		//检索团队名称是否存在
-		TeamInfo search = bomanager.loadBusinessObject(TeamInfo.class,"teamName",req.getTeamName());
-		if (!ObjectUtils.isEmpty(search)) {//若同名团队存在，则提示团队已存在
-            throw new ALSException("EMS6030");
+		//如果请求体中团队编号为空，则是新增团队，检索团队名称是否存在
+		if (StringUtils.isEmpty(req.getTeamId())) {
+		    TeamInfo search = bomanager.loadBusinessObject(TeamInfo.class,"teamName",req.getTeamName());
+	        if (!ObjectUtils.isEmpty(search)) {//若同名团队存在，则提示团队已存在
+	            throw new ALSException("EMS6030");
+	        }
+	        //如果没有,则新建一个团队
+	        team = new TeamInfo();
+	        BeanUtils.copyProperties(req, team);
+	        team.generateKey();
+	        team.setStatus(OrgStatus.New.id);
+	      
+	        //添加部门团队关系表
+	        OrgTeam orgTeam = new OrgTeam();
+	        orgTeam.setOrgId(req.getBelongOrgId());
+	        orgTeam.setTeamId(team.getTeamId());
+	        bomanager.updateBusinessObject(orgTeam);
+	        bomanager.updateBusinessObject(team);
+        }else {//否则执行更新操作
+            TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class, "teamId",req.getTeamId());
+            teamInfo.setRoleA(req.getRoleA());
+            teamInfo.setRoleB(req.getRoleB());
+            teamInfo.setRoleC(req.getRoleC());
+            teamInfo.setTeamName(req.getTeamName());
+            teamInfo.setDescription(req.getDescription());
+            teamInfo.setBelongOrgId(req.getBelongOrgId());
+            teamInfo.setStatus(req.getStatus());
+            teamInfo.setUpdateUserId(GlobalShareContextHolder.getUserId());
+            teamInfo.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
+            teamInfo.setUpdateTime(LocalDateTime.now());
+            bomanager.updateBusinessObject(teamInfo);
         }
-		//如果没有,则新建一个团队
-		team = new TeamInfo();
-		BeanUtils.copyProperties(req, team);
-		team.generateKey();
-		team.setStatus(OrgStatus.New.id);
-		bomanager.updateBusinessObject(team);
-		//添加部门团队关系表
-		OrgTeam orgTeam = new OrgTeam();
-		orgTeam.setOrgId(req.getBelongOrgId());
-		orgTeam.setTeamId(team.getTeamId());
-		bomanager.updateBusinessObject(orgTeam);
+		
 		bomanager.updateDB();
 	}
 

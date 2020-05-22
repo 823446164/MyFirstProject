@@ -83,10 +83,12 @@ public class TeamServiceImpl implements TeamService {
     EmployeeInfoDtoClient employeeInfoDtoClient;
     @Autowired
     EmployeeBelongChangeInfoDtoClient employeeBelongChangeInfoDtoClient ;
+    
     /**
-     * Description: <br>
-     * 新增团队<br>
-     * ${tags}
+     * Description:新增团队<br>
+     * @param AddTeamReq
+     * @return AddTeamRsp
+     * 修改人:xszhou
      * @see
      */
     @Override
@@ -387,81 +389,6 @@ public class TeamServiceImpl implements TeamService {
         }
         return true;
     }
-    /**
-     * Description: 删除团队信息<br>
-     *@param DeleteTeamReq(teamId)
-     * ${tags}
-     * @see
-     */
-    @Override
-    public DeleteTeamRsp deleteTeam(@RequestBody @Valid DeleteTeamReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo delTeam = bomanager.keyLoadBusinessObject(TeamInfo.class, req.getTeamId());
-        //1.根据传入参数确认团队下员工信息
-        List<UserTeam> userTeams = bomanager.loadBusinessObjects(UserTeam.class, "teamId=:teamId","teamId",req.getTeamId());
-        DeleteTeamRsp deleteTeamRsp =new DeleteTeamRsp ();
-        //2.查询团队对应的部门Id
-        OrgTeam orgTeam = bomanager.loadBusinessObject(OrgTeam.class, "teamId",req.getTeamId());
-        
-        if (!"2".equals(delTeam.getStatus())) {//3.若团队不为停用状态，不许操作
-            deleteTeamRsp.setIsExit(true);
-            deleteTeamRsp.setMeassage("团队非停用状态");
-        }else if(!CollectionUtils.isEmpty(userTeams)) {//4.若团队下有员工，不许删除
-            deleteTeamRsp.setIsExit(true);
-            deleteTeamRsp.setMeassage("团队下存在员工，请勿删除");
-        }else if(!StringUtils.isEmpty(delTeam.getRoleA())) {//5.若团队有负责人，不许删除
-            deleteTeamRsp.setIsExit(true);
-            deleteTeamRsp.setMeassage("该团队存在负责人，请核实后再操作！"); 
-        }else {//6.可删除校验成功,执行删除操作
-            bomanager.deleteBusinessObject(delTeam);
-            if (!ObjectUtils.isEmpty(orgTeam)) {
-                bomanager.deleteObjectBySql(OrgTeam.class, "teamId=:teamId and orgId=:orgId", "teamId",delTeam.getTeamId(),"orgId",orgTeam.getOrgId());
-            }
-        }
-
-        bomanager.updateDB();
-        return deleteTeamRsp;
-        
-    }
-
-  
-    
-    /**
-     * Description:根据部门编号查询团队信息 <br>
-     * <br>
-     * ${tags}
-     * @see
-     */
-    @Override
-    public TeamQueryRsp teamQueryById(TeamQueryReq req) {
-      
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        //根据部门编号查询团队信息
-        bomanager.clear();
-       // String orgId = req.getOrgId();
-        BusinessObjectAggregate<BusinessObject> TeamQueryReqBoa = bomanager.selectBusinessObjectsBySql(
-            "select  count(*), UT.userId as userId ,TI.teamId as teamId,TI.teamName as teamName,TI.teamLeader as  teamLeader "
-            + "from UserTeam UT, TeamInfo TI "
-            + "where TI.teamId  =UT.teamId and  TI.belongOrgId= :belongOrgId  ","belongOrgId", req.getBelongOrgId());
-       
-        List<BusinessObject> TeamQueryList = TeamQueryReqBoa.getBusinessObjects();
-        TeamQueryRsp  teamQueryRsp =new TeamQueryRsp ();
-        if(TeamQueryList !=null && TeamQueryList.size()>0) {
-            List list = new ArrayList<TeamInfo>();
-            //遍历TeamQueryList
-         for(BusinessObject team:TeamQueryList) {
-             com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo t = new com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo();
-             t.setTeamId(team.getString("teamId"));
-              t.setTeamName(team.getString("teamName"));
-              t.setTeamLeader(team.getString("teamLeader"));
-              //设置团队的总人数
-              t.setCount(team.getInt("count"));
-              list.add(t); 
-             }
-         teamQueryRsp.setTeamInfos(list);
-        }
-        return teamQueryRsp;  
-    }
 
     /**
      * Description: 更新员工团队信息 <br>
@@ -572,39 +499,6 @@ public class TeamServiceImpl implements TeamService {
         return rsp;
     }
 	
-	 /**
-     * Description: 根据条件查询团队信息<br>
-     * ${tags}
-     * @see
-     */
-	
-    @Override
-    public TeamQueryRsp teamSearch(TeamQueryReq req) {
-      
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager(); 
-        BusinessObjectAggregate<TeamInfo> teamAggregate = null;
-        List<TeamInfo> teamInfos = new ArrayList<TeamInfo>();
-        //根据团队负责人查询团队信息
-        String[] searchAttributes = {"teamLeader","teamName"};//查询条件
-        if (req.getBegin() == null || req.getPageSize() == null) { //如果传入分页信息为空则展示所有
-            req.setBegin(0);
-            req.setPageSize(Integer.MAX_VALUE);
-            }
-       if (!StringUtils.isEmpty(req.getTeamName())) {//按团队名称查询
-            teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "teamName = :teamName ","teamName ",req.getTeamName());
-        }else if (!StringUtils.isEmpty(req.getTeamLeader())) {//按团队负责人查询
-            teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "teamLeader = :teamLeader","teamLeader",req.getTeamLeader());
-        }else {//查询所有
-            teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "1 = 1");
-            }
-       TeamQueryRsp rsp = new TeamQueryRsp();
-       rsp.setTotalCount(teamAggregate == null ? 1 : teamAggregate.getAggregate("count(teamId) as cnt").getInt("cnt")); // 为空则为查询详情，不为空返回集合数量
-       rsp.setTeamInfos(new ArrayList<com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo>());
-       return rsp;
-      
-       
-    }
-    
     /**
      * Description: 根据用户查找对应的团队<br>
      * @param  UserTeamQueryReq(userId)
