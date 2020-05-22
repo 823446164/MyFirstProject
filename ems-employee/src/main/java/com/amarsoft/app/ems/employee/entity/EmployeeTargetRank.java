@@ -72,7 +72,11 @@ public class EmployeeTargetRank extends BusinessObject {
     @Description("职级考核日期") 
     @Column(name = "evaluationRankTime",length=10) 
     private LocalDate evaluationRankTime;
-      
+     
+    @Description("审批状态") 
+    @Column(name = "approveStatus",length=20) 
+    private String approveStatus;
+    
     @Description("标签") 
     @Column(name = "label",length=40) 
     private String label;
