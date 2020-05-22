@@ -57,7 +57,8 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1006",e.getMessage());
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -168,11 +169,7 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
     
     @Override
     @Transactional
-    /**
-     * Description: 失效按钮-将员工的状态改为离职状态<br>
-     * ${tags}
-     * @see
-     */
+    //员工状态保存
     public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoStatusSave(
             @RequestBody @Valid RequestMessage<EmployeeInfoStatusUpdateReq> reqMsg) {
         ResponseMessage<Object> rspMsg = null;
@@ -183,36 +180,11 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
-                log.error("员工状态更新："+ reqMsg.toString(), e);
+                log.error("员工状态保存："+ reqMsg.toString(), e);
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1001",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    @Override
-    @Transactional
-    /**
-     * Description: 生效按钮-离职员工状态改为实习或者是试用<br>
-     * ${tags}
-     * @see
-     */
-    public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoStatusUpdate(
-            @RequestBody @Valid RequestMessage<EmployeeInfoStatusUpdateReq> reqMsg) {
-        ResponseMessage<Object> rspMsg = null;
-        try {
-            EmployeeInfoStatusUpdateReq request = reqMsg.getMessage();
-            employeeInfoListDtoServiceImpl.employeeInfoDtoStatusSave(request);
-            rspMsg = new ResponseMessage<Object>();
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("员工状态更新："+ reqMsg.toString(), e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1001",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1007",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
