@@ -41,13 +41,7 @@ public interface TeamListDtoService {
      * @return rsp
      */
     public EmployeeQueryRsp employeeQuery(@Valid EmployeeQueryReq employeeQueryReq);
-    /**
-     * 
-     * 按条件查询团队信息
-     * @param request
-     * @return rsp
-     */
-	public TeamListDtoQueryRsp teamSearch(TeamListDtoQueryReq request);
+
 
 
 }

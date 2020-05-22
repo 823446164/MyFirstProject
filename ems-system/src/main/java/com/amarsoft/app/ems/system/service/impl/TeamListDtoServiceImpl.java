@@ -1,3 +1,13 @@
+/*
+ * 文件名：TeamListDtoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：团队列表Service实现类
+ * 修改人：xszhou
+ * 修改时间：2020/5/21
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.system.service.impl;
 
 import java.time.LocalDateTime;
@@ -6,13 +16,14 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.system.constant.ChangeEventType;
 import com.amarsoft.aecd.system.constant.OrgStatus;
@@ -29,10 +40,12 @@ import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjec
 import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoListDtoClient;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoReq;
 import com.amarsoft.app.ems.employee.template.cs.employeelistbyemplno.EmployeeListByEmplNoRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.EmployeeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.EmployeeQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.teamlistdto.Filter;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDto;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamlistdto.TeamListDtoQueryRsp;
@@ -130,69 +143,55 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
 
   
     /**
-     * 根据部门/关键字查询团队信息
-     * 
-     * @param request
-     * @return
+     * Description: 根据关键字查询团队信息<br>
+     * @param TeamListDtoQueryReq
+     * @return TeamListDtoQueryRsp
+     * 修改人:xszhou
+     * @see
      */
 
     @Override
     @Transactional
-    public TeamListDtoQueryRsp teamQueryById(TeamListDtoQueryReq request) {
+    public TeamListDtoQueryRsp teamQueryById(@Valid TeamListDtoQueryReq req) {
 
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         TeamListDtoQueryRsp rsp = new TeamListDtoQueryRsp();
-        List<TeamListDto> teamListDtos = new ArrayList<>();
-        BusinessObjectAggregate<TeamInfo> loadBusinessObjects = bomanager.loadBusinessObjects(TeamInfo.class,request.getBegin(), request.getPageSize(), "belongOrgId=:orgId", "orgId",
-                request.getOrgId());
-             List<TeamInfo> businessObjects = loadBusinessObjects.getBusinessObjects();
-        if (!CollectionUtils.isEmpty( businessObjects)) {
-            for (BusinessObject bs : businessObjects) {
-                // 查询员工信息
-                String sql = "select count(*) as count , TI.teamName as teamName,TI.teamLeader as teamLeader ,"
-                             + "TI.status as status ,TI.teamId as teamId from UserTeam UT,"
-                             + "TeamInfo TI where TI.teamId = UT.teamId and  UT.teamId=:teamId";
-                String search = "";
-                BusinessObjectAggregate<BusinessObject> selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(sql, "teamId",
-                    bs.getString("teamId"));
-                if (!StringUtils.isEmpty(request.getTeamName())) {
-                    search = request.getTeamName();
-
-                    selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(
-                        "select count(*) as count ,TI.belongOrgId as belongOrgId," + " TI.teamName as teamName,TI.status as status ,TI.teamLeader as teamLeader ,"
-                                                                                      + "TI.teamId as teamId from UserTeam UT,"
-                                                                                      + "TeamInfo TI where TI.teamId = UT.teamId and  UT.teamId=:teamId and TI.teamName like: teamName ",
-                        "teamId", bs.getString("teamId"), "search", "%" + search + "%");
+        List<TeamListDto> teams= new ArrayList<>();
+        TeamListDto team = null;
+        
+        String name = "";
+        String roleA = "";
+        //获取查询条件值
+        if (!CollectionUtils.isEmpty(req.getFilters())) {
+            for (Filter filter : req.getFilters()) {
+                if ("teamName".equals(filter.getName())) {
+                    name = filter.getValue()[0];
                 }
-                else if (!StringUtils.isEmpty(request.getRoleA())) {
-                   
-                	search = request.getRoleA();
-                    selectBusinessObjectsBySql = bomanager.selectBusinessObjectsBySql(
-                        "select count(*) as count ,TI.belongOrgId as belongOrgId, TI.teamName as teamName,TI.status as status ,"
-                                                                                      + "TI.teamLeader as teamLeader ,TI.teamId as teamId from UserTeam UT,"
-                                                                                      + "TeamInfo TI where TI.teamId = UT.teamId and  UT.teamId=:teamId and TI.roleA like: roleA ",
-                        "teamId", bs.getString("teamId"), "search", "%" + search + "%");
-
-                }
-
-                List<BusinessObject> businessObject = selectBusinessObjectsBySql.getBusinessObjects();
-                if (!CollectionUtils.isEmpty(businessObject)) {
-                    for (BusinessObject bos : businessObject) {
-                        TeamListDto tl = new TeamListDto();
-                        tl.setTeamName(bos.getString("teamName"));
-                        tl.setTeamId(bos.getString("teamId"));
-                        tl.setRoleA(bos.getString("roleA"));
-                        tl.setCount(bos.getInt("count"));
-                        tl.setStatus(bos.getString("status"));
-                        teamListDtos.add(tl);
-                    }
-                    
-                    rsp.setTeamListDtos(teamListDtos);
+                if ("roleA".equals(filter.getName())) {
+                    roleA = filter.getValue()[0];
                 }
             }
-
         }
-        rsp.setTotalCount(loadBusinessObjects == null ? 0 :loadBusinessObjects.getAggregate("count(belongOrgId) as count").getInt("count"));
+        name = StringUtils.isEmpty(name)?"%":"%"+name+"%";
+        roleA = StringUtils.isEmpty(roleA)?"%":"%"+roleA+"%";
+        String orgId = req.getOrgId();
+        if (StringUtils.isEmpty(req.getOrgId())) {//如果没有传入部门
+            throw new ALSException("请选择部门");
+        }
+        //根据搜索条件获取团队
+        List<TeamInfo> teamInfos = bomanager.loadBusinessObjects(TeamInfo.class, "belongOrgId=:orgId and teamName like :name and roleA like :roleA",
+            "orgId",orgId,"name",name,"roleA",roleA);
+        //返回对象的参数录入
+        for (TeamInfo teamInfo : teamInfos) {
+            team = new TeamListDto();
+            BeanUtils.copyProperties(teamInfo, team);
+            List<UserTeam> users = bomanager.loadBusinessObjects(UserTeam.class, "teamId=:teamId","teamId",teamInfo.getTeamId());
+            team.setCount(users.size());
+            teams.add(team);
+        }
+        
+        rsp.setTeamListDtos(teams);
+        rsp.setTotalCount(teams.size());        
         return rsp;
     }
 
@@ -230,9 +229,9 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         OrgTeam orgTeam = bomanager.loadBusinessObject(OrgTeam.class, "teamId",req.getObjectNo());
         
         if (!OrgStatus.Disabled.id.equals(delTeam.getStatus())) {//5.若团队不为停用状态，不许操作
-            throw new ALSException("EMS6030");
+            throw new ALSException("EMS6029");
         }else if(!CollectionUtils.isEmpty(userTeams)) {//6.若团队下有员工，不许删除
-            throw new ALSException("EMS6032");
+            throw new ALSException("EMS6008");
         }else if(!StringUtils.isEmpty(delTeam.getRoleA())) {//7.若团队有负责人，不许删除
             throw new ALSException("EMS6031");
         }else {//8.可删除校验成功,执行删除操作
@@ -246,82 +245,40 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         bomanager.updateDB();
     }
 
+
     /**
-     * 
-     * 员工团队信息
-     * @param request
-     * @return response 
+     * Description: 团队下员工信息<br>
+     * @param EmployeeQueryReq(teamID)
+     * @return EmployeeQueryRsp(List<EmployeeInfoDto>)
+     * 修改人:xszhou
+     * @see
      */
     @Transactional
     @Override
-    public EmployeeQueryRsp employeeQuery(@Valid EmployeeQueryReq employeeQueryReq) {
+    public EmployeeQueryRsp employeeQuery(@Valid EmployeeQueryReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        List<String> employeeLists = new ArrayList<String>();
-        EmployeeQueryRsp response = new EmployeeQueryRsp();
-        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-            "select userId as userId from UserTeam   where teamId=:teamId", "teamId", employeeQueryReq.getTeamId()).getBusinessObjects();
-        if (!CollectionUtils.isEmpty(businessObjects)) {
-            for (BusinessObject busis : businessObjects) {
-                employeeLists.add(busis.getString("userId"));
-
+        List<String> eNoList = new ArrayList<String>();
+        EmployeeQueryRsp rsp = new EmployeeQueryRsp();
+        List<EmployeeInfoDto> eiList = new ArrayList<EmployeeInfoDto>();
+        //查询团队下员工ID
+        List<UserTeam> userTeams = bomanager.loadBusinessObjects(UserTeam.class, "teamId=:teamId","teamId",req.getTeamId());
+        if (!CollectionUtils.isEmpty(userTeams)) {//如果团队下有员工,将员工ID取出后
+            for (UserTeam userTeam : userTeams) {
+                eNoList.add(userTeam.getUserId());
             }
+            //调用员工管理接口服务
+            EmployeeListByEmplNoReq request = new EmployeeListByEmplNoReq();
+            request.setEmployeeNoList(eNoList);
+            request.setFilters(req.getFilters());
+            RequestMessage<EmployeeListByEmplNoReq> reqMsg = new RequestMessage<EmployeeListByEmplNoReq>();
+            reqMsg.setMessage(request);
+            ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> eQuery = employeeListDtoClient.employeeListByEmployeeNoQuery(reqMsg);
+            //获取员工的信息
+            eiList = eQuery.getBody().getMessage().getEmployeeInfoList();
         }
-        EmployeeListByEmplNoReq req = new EmployeeListByEmplNoReq();
-        req.setEmployeeNoList(employeeLists);
-        RequestMessage<EmployeeListByEmplNoReq> reqMsg = new RequestMessage<EmployeeListByEmplNoReq>();
-        reqMsg.setMessage(req);
-        if (!CollectionUtils.isEmpty(employeeLists)) {
-            ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery = employeeListDtoClient.employeeListByEmployeeNoQuery(reqMsg);
-            EmployeeListByEmplNoRsp message = employeeListByEmployeeNoQuery.getBody().getMessage();
-            response.setEmployeeInfoList(message.getEmployeeInfoList());
-        }
-
-        return response;
+        rsp.setEmployeeInfoList(eiList);
+        return rsp;
     }
-    /**
-     * 
-     * 按条件搜所团队信息
-     * @param request
-     * @return response 
-     */
-    @Transactional
-    @Override
-	public TeamListDtoQueryRsp teamSearch(TeamListDtoQueryReq req) {
-	
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-    	
-    	  TeamListDtoQueryRsp rsp =new  TeamListDtoQueryRsp();
-    	  List<TeamListDto> teamListDtos =new ArrayList<TeamListDto>();
-    	  TeamListDto dto =new TeamListDto();
-    	  List<BusinessObject>  bos=null;
-    	  //按照查询团队名称进行查询
-    	  if(!StringUtils.isEmpty(req.getTeamName())) {
-    		 bos = bomanager.selectBusinessObjectsBySql("select count(1) as cnt, UT.teamId as teamId ,TI.teamName as teamName ,TI.roleA as roleA from UserTeam  UT ,"
-    		 		+ "TeamInfo TI where  TI.teamId =UT.teamId and TI.teamName like :teamName","teamName",req.getTeamName()+"%").getBusinessObjects();
-    		//遍历bos
-    		 for( BusinessObject bo :bos) {
-    			int count= bos.get(0).getInt("cnt");
-    			dto.setRoleA(bo.getString("roleA"));	
-    			dto.setTeamName(bo.getString("teamName"));
-    			dto.setCount(count);
-    			teamListDtos.add(dto);
-    		}
-    		 rsp.setTeamListDtos(teamListDtos);
-    		
-    	  } else if(!StringUtils.isEmpty(req.getRoleA())) {
-    		  bos = bomanager.selectBusinessObjectsBySql("select count(1) as cnt,UT.teamId as teamId , TI.teamName as teamName ,"
-    		  		+ "TI.roleA as roleA from UserTeam  UT ,TeamInfo TI where   TI.teamId =UT.teamId and TI.roleA like:roleA","roleA",req.getRoleA()+"%").getBusinessObjects();
-        		for( BusinessObject bo :bos) {
-        			int count= bos.get(0).getInt("cnt");
-        			dto.setRoleA(bo.getString("roleA"));	
-        			dto.setTeamName(bo.getString("teamName"));
-        			dto.setCount(count);
-        			teamListDtos.add(dto);
-    		}
-        		 rsp.setTeamListDtos(teamListDtos);
-    	  } else {
-    		  throw new ALSException("901013");
-    	  }
-    	  return rsp;
-	}
+    
+    
 }
