@@ -170,4 +170,18 @@ public interface RoleService {
      * @return
      */
     public void roleUserListDtoDelete(@Valid EmployeeInfoListDtoQueryReq req);
+    
+    /**
+     * 
+     * Description: 角色状态更改<br>
+     * 1、…<br>
+     * 2、…<br>
+     * Implement: <br>
+     * 1、…<br>
+     * 2、…<br>
+     *
+     * @param req 角色info
+     * @see
+     */
+    public void roleInfoStatusUpdate(@Valid RoleInfoDtoQueryReq req);
 }

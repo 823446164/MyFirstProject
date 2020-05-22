@@ -16,6 +16,9 @@ import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 @QueryRule(groupBy = {})
 public class RoleInfoDtoQueryReq implements Serializable {
     private static final long serialVersionUID = 1L;
+    //角色编号
     private String roleId;
+    //角色状态
+    private String status;
     
 }
