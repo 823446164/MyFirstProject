@@ -966,7 +966,7 @@ public class OrgServiceImpl implements OrgService {
         rsp.setOrgName(orgInfo.getOrgName());
         rsp.setDeptManagerId(department.getDeptManager());//设置部门经理编号
         UserInfo UI = bomanager.keyLoadBusinessObject(UserInfo.class, department.getDeptManager());
-        rsp.setDeptManagerName(UI.getUserName());
+        rsp.setDeptManagerName(ObjectUtils.isEmpty(UI)?"":UI.getUserName());
         rsp.setParentOrgName(parentOrgInfo.getOrgName());
         //查询下一级部门list
         List<OrgInfo> ois = bomanager.loadBusinessObjects(OrgInfo.class, "parentOrgId = :parentOrgId", "parentOrgId",
@@ -1183,7 +1183,7 @@ public class OrgServiceImpl implements OrgService {
         }
         rsp.setParentOrgName(orgInfoParent.getOrgName());
         rsp.setOrgName(orgInfo.getOrgName());
-        rsp.setDeptManagerName(uInfo.getUserName());//获取部门经理姓名
+        rsp.setDeptManagerName(ObjectUtils.isEmpty(uInfo)?"":uInfo.getUserName());//获取部门经理姓名
         rsp.setDeptManagerId(department.getDeptManager());//获取部门经理编号
         rsp.setDeptAddress(department.getDeptAddress());
         rsp.setRemark(department.getRemark());
@@ -1328,25 +1328,30 @@ public class OrgServiceImpl implements OrgService {
         //根据返回list循环 新建dto对象　赋值
         EmployeeListByEmplNoReq  elbNoReq = new EmployeeListByEmplNoReq();
         elbNoReq.setEmployeeNoList(ids);
-        ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
-        List<EmployeeInfoListDto> employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
-        List<EmployeeInfoDto> employeeInfoDtos = response.getMessage().getEmployeeInfoList();
-        EmployeeInfoListDto employeeInfoListDto = null;
-        for (EmployeeInfoDto employeeInfoDto : employeeInfoDtos) {
-            employeeInfoListDto = new EmployeeInfoListDto();
-            employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
-            employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
-            employeeInfoListDto.setEmployeeNo(employeeInfoDto.getEmployeeNo());
-            employeeInfoListDto.setEmployeeRank(employeeInfoDto.getNowRank());
-            employeeInfoListDto.setRntryTime(employeeInfoDto.getRntryTime());
-            employeeInfoListDto.setSex(employeeInfoDto.getSex());
-            //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
-            Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
-            String teamName = map.get("teamName");
-            String orgName = map.get("orgName");
-            employeeInfoListDto.setTeamName(teamName);
-            employeeInfoListDto.setOrgName(orgName);
-            employeeInfoListDtos.add(employeeInfoListDto);
+        List<EmployeeInfoListDto> employeeInfoListDtos = null;
+        if (CollectionUtils.isEmpty(ids)) {
+            employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
+        }else {
+            ResponseMessage<EmployeeListByEmplNoRsp> response = employeeInfoDtoClient.employeeListByEmployeeNoQuery(new RequestMessage<>(elbNoReq)).getBody();
+            employeeInfoListDtos = new ArrayList<EmployeeInfoListDto>();
+            List<EmployeeInfoDto> employeeInfoDtos = response.getMessage().getEmployeeInfoList();
+            EmployeeInfoListDto employeeInfoListDto = null;
+            for (EmployeeInfoDto employeeInfoDto : employeeInfoDtos) {
+                employeeInfoListDto = new EmployeeInfoListDto();
+                employeeInfoListDto.setEmployeeName(employeeInfoDto.getEmployeeName());
+                employeeInfoListDto.setEmployeeAcct(employeeInfoDto.getEmployeeAcct());
+                employeeInfoListDto.setEmployeeNo(employeeInfoDto.getEmployeeNo());
+                employeeInfoListDto.setEmployeeRank(employeeInfoDto.getNowRank());
+                employeeInfoListDto.setRntryTime(employeeInfoDto.getRntryTime());
+                employeeInfoListDto.setSex(employeeInfoDto.getSex());
+                //增加员工部门团队  员工id:employeeInfoDto.getEmployeeNo()
+                Map<String, String> map = getEmployeeMap(employeeInfoDto.getEmployeeNo());
+                String teamName = map.get("teamName");
+                String orgName = map.get("orgName");
+                employeeInfoListDto.setTeamName(teamName);
+                employeeInfoListDto.setOrgName(orgName);
+                employeeInfoListDtos.add(employeeInfoListDto);
+            }
         }
         rsp.setTotalCount(employeeInfoListDtos.size());
         rsp.setEmployeeInfoListDtos(employeeInfoListDtos);
