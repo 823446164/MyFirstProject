@@ -44,4 +44,11 @@ public class EmployeeInfoListDtoQueryReq implements Serializable {
     @Length(max=80)
     private String orgId;
     
+    @Description("角色编号")
+    @Length(max=40)
+    private String roleId;
+    
+    @Description("用户编号")
+    private List<String> employeeNos;
+    
 }
