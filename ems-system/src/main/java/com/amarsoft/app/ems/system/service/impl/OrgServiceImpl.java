@@ -59,6 +59,8 @@ import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptUserInfo;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.Filter;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgManagerQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgManagerQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserTeamOrgInfo;
@@ -1417,6 +1419,31 @@ public class OrgServiceImpl implements OrgService {
             userInfos.add(deptUserInfo);
         }
         rsp.setUserInfos(userInfos);
+        return rsp;
+    }
+
+    /**
+     * Description:　根据员工id查询所属部门
+     * @param  req
+     * @return  rsp
+     * @see
+     */
+    @Override
+    public OrgManagerQueryRsp orgManagerQuery(OrgManagerQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        OrgManagerQueryRsp rsp = new OrgManagerQueryRsp();
+        List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class, "userId",req.getUserId());
+        //因数据问题，一个员工对应多个部门，默认获取第一个部门
+        if (!CollectionUtils.isEmpty(userBelongs)) {
+            Department department = bomanager.keyLoadBusinessObject(Department.class, userBelongs.get(0).getOrgId());
+            UserInfo userInfo = bomanager.keyLoadBusinessObject(UserInfo.class, department.getDeptManager());
+            rsp.setDeptManagerId(ObjectUtils.isEmpty(department)?"":department.getDeptManager());
+            rsp.setDeptManagerName(ObjectUtils.isEmpty(userInfo)?"":userInfo.getUserName());
+            rsp.setOrgId(ObjectUtils.isEmpty(department)?"":department.getDeptId());
+            rsp.setOrgName(ObjectUtils.isEmpty(department)?"":department.getDeptName());
+        }else {
+            throw new ALSException("EMS6012");
+        }
         return rsp;
     }
 }
