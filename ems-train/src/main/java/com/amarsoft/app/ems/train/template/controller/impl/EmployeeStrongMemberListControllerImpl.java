@@ -58,30 +58,6 @@ public class EmployeeStrongMemberListControllerImpl implements EmployeeStrongMem
 
     @Override
     @Transactional
-    //培训项目参与人员列表保存
-    public ResponseEntity<ResponseMessage<Object>> employeeStrongMemberListSave(@RequestBody @Valid RequestMessage<EmployeeStrongMemberListSaveReq> reqMsg){
-        ResponseMessage<Object> rspMsg = null;
-        try {
-            EmployeeStrongMemberListSaveReq request = reqMsg.getMessage();
-            
-            employeeStrongMemberListServiceImpl.employeeStrongMemberListSave(request);
-            rspMsg = new ResponseMessage<Object>();
-
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
-        } catch (Exception e) {
-            if(log.isErrorEnabled()) {
-                log.error("培训项目参与人员列表保存："+ reqMsg.toString(), e);
-            }
-            //事务回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
-            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    @Transactional
     //培训项目参与人员列表删除
     public ResponseEntity<ResponseMessage<Object>> employeeStrongMemberListDelete(@RequestBody @Valid RequestMessage<EmployeeStrongMemberListDeleteReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
