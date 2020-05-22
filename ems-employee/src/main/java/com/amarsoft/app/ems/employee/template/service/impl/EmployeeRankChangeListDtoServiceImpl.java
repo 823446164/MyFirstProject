@@ -1,6 +1,12 @@
 /*
- * 文件名：EmployeeRankChangeListDtoServiceImpl 版权：Copyright by www.amarsoft.com
- * 描述：员工职级调整情况ListService实现类 修改人：xucheng 修改时间：2020/5/22 跟踪单号： 修改单号： 修改内容：
+ * 文件名：EmployeeRankChangeListDtoServiceImpl 
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：员工职级调整情况ListService实现类 
+ * 修改人：xucheng 
+ * 修改时间：2020/5/22 
+ * 跟踪单号： 
+ * 修改单号： 
+ * 修改内容：
  */
 package com.amarsoft.app.ems.employee.template.service.impl;
 
@@ -13,11 +19,11 @@ import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
 import com.amarsoft.aecd.employee.constant.RankVersion;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.util.DateHelper;
-import com.amarsoft.app.ems.employee.entity.EmployeeInfo;
 import com.amarsoft.app.ems.employee.entity.EmployeeRank;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangelistdto.EmployeeRankChangeListDto;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangelistdto.EmployeeRankChangeListDtoDeleteReq;

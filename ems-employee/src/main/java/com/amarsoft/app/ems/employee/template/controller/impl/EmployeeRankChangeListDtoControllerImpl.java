@@ -36,9 +36,15 @@ public class EmployeeRankChangeListDtoControllerImpl implements EmployeeRankChan
     @Autowired
     EmployeeRankChangeListDtoService employeeRankChangeListDtoServiceImpl;
     
+    /**
+     * Description: 员工职级调整List查询
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     @Override
     @Transactional
-    //员工职级调整情况List查询
     public ResponseEntity<ResponseMessage<EmployeeRankChangeListDtoQueryRsp>> employeeRankChangeListDtoQuery(@RequestBody @Valid RequestMessage<EmployeeRankChangeListDtoQueryReq> reqMsg){
         ResponseMessage<EmployeeRankChangeListDtoQueryRsp> rspMsg = null;
         try {
@@ -54,7 +60,7 @@ public class EmployeeRankChangeListDtoControllerImpl implements EmployeeRankChan
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+            // TODO xucheng  Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeRankChangeListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -62,7 +68,13 @@ public class EmployeeRankChangeListDtoControllerImpl implements EmployeeRankChan
 
     @Override
     @Transactional
-    //员工职级调整情况List保存
+    /**
+     * Description: 员工职级调整情况List保
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     public ResponseEntity<ResponseMessage<Object>> employeeRankChangeListDtoSave(@RequestBody @Valid RequestMessage<EmployeeRankChangeListDtoSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -78,15 +90,21 @@ public class EmployeeRankChangeListDtoControllerImpl implements EmployeeRankChan
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+            // TODO xucheng Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
+    /**
+     * Description: 员工职级调整情况List删除
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     @Override
     @Transactional
-    //员工职级调整情况List删除
     public ResponseEntity<ResponseMessage<Object>> employeeRankChangeListDtoDelete(@RequestBody @Valid RequestMessage<EmployeeRankChangeListDtoDeleteReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -102,7 +120,7 @@ public class EmployeeRankChangeListDtoControllerImpl implements EmployeeRankChan
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+            // TODO xucheng  Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }

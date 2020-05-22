@@ -1,6 +1,12 @@
 /*
- * 文件名：EmployeeRankChangeApplyInfoDtoServiceImpl 版权：Copyright by www.amarsoft.com 描述：
- * 员工职级调整申请详情InfoService实现类 修改人：xucheng 修改时间：2020/05/20 跟踪单号： 修改单号： 修改内容：
+ * 文件名：EmployeeRankChangeApplyInfoDtoServiceImpl 
+ * 版权：Copyright by www.amarsoft.com 
+ * 描述：员工职级调整申请详情InfoService实现类 
+ * 修改人：xucheng 
+ * 修改时间：2020/05/20 
+ * 跟踪单号： 
+ * 修改单号： 
+ * 修改内容：
  */
 package com.amarsoft.app.ems.employee.template.service.impl;
 
@@ -50,7 +56,7 @@ public class EmployeeRankChangeApplyInfoDtoServiceImpl implements EmployeeRankCh
             "serialNo", employeeRankChangeApplyInfoDtoQueryReq.getSerialNo(), "employeeNo",
             employeeRankChangeApplyInfoDtoQueryReq.getEmployeeNo());
         List<BusinessObject> employeeRankChangeApplyInfoDtoQueryRspBoList = employeeRankChangeApplyInfoDtoQueryRspBoa.getBusinessObjects();
-        if (employeeRankChangeApplyInfoDtoQueryRspBoList != null && employeeRankChangeApplyInfoDtoQueryRspBoList.size() > 0) {
+        if (StringUtils.isEmpty(employeeRankChangeApplyInfoDtoQueryRspBoList) && employeeRankChangeApplyInfoDtoQueryRspBoList.size() > 0) {
             BusinessObject employeeRankChangeApplyInfoDtoQueryRspBo = employeeRankChangeApplyInfoDtoQueryRspBoList.get(0);
             EmployeeRankChangeApplyInfoDtoQueryRsp employeeRankChangeApplyInfoDto = new EmployeeRankChangeApplyInfoDtoQueryRsp();
             employeeRankChangeApplyInfoDto.setEmployeeNo(employeeRankChangeApplyInfoDtoQueryRspBo.getString("EmployeeNo"));
@@ -86,7 +92,7 @@ public class EmployeeRankChangeApplyInfoDtoServiceImpl implements EmployeeRankCh
     @Transactional
     public void employeeRankChangeApplyInfoDtoSaveAction(EmployeeRankChangeApplyInfoDto employeeRankChangeApplyInfoDto) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if (employeeRankChangeApplyInfoDto != null) {
+        if (StringUtils.isEmpty(employeeRankChangeApplyInfoDto)) {
             EmployeeRankApply employeeRankApply = bomanager.keyLoadBusinessObject(EmployeeRankApply.class,
                 employeeRankChangeApplyInfoDto.getSerialNo());
             String orgId = GlobalShareContextHolder.getOrgId();

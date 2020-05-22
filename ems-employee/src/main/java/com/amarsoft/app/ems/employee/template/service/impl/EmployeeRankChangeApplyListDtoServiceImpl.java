@@ -16,6 +16,8 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.acsc.util.DTOHelper;
@@ -100,7 +102,7 @@ public class EmployeeRankChangeApplyListDtoServiceImpl implements EmployeeRankCh
         BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(employeeRankChangeApplyListDtoQueryReq.getBegin(), employeeRankChangeApplyListDtoQueryReq.getPageSize(), fullsql, query.getParam());
         List<BusinessObject> businessObjectList = boa.getBusinessObjects();
         
-        if(null != businessObjectList && !businessObjectList.isEmpty()) {
+        if(!StringUtils.isEmpty(businessObjectList) && !businessObjectList.isEmpty()) {
             List<EmployeeRankChangeApplyListDto> employeeRankChangeApplyListDtos = new ArrayList<EmployeeRankChangeApplyListDto>();
             for(BusinessObject bo : businessObjectList) {
                 //查询到的数据转换为响应实体
@@ -130,10 +132,10 @@ public class EmployeeRankChangeApplyListDtoServiceImpl implements EmployeeRankCh
     @Transactional
     public void employeeRankChangeApplyListDtoSaveAction(List<EmployeeRankChangeApplyListDto> employeeRankChangeApplyListDtos){
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if(employeeRankChangeApplyListDtos!=null){
+        if(!StringUtils.isEmpty(employeeRankChangeApplyListDtos)){
             for(EmployeeRankChangeApplyListDto employeeRankChangeApplyListDtoTmp :employeeRankChangeApplyListDtos){
                 EmployeeRankApply employeeRankApply = bomanager.keyLoadBusinessObject(EmployeeRankApply.class,employeeRankChangeApplyListDtoTmp.getSerialNo());
-                if(employeeRankApply==null){
+                if(StringUtils.isEmpty(employeeRankApply)){
                     employeeRankApply = new EmployeeRankApply();
                     employeeRankApply.generateKey();
                 }
