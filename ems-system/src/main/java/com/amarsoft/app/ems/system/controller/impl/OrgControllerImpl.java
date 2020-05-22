@@ -33,6 +33,8 @@ import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orgtreequery.OrgTreeQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.DeptManagerUserQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgManagerQueryReq;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgManagerQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.OrgUserQueryRsp;
 import com.amarsoft.app.ems.system.service.OrgService;
@@ -435,6 +437,28 @@ public class OrgControllerImpl implements OrgController {
             }
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "900209",e.getMessage());
             return new ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Description: 根据员工id查询所属部门
+     * @param reqMsg
+     * @return  rsp
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<OrgManagerQueryRsp>> orgManagerQuery(@RequestBody @Valid RequestMessage<OrgManagerQueryReq> reqMsg) {
+        ResponseMessage<OrgManagerQueryRsp> rspMsg = null;
+        try {
+            OrgManagerQueryRsp rsp = orgService.orgManagerQuery(reqMsg.getMessage());
+            return new ResponseEntity<ResponseMessage<OrgManagerQueryRsp>>(new ResponseMessage<OrgManagerQueryRsp>(rsp), HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("查询机构用户请求报文："+ reqMsg.toString(), e);
+            }
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "900209",e.getMessage());
+            return new ResponseEntity<ResponseMessage<OrgManagerQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

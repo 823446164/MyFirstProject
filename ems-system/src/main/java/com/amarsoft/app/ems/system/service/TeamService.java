@@ -79,12 +79,6 @@ public interface TeamService {
      */
     LevelTeamQueryRsp levelTeamQuery(LevelTeamQueryReq req,TeamService teamService, OrgService orgService);
 
-    /**
-     * 删除团队
-     * @param message
-     */
-    DeleteTeamRsp deleteTeam(DeleteTeamReq req);
-
   
     /**
      * Description:部门团队列表展示<br>
@@ -93,24 +87,14 @@ public interface TeamService {
      * @see
      */
     TeamOrgQueryRsp orgTeamListQuery(@Valid TeamOrgQueryReq req);
-
-    /**
-     * 根据部门编号查询团队
-     * @param orgService 
-     * @param req
-     */
-    TeamQueryRsp teamQueryById(TeamQueryReq req);
-   
-
-    /**
-     * Description:根据条件查询团队信息 <br>
-     * @param message
-     * @return
-     * @see
-     */
-    TeamQueryRsp teamSearch(TeamQueryReq message);
     
    
+    /**
+     * Description:根据用户查找对应的团队<br>
+     * @param UserTeamQueryReq(userId)
+     * @return UserTeamQueryRsp(teamId,teamName)
+     * @see
+     */
     public UserTeamQueryRsp userTeamQuery(@RequestBody @Valid UserTeamQueryReq req);
 
 

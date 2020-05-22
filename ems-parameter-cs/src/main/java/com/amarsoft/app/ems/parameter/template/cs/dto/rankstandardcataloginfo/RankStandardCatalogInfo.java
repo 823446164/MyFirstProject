@@ -55,6 +55,7 @@ public class RankStandardCatalogInfo implements Serializable {
     private String rankStandard;
 
     @Length(max=40)
+    @Description("职级")
     @NotEmpty
     @ActualColumn("RSC.rankName")
     @TemplateBody(sortNo = 2, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
@@ -63,7 +64,7 @@ public class RankStandardCatalogInfo implements Serializable {
     @Description("能力要求")
     @Length(max=2000)
     @ActualColumn("RSC.ability")
-    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
+    @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 2, groupIndex = -1)
     private String ability;
 
     @Description("技术职级描述")

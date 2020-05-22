@@ -1,9 +1,21 @@
+/*
+ * 文件名：TeamInfoDtoServiceImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：团队信息Service实现类
+ * 修改人：xszhou
+ * 修改时间：2020/5/21
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：
+ */
 package com.amarsoft.app.ems.system.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,19 +23,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
 import com.amarsoft.aecd.system.constant.OrgStatus;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.employee.template.cs.client.EmployeeInfoListDtoClient;
 import com.amarsoft.app.ems.system.cs.dto.orguserquery.UserInfo;
-import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDto;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryRsp;
+import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
 import com.amarsoft.app.ems.system.service.UserService;
@@ -87,6 +101,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 					String userNameb = UserHelper.getUserName(roleblist[i]);
 					userBName += userNameb + ",";
 				}
+                userBName = userBName.substring(0,userBName.length()-1);
 			}
 			if (roleC != "" && roleC != null) {
 				String[] roleclist = roleC.split(",");
@@ -94,7 +109,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 					String userNamec = UserHelper.getUserName(roleclist[i]);
 					userCName += userNamec + ",";
 				}
-
+				userCName = userCName.substring(0, userCName.length()-1);
 			}
 
 			teamInfoDto.setRoleBName(userBName);
@@ -126,44 +141,55 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 		teamInfoDtoSaveAction(teamInfoDtoSaveReq);
 	}
 
+
 	/**
-	 * 团队信息单记录保存
-	 * 
-	 * @param teamInfoDto
-	 * @return
+	 * Description: 团队信息单记录保存<br>
+	 * @param TeamInfoDtoSaveReq
+	 * 修改人:xszhou
+	 * ${tags}
+	 * @see
 	 */
 	@Transactional
-	public void teamInfoDtoSaveAction(TeamInfoDto teamInfoDto) {
+	public void teamInfoDtoSaveAction(TeamInfoDtoSaveReq req) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-		if (ObjectUtils.isEmpty(teamInfoDto)) {
-			throw new ALSException("EMS6022");
-		}
-		String teamId = teamInfoDto.getTeamId();
-		TeamInfo teamInfo = null;
-		if (StringUtils.isEmpty(teamId)) {
-			// 新增
-			BusinessObjectAggregate<BusinessObject> teamOrgRsq = bomanager.selectBusinessObjectsBySql(
-					" select  TI.teamName as teamName" + " from OrgTeam OT,TeamInfo TI"
-							+ " where OT.teamId =TI.teamId and TI.teamName=:teamName",
-					"teamName", teamInfoDto.getTeamName());
-			List<BusinessObject> teamOrg = teamOrgRsq.getBusinessObjects();
-			if (!CollectionUtils.isEmpty(teamOrg)) {
-				throw new ALSException("901001");
-			} else {
-				teamInfo = new TeamInfo();
-				teamInfo.generateKey();
-				teamInfo.setStatus(OrgStatus.New.id);
-			}
-		} else {
-			// 更新
-			teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, teamInfoDto.getTeamId());
-		}
-		// 拷贝属性
-		BeanUtils.copyProperties(teamInfoDto, teamInfo);
-		bomanager.updateBusinessObject(teamInfo);
+		TeamInfo team = null;
+		//如果请求体中团队编号为空，则是新增团队，检索团队名称是否存在
+		if (StringUtils.isEmpty(req.getTeamId())) {
+		    TeamInfo search = bomanager.loadBusinessObject(TeamInfo.class,"teamName",req.getTeamName());
+	        if (!ObjectUtils.isEmpty(search)) {//若同名团队存在，则提示团队已存在
+	            throw new ALSException("EMS6030");
+	        }
+	        //如果没有,则新建一个团队
+	        team = new TeamInfo();
+	        BeanUtils.copyProperties(req, team);
+	        team.generateKey();
+	        team.setStatus(OrgStatus.New.id);
+	      
+	        //添加部门团队关系表
+	        OrgTeam orgTeam = new OrgTeam();
+	        orgTeam.setOrgId(req.getBelongOrgId());
+	        orgTeam.setTeamId(team.getTeamId());
+	        bomanager.updateBusinessObject(orgTeam);
+	        bomanager.updateBusinessObject(team);
+        }else {//否则执行更新操作
+            TeamInfo teamInfo = bomanager.loadBusinessObject(TeamInfo.class, "teamId",req.getTeamId());
+            teamInfo.setRoleA(req.getRoleA());
+            teamInfo.setRoleB(req.getRoleB());
+            teamInfo.setRoleC(req.getRoleC());
+            teamInfo.setTeamName(req.getTeamName());
+            teamInfo.setDescription(req.getDescription());
+            teamInfo.setBelongOrgId(req.getBelongOrgId());
+            teamInfo.setStatus(req.getStatus());
+            teamInfo.setUpdateUserId(GlobalShareContextHolder.getUserId());
+            teamInfo.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
+            teamInfo.setUpdateTime(LocalDateTime.now());
+            bomanager.updateBusinessObject(teamInfo);
+        }
+		
 		bomanager.updateDB();
 	}
 
+	
 	/**
 	 * 团队状态 1.表示完成 2.表示停用 3.表示新增
 	 * 
@@ -229,9 +255,9 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 		UserInfo userInfo = new UserInfo();
 		// 查询部门下的人员，取出掉成为团队负责人
 		List<BusinessObject> businessObjects = bomanager
-				.selectBusinessObjectsBySql("select  UI.userId as userId , UI.userName as userName  "
-						+ "from  UserBelong UB, UserInfo UI  where UI.userId =UB.userId and  UB.orgId =:orgId and UB.userId not in("
-						+ " select roleA from  TeamInfo TI  where  TI.belongOrgId =:orgId) ", "orgId", req.getOrgId())
+				.selectBusinessObjectsBySql("select UI.userId as userId,UI.userName as userName"
+						+ "from  UserBelong UB, UserInfo UI  where UI.userId =UB.userId and UB.orgId =:orgId and UB.userId not in("
+						+ " select roleA from TeamInfo TI where TI.belongOrgId =:orgId)", "orgId", req.getOrgId())
 				.getBusinessObjects();
 		// 判空
 		if (!CollectionUtils.isEmpty(businessObjects)) {

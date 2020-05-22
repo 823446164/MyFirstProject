@@ -19,8 +19,6 @@ import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
 import com.amarsoft.app.ems.train.template.cs.dto.employeestrongmemberlist.EmployeeStrongMemberList;
 import com.amarsoft.app.ems.train.template.cs.dto.employeestrongmemberlist.EmployeeStrongMemberListSaveReq;
-import com.amarsoft.app.ems.project.entity.ProjectEmployee;
-import com.amarsoft.app.ems.employee.entity.EmployeeInfo;
 import com.amarsoft.app.ems.train.template.cs.dto.employeestrongmemberlist.EmployeeStrongMemberListDeleteReq;
 
 /**
@@ -96,45 +94,6 @@ public class EmployeeStrongMemberListServiceImpl implements EmployeeStrongMember
         return employeeStrongMemberListQueryRsp;
     }
 
-    /**
-     * 培训项目参与人员列表多记录保存
-     * @param request
-     * @return
-     */
-    @Override
-    public void employeeStrongMemberListSave(@Valid EmployeeStrongMemberListSaveReq employeeStrongMemberListSaveReq) {
-        employeeStrongMemberListSaveAction(employeeStrongMemberListSaveReq.getEmployeeStrongMemberLists());
-    }
-    /**
-     * 培训项目参与人员列表多记录保存
-     * @param
-     * @return
-     */
-    @Transactional
-    public void employeeStrongMemberListSaveAction(List<EmployeeStrongMemberList> employeeStrongMemberLists){
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if(employeeStrongMemberLists!=null){
-            for(EmployeeStrongMemberList employeeStrongMemberListTmp :employeeStrongMemberLists){
-                ProjectEmployee projectEmployee = bomanager.keyLoadBusinessObject(ProjectEmployee.class,employeeStrongMemberListTmp.getSerialNo());
-                if(projectEmployee==null){
-                    projectEmployee = new ProjectEmployee();
-                    projectEmployee.generateKey();
-                }
-                EmployeeInfo employeeInfo = bomanager.keyLoadBusinessObject(EmployeeInfo.class,employeeStrongMemberListTmp.getEmployeeNo());
-                if(employeeInfo==null){
-                    employeeInfo = new EmployeeInfo();
-                    employeeInfo.generateKey();
-                }
-                employeeInfo.setEmployeeName(employeeStrongMemberListTmp.getEmployeeName());
-                employeeInfo.setSex(employeeStrongMemberListTmp.getSex());
-                employeeInfo.setNowRank(employeeStrongMemberListTmp.getNowRank());
-                bomanager.updateBusinessObject(projectEmployee);
-                bomanager.updateBusinessObject(employeeInfo);
-            }
-        }
-        bomanager.updateDB();
-    }
-
 
     /**
      * 培训项目参与人员列表删除
@@ -145,8 +104,6 @@ public class EmployeeStrongMemberListServiceImpl implements EmployeeStrongMember
     @Transactional
     public void employeeStrongMemberListDelete(@Valid EmployeeStrongMemberListDeleteReq employeeStrongMemberListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        ProjectEmployee projectEmployee=bomanager.keyLoadBusinessObject(ProjectEmployee.class, employeeStrongMemberListDeleteReq.getSerialNo());
-        bomanager.deleteBusinessObject(projectEmployee);
         // TODO 关联表数据如需删除的话，请自行补充代码
         bomanager.updateDB();
 
