@@ -91,46 +91,6 @@ public class TeamControllerImpl implements TeamController {
 
 	@Override
 	@Transactional
-	public ResponseEntity<ResponseMessage<Object>> addTeamUser(
-			@RequestBody @Valid RequestMessage<AddTeamUserReq> reqMsg) {
-		ResponseMessage<Object> rspMsg = null;
-		try {
-			teamServiceImpl.addTeamUser(reqMsg.getMessage());
-			return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()),
-					HttpStatus.OK);
-		} catch (Exception e) {
-			if (log.isErrorEnabled()) {
-				log.error("添加团队成员请求报文：" + reqMsg.toString(), e);
-			}
-			// 事务回滚
-			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "901003", e.getMessage());
-			return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@Override
-	@Transactional
-	public ResponseEntity<ResponseMessage<Object>> deleteTeamUser(
-			@RequestBody @Valid RequestMessage<DeleteTeamUserReq> reqMsg) {
-		ResponseMessage<Object> rspMsg = null;
-		try {
-			teamServiceImpl.deleteTeamUser(reqMsg.getMessage());
-			return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()),
-					HttpStatus.OK);
-		} catch (Exception e) {
-			if (log.isErrorEnabled()) {
-				log.error("删除团队成员请求报文：" + reqMsg.toString(), e);
-			}
-			// 事务回滚
-			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "901004", e.getMessage());
-			return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@Override
-	@Transactional
 	public ResponseEntity<ResponseMessage<Object>> transferTeam(@RequestHeader() HttpHeaders header,
 			@RequestBody @Valid RequestMessage<TransferTeamReq> reqMsg) {
 		ResponseMessage<Object> rspMsg = null;
@@ -164,7 +124,7 @@ public class TeamControllerImpl implements TeamController {
 			}
 			// 事务回滚
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "9001001", e.getMessage());
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010", e.getMessage());
 			return new ResponseEntity<ResponseMessage<TeamQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -189,33 +149,6 @@ public class TeamControllerImpl implements TeamController {
 		}
 	}
 
-	/**
-	 * Description: 删除团队信息 <br>
-	 * ${tags}
-	 * 
-	 * @see
-	 */
-
-	@Override
-	@Transactional
-	public ResponseEntity<ResponseMessage<Object>> deleteTeam(
-			@RequestBody @Valid RequestMessage<DeleteTeamReq> reqMsg) {
-		ResponseMessage<Object> rspMsg = null;
-		try {
-			teamServiceImpl.deleteTeam(reqMsg.getMessage());
-			return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(Optional.empty()),
-					HttpStatus.OK);
-		} catch (Exception e) {
-			if (log.isErrorEnabled()) {
-				log.error("删除团队失败：", e);
-			}
-			// 事务回滚
-			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "901009", e.getMessage());
-			return new ResponseEntity<ResponseMessage<Object>>(new ResponseMessage<Object>(rspMsg),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
 
 	/**
 	 * Description: 查询团队信息 <br>
@@ -274,7 +207,7 @@ public class TeamControllerImpl implements TeamController {
 			// 事务回滚
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "", e.getMessage());
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6018", e.getMessage());
 			return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -368,7 +301,7 @@ public class TeamControllerImpl implements TeamController {
 	}
 
 	/**
-	 * Description: 根据部门编号查询团队<br>
+	 * Description: 根据关键字查询团队信息<br>
 	 * ${tags}
 	 * 
 	 * @see
@@ -419,19 +352,18 @@ public class TeamControllerImpl implements TeamController {
 			return new ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>>(rspMsg, HttpStatus.OK);
 		} catch (Exception e) {
 			if (log.isErrorEnabled()) {
-				log.error("团队信息状态：" + reqMsg.toString(), e);
+				log.error("修改团队状态：" + reqMsg.toString(), e);
 			}
 			// 事务回滚
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
-			rspMsg = ResponseMessage.getResponseMessageFromException(e, "901010", e.getMessage());
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6032", e.getMessage());
 			return new ResponseEntity<ResponseMessage<TeamInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	/**
 	 * Description: 更新用户团队<br>
-	 * 
 	 * @param UpdateUserTeamReq
 	 * @see
 	 */

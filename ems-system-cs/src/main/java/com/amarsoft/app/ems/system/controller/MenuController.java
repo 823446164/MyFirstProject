@@ -60,6 +60,6 @@ public interface MenuController {
     public ResponseEntity<ResponseMessage<Object>> updateMenuStatus(@RequestBody @Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg);
     @PostMapping(value = "/menu/deletemenubyid", name="根据菜单编号删除菜单", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> deleteMenuById(@RequestBody @Valid RequestMessage<SysMenuInfoDtoQueryReq> reqMsg);
-    @PostMapping(value = "/menu/getmenuid", name="获取菜单编号", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/menu/getmenuid", name="获取菜单编号、未配置角色、录入人", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<MenuIdQueryRsp>> menuIdQuery(@RequestBody @Valid RequestMessage<MenuIdQueryReq> reqMsg);
 }

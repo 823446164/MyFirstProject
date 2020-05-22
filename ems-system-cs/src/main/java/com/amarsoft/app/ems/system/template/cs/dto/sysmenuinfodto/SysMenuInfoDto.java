@@ -107,7 +107,6 @@ public class SysMenuInfoDto implements Serializable {
     
     @Description("上级菜单编号")
     @Length(max=40)
-    @NotEmpty
     @ActualColumn("MI.parentId")
     @TemplateBody(sortNo = 10, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = false, span = 1, groupIndex = -1)
     private String parentId;

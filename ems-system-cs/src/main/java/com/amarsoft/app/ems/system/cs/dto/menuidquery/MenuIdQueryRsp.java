@@ -2,14 +2,20 @@
  * 获取菜单编号
  * @Author hzhang23
  * 根据接口定义的excel文档自动生成实体，由AutoCreateCoder.class的test方法批量生成。
+ * 修改：jcli2
+ * 增加 返回体 未配置角色list、当前用户、当前时间
  */
 package com.amarsoft.app.ems.system.cs.dto.menuidquery;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.app.ems.system.cs.dto.roleallquery.Role;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.annotation.Length;
 
@@ -23,4 +29,7 @@ public class MenuIdQueryRsp implements Serializable{
     @NotEmpty
     @Length(max=40)
     private String menuId;
+    private List<Role> notexistlist;
+    private String userId;
+    private String time;
 }
