@@ -1040,6 +1040,8 @@ public class OrgServiceImpl implements OrgService {
             orgInfo.setSortNo(orgId);
             orgInfo.setOrgName(req.getOrgName());
             orgInfo.setStatus(OrgStatus.New.id);
+            //新增部门的部门类型统一为部室
+            orgInfo.setOrgType(OrgType.Department.id);
             //设置部门等级，可修改  2为一级部门  3为二级部门
             if(OrgLevel.LEVEL_2.id.equals(req.getOrgLevel())) {//一级部门
                 orgInfo.setOrgLevel(OrgLevel.LEVEL_2.id); 
@@ -1214,10 +1216,10 @@ public class OrgServiceImpl implements OrgService {
         
         List<SecondLevelDeptListDto> secondLevelDeptListDtos = new ArrayList<SecondLevelDeptListDto>(); //新建返回list
         //查询二级部门list
-        List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(
-            "select OI.status as status, DT.deptManager as deptManagerId,DT.deptName as deptName,DT.deptId as orgId from OrgInfo OI,Department DT where"
-            + " DT.deptId = OI.orgId and OI.parentOrgId = :parentOrgId", "parentOrgId",orgInfo.getOrgId()
-            ).getBusinessObjects();
+        String sql = "select OI.status as status, DT.deptManager as deptManagerId,DT.deptName as deptName,DT.deptId as orgId from"
+            + " OrgInfo OI,Department DT where DT.deptId = OI.orgId and OI.parentOrgId = :parentOrgId";
+        BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsBySql(req.getBegin(),req.getPageSize(),sql,"parentOrgId",orgInfo.getOrgId());
+        List<BusinessObject> businessObjects = boa.getBusinessObjects();
         SecondLevelDeptListDto secondLevelDeptListDto = null;
         for (BusinessObject businessObject : businessObjects) {
             secondLevelDeptListDto = new SecondLevelDeptListDto();
