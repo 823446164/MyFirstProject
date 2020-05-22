@@ -28,8 +28,6 @@ import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updaterole.UpdateRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
-import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
-import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoSaveReq;
@@ -59,18 +57,9 @@ public interface RoleController {
     //dto模板 
     @PostMapping(value = "/rolelistdto/query", name="角色信息List查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<RoleListDtoQueryRsp>> roleListDtoQuery(@RequestBody @Valid RequestMessage<RoleListDtoQueryReq> reqMsg);
-    @PostMapping(value = "/roleuserlist/query", name="用户待引入的list查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> roleUserListDtoQuery(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg);
-    @PostMapping(value = "/roleuserintroducedlist/query", name="用户已引入的list查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> RoleUserIntroducedListDtoQuery(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg);
     @PostMapping(value = "/roleinfodto/query", name="角色信息Info查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<RoleInfoDtoQueryRsp>> roleInfoDtoQuery(@RequestBody @Valid RequestMessage<RoleInfoDtoQueryReq> reqMsg);
     @PostMapping(value = "/roleinfodto/save", name="角色信息Info保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> roleInfoDtoSave(@RequestBody @Valid RequestMessage<RoleInfoDtoSaveReq> reqMsg);
-    @PostMapping(value = "/roleuserlist/save", name="用户引入list保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> roleUserListDtoSave(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg);
-    @PostMapping(value = "/roleuserlist/delete", name="用户引入list删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> roleUserListDtoDelete(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg);
-    
 
 }

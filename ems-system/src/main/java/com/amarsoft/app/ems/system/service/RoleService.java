@@ -2,11 +2,6 @@ package com.amarsoft.app.ems.system.service;
 
 import javax.validation.Valid;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import com.amarsoft.amps.acsc.rpc.RequestMessage;
-import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.app.ems.system.cs.dto.addrole.AddRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.deleterole.DeleteRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.levelrolequery.LevelRoleQueryReq;
@@ -21,8 +16,6 @@ import com.amarsoft.app.ems.system.cs.dto.roleuserquery.RoleUserQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.updaterole.UpdateRoleReq;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
-import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
-import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoSaveReq;
@@ -131,33 +124,4 @@ public interface RoleService {
      * @return
      */
     public void roleInfoDtoSave(@Valid RoleInfoDtoSaveReq roleInfoDtoSaveReq);
-    
-    /**
-     * 用户待引入list查询
-     * @param req
-     * @return
-     */
-    public EmployeeInfoListDtoQueryRsp roleUserListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req);
-    
-    /**
-     * 用户已引入list查询
-     * @param reqMsg
-     * @return
-     */
-    public EmployeeInfoListDtoQueryRsp RoleUserIntroducedListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req);
-    
-    /**
-     * 用户引入list保存
-     * @param reqMsg
-     * @return
-     */
-    public void roleUserListDtoSave(@Valid EmployeeInfoListDtoQueryReq req);
-    
-    
-    /**
-     * 用户引入list删除
-     * @param reqMsg
-     * @return
-     */
-    public void roleUserListDtoDelete(@Valid EmployeeInfoListDtoQueryReq req);
 }
