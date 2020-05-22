@@ -17,6 +17,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -24,9 +26,14 @@ import org.springframework.util.StringUtils;
 
 import com.amarsoft.aecd.system.constant.LabelStatus;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.acsc.rpc.RequestMessage;
+import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.amps.arem.exception.ALSException;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
+import com.amarsoft.app.ems.employee.template.cs.client.EmployeeRankApplyInfoDtoClient;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankapplyinfodto.RankDeleteValidateReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankapplyinfodto.RankDeleteValidateRsp;
 import com.amarsoft.app.ems.parameter.entity.RankStandardItems;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabel;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryReq;
@@ -54,7 +61,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class RankStandardItemsListServiceImpl implements RankStandardItemsListService {
-
+    @Autowired
+    EmployeeRankApplyInfoDtoClient    employeeRankApplyInfoDtoClient;
     /**
      * 
      * Description: 职级指标多记录查询
@@ -68,18 +76,25 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
     public RankStandardItemsListQueryRsp rankStandardItemsListQuery(@Valid RankStandardItemsListQueryReq rankStandardItemslistQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         List<RankStandardItems> rankStandardItems = new ArrayList<RankStandardItems>();
+        RankStandardItemsListQueryRsp rankQueryRsp = new RankStandardItemsListQueryRsp();
         if (StringUtils.isEmpty(rankStandardItemslistQueryReq.getLabelNo())
             && !StringUtils.isEmpty(rankStandardItemslistQueryReq.getSerialNo())) {
             // 1.点击左侧树图，根据所属目录获取职级指标List
             rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class, "parentNo=:parentNo and rankNo=:rankNo", "parentNo",
                 rankStandardItemslistQueryReq.getSerialNo(), "rankNo", rankStandardItemslistQueryReq.getRankNo());
+            RankDeleteValidateReq rankDeleteValidateReq=new RankDeleteValidateReq();
+            rankDeleteValidateReq.setRankNo(rankStandardItemslistQueryReq.getRankNo());
+            RequestMessage<RankDeleteValidateReq> reqMsg = new RequestMessage<RankDeleteValidateReq>();
+            reqMsg.setMessage(rankDeleteValidateReq);
+            ResponseEntity<ResponseMessage<RankDeleteValidateRsp>> employeeRankApplyInfoExist = employeeRankApplyInfoDtoClient.employeeRankApplyInfoExist(reqMsg);
+            RankDeleteValidateRsp message = employeeRankApplyInfoExist.getBody().getMessage();
+            rankQueryRsp.setFlowCount(message.getRecordCount());
         }
         if (!StringUtils.isEmpty(rankStandardItemslistQueryReq.getLabelNo())
             && StringUtils.isEmpty(rankStandardItemslistQueryReq.getSerialNo())) {
             rankStandardItems = bomanager.loadBusinessObjects(RankStandardItems.class, "parentNo=:parentNo and rankNo=:rankNo", "parentNo",
                 rankStandardItemslistQueryReq.getLabelNo(), "rankNo", rankStandardItemslistQueryReq.getRankNo());
         }
-        RankStandardItemsListQueryRsp rankQueryRsp = new RankStandardItemsListQueryRsp();
         List<RankStandardItemsList> ranStandardItemsLists = null;
         if (!CollectionUtils.isEmpty(rankStandardItems)) {
             ranStandardItemsLists = new ArrayList<RankStandardItemsList>();

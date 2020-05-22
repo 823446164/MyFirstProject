@@ -15,7 +15,7 @@ public enum MasteryTwo {
 	
 	_1("1","了解"),
 	_2("2","熟悉"),
-	_3("3","精通"),
+	_4("4","精通"),
 	;
 	
 	public final String id;
@@ -33,7 +33,7 @@ public enum MasteryTwo {
 	 * @return
 	 */
 	public static boolean isExist(String id) {
-		return _1.id.equals(id) || _2.id.equals(id) || _3.id.equals(id);
+		return _1.id.equals(id) || _2.id.equals(id) || _4.id.equals(id);
 	}
 
 	/**

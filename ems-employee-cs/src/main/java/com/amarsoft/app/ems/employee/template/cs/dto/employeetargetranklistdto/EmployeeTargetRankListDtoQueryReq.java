@@ -39,9 +39,10 @@ public class EmployeeTargetRankListDtoQueryReq implements Serializable {
     @QueryOrderBy
     private String[] orderBy;
 
-    @Description("员工编号")
-    @Length(max=40)
+    //add by xphe 20200521
+    @Description("审批状态")
+    @Length(max=20)
     @NotEmpty
-    @ActualColumn("ETR.employeeNo")
-    private String employeeNo;
+    @ActualColumn("ETR.approveStatus")
+    private String approveStatus;
 }
