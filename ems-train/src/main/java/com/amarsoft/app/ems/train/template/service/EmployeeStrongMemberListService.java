@@ -19,13 +19,6 @@ public interface EmployeeStrongMemberListService {
     public EmployeeStrongMemberListQueryRsp employeeStrongMemberListQuery(@Valid EmployeeStrongMemberListQueryReq employeeStrongMemberListQueryReq);
 
     /**
-     * 培训项目参与人员列表保存
-     * @param request
-     * @return
-     */
-    public void employeeStrongMemberListSave(@Valid EmployeeStrongMemberListSaveReq employeeStrongMemberListSaveReq);
-
-    /**
      * 培训项目参与人员列表删除
      * @param request
      * @return

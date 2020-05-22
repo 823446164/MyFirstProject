@@ -18,7 +18,6 @@ import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.avts.convert.Convert;
 import com.amarsoft.amps.avts.query.RequestQuery;
 import com.amarsoft.app.ems.train.template.cs.dto.employeeprojectexperiencelist.EmployeeProjectExperienceList;
-import com.amarsoft.app.ems.employee.entity.EmployeeProjectExperience;
 import com.amarsoft.app.ems.train.template.cs.dto.employeeprojectexperiencelist.EmployeeProjectExperienceListDeleteReq;
 
 /**
@@ -99,8 +98,7 @@ public class EmployeeProjectExperienceListServiceImpl implements EmployeeProject
     @Transactional
     public void employeeProjectExperienceListDelete(@Valid EmployeeProjectExperienceListDeleteReq employeeProjectExperienceListDeleteReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        EmployeeProjectExperience employeeProjectExperience=bomanager.keyLoadBusinessObject(EmployeeProjectExperience.class, employeeProjectExperienceListDeleteReq.getSerialNo());
-        bomanager.deleteBusinessObject(employeeProjectExperience);
+        
         // TODO 关联表数据如需删除的话，请自行补充代码
         bomanager.updateDB();
 

@@ -1432,11 +1432,11 @@ public class OrgServiceImpl implements OrgService {
     public OrgManagerQueryRsp orgManagerQuery(OrgManagerQueryReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         OrgManagerQueryRsp rsp = new OrgManagerQueryRsp();
-        List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class, "userId",req.getUserId());
+        List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class,"userId = :userId", "userId",req.getUserId());
         //因数据问题，一个员工对应多个部门，默认获取第一个部门
         if (!CollectionUtils.isEmpty(userBelongs)) {
             Department department = bomanager.keyLoadBusinessObject(Department.class, userBelongs.get(0).getOrgId());
-            UserInfo userInfo = bomanager.keyLoadBusinessObject(UserInfo.class, department.getDeptManager());
+            UserInfo userInfo = bomanager.keyLoadBusinessObject(UserInfo.class, ObjectUtils.isEmpty(department)?"":department.getDeptManager());
             rsp.setDeptManagerId(ObjectUtils.isEmpty(department)?"":department.getDeptManager());
             rsp.setDeptManagerName(ObjectUtils.isEmpty(userInfo)?"":userInfo.getUserName());
             rsp.setOrgId(ObjectUtils.isEmpty(department)?"":department.getDeptId());
