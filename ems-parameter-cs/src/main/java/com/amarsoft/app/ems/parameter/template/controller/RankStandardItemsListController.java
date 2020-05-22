@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelSaveReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsBatchDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsInfoDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryRsp;
@@ -49,5 +50,6 @@ public interface RankStandardItemsListController {
     @PostMapping(value = "/rankstandarditemsinfo/delete", name="职级指标删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> rankStandardItemsInfoDelete(@RequestBody @Valid RequestMessage<RankStandardItemsInfoDeleteReq> reqMsg);
     
-  
+    @PostMapping(value = "/rankstandarditemsinfo/batchdelete", name="职级指标批量删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> rankStandardItemBatchDelete(@RequestBody @Valid RequestMessage<RankStandardItemsBatchDeleteReq> reqMsg);
 }

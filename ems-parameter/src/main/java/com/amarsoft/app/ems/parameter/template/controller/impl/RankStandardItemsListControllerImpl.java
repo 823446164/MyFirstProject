@@ -27,6 +27,7 @@ import com.amarsoft.app.ems.parameter.template.service.RankStandardItemsListServ
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelSaveReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsBatchDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsInfoDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryRsp;
@@ -179,6 +180,34 @@ public class RankStandardItemsListControllerImpl implements RankStandardItemsLis
         try {
             RankStandardItemsInfoDeleteReq request = reqMsg.getMessage();
             rankStandardItemsInfoServiceImpl.rankStandardDelete(request);
+            rspMsg = new ResponseMessage<Object>();
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("职级指标删除："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS2024",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * 
+     * Description: 职级指标页面的批量删除
+     *
+     * @param reqMsg
+     * @return 
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> rankStandardItemBatchDelete(@RequestBody @Valid RequestMessage<RankStandardItemsBatchDeleteReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            RankStandardItemsBatchDeleteReq request = reqMsg.getMessage();
+            rankStandardItemsInfoServiceImpl.rankStandardBatchDelete(request);
             rspMsg = new ResponseMessage<Object>();
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
