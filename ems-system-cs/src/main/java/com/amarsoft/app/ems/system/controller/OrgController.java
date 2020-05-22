@@ -93,6 +93,6 @@ public interface OrgController {
     public ResponseEntity<ResponseMessage<OrgUserQueryRsp>> orgUserQuery(@RequestBody @Valid RequestMessage<OrgUserQueryReq> reqMsg);
     @PostMapping(value = "/system/getdeptmanagerall", name="查询所有不是部门经理的userId", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<DeptManagerUserQueryRsp>> getDeptManagerAll(@RequestBody @Valid RequestMessage<DeptManagerUserQueryReq> reqMsg);
-    @PostMapping(value = "/system/getdeptManagerbyuserId", name="根据员工id查询所属部门", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/system/getdeptmanagerbyuserId", name="根据员工id查询所属部门", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<OrgManagerQueryRsp>> orgManagerQuery(@RequestBody @Valid RequestMessage<OrgManagerQueryReq> reqMsg);
 }
