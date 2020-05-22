@@ -448,7 +448,7 @@ public class OrgControllerImpl implements OrgController {
      */
     @Override
     @Transactional
-    public ResponseEntity<ResponseMessage<OrgManagerQueryRsp>> orgManagerQuery(@Valid RequestMessage<OrgManagerQueryReq> reqMsg) {
+    public ResponseEntity<ResponseMessage<OrgManagerQueryRsp>> orgManagerQuery(@RequestBody @Valid RequestMessage<OrgManagerQueryReq> reqMsg) {
         ResponseMessage<OrgManagerQueryRsp> rspMsg = null;
         try {
             OrgManagerQueryRsp rsp = orgService.orgManagerQuery(reqMsg.getMessage());
