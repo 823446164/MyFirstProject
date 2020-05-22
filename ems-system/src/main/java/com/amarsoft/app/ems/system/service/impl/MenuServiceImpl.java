@@ -554,15 +554,15 @@ public class MenuServiceImpl implements MenuService {
 	@Transactional
 	public void sysMenuInfoDtoSave(SysMenuInfoDtoSaveReq sysMenuInfoDto) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-    	/**获取当前登录用户**/
+    	//获取当前登录用户
     	String inputUserId=GlobalShareContextHolder.getUserId(); 
-    	/**获取当前时间**/
+    	//获取当前时间
     	LocalDateTime now = LocalDateTime.now(); 
         if(sysMenuInfoDto!=null){
-        	/**判断新增or更新**/
+        	//判断新增or更新
         	MenuInfo menuInfo = bomanager.keyLoadBusinessObject(MenuInfo.class,sysMenuInfoDto.getMenuId());
             if(menuInfo==null){
-            	/**新增**/
+            	//新增
                 menuInfo = new MenuInfo();
                 menuInfo.setMenuId(sysMenuInfoDto.getMenuId());
                 menuInfo.setSortNo(sysMenuInfoDto.getSortNo());
@@ -581,21 +581,21 @@ public class MenuServiceImpl implements MenuService {
                 menuInfo.setInputUserId(inputUserId);
                 menuInfo.setInputTime(now);
                 bomanager.updateBusinessObject(menuInfo);
-                /**保存角色**/
+                //保存角色
                 saveRoleAuthByMenuId(bomanager,sysMenuInfoDto,inputUserId,now);
                 
             }else {
-            	/**更新所填数据**/
+            	//更新所填数据
             	menuInfo.setMenuName(sysMenuInfoDto.getMenuName());
                 menuInfo.setMenuTwName(sysMenuInfoDto.getMenuTwName());
                 menuInfo.setUrl(sysMenuInfoDto.getUrl());
                 menuInfo.setUrlParam(sysMenuInfoDto.getUrlParam());
                 menuInfo.setIcon(sysMenuInfoDto.getIcon());
-                /**更新时间与更新用户，前端不填**/
+                //更新时间与更新用户，前端不填
                 menuInfo.setUpdateUserId(inputUserId);
                 menuInfo.setUpdateTime(now);
                 bomanager.updateBusinessObject(menuInfo);
-                /**保存角色**/
+                //保存角色
                 saveRoleAuthByMenuId(bomanager,sysMenuInfoDto,inputUserId,now);
 			}   
         }
@@ -609,9 +609,9 @@ public class MenuServiceImpl implements MenuService {
 	 */
 	private void saveRoleAuthByMenuId(BusinessObjectManager bomanager,SysMenuInfoDtoSaveReq sysMenuInfoDto,
 			String inputid,LocalDateTime time) {
-		/**保存已选择角色之前 删除此菜单编号下所有的已配置角色 防止主键冲突**/
+		//保存已选择角色之前 删除此菜单编号下所有的已配置角色 防止主键冲突
     	bomanager.deleteObjectBySql(RoleAuth.class, "authNo=:menuid","menuid",sysMenuInfoDto.getMenuId());
-    	/**获取前端所选 角色list、遍历新增**/
+    	//获取前端所选 角色list、遍历新增
     	List<Role> existlist = sysMenuInfoDto.getExistlist();
     	if(!CollectionUtils.isEmpty(existlist)) {
     		RoleAuth roleAuth =null;
@@ -642,19 +642,19 @@ public class MenuServiceImpl implements MenuService {
 	public SysMenuInfoDtoQueryRsp queryRoleByMenuId(String id) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
 		SysMenuInfoDtoQueryRsp rsp=new SysMenuInfoDtoQueryRsp();
-		/**塞值 菜单info详情**/
+		//塞值 菜单info详情
 		sysMenuInfoDtoQuery(rsp,id,bomanager);
 		
 		rsp.setExistlist(new ArrayList<Role>());
 		rsp.setNotexistlist(new ArrayList<Role>());
-		/**根据菜单编号 查询此菜单下 已配置的用户**/
+		//根据菜单编号 查询此菜单下 已配置的用户
 		String existsql="SELECT b.roleId,b.roleName FROM RoleAuth a inner join RoleInfo b on a.roleId=b.roleId where a.authNo=:id";
-		/**根据菜单编号 查询此菜单下 未配置的用户**/
+		//根据菜单编号 查询此菜单下 未配置的用户
 		String notexistsql="select roleId,roleName from RoleInfo where roleId not in " + 
 				"(SELECT b.roleId FROM RoleAuth a inner join RoleInfo b on a.roleId=b.roleId where a.authNo=:id)";
 		List<BusinessObject> exists = bomanager.selectBusinessObjectsBySql(existsql, "id",id).getBusinessObjects();
 		List<BusinessObject> notexists = bomanager.selectBusinessObjectsBySql(notexistsql, "id",id).getBusinessObjects();
-		/**遍历数组取出角色编号、姓名放入返回体**/
+		//遍历数组取出角色编号、姓名放入返回体
 		 if (!CollectionUtils.isEmpty(exists)) {
 			 Role existDto=null;
 			 for (int i = 0; i < exists.size(); i++) {
@@ -710,14 +710,14 @@ public class MenuServiceImpl implements MenuService {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
 		String menuId = req.getMenuId();
 		String status = req.getStatus();
-		/**如果是停用操作**/
+		//停用
 		if (status.equals(MenuStatus.stop.id)) {
 			/**停用此菜单下所有子菜单**/
 			String updateStatus = "update sys_menu_info set status='"+status+"' where menuId like:id";
 			bomanager.updateObjectByNativeSql(updateStatus, "id",menuId+"%");
 
 		}
-		/**如果是启用操作**/
+		//启用
 		if (status.equals(MenuStatus.start.id)) {
 			String updateStatus = "update sys_menu_info set status='"+status+"' where menuId =:id";
 			bomanager.updateObjectByNativeSql(updateStatus, "id",menuId);
@@ -733,9 +733,9 @@ public class MenuServiceImpl implements MenuService {
 	@Transactional
 	public void deleteMenuByid(String menuId) {
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-		/**删除此菜单  以及下面的子菜单**/
+		//删除此菜单  以及下面的子菜单
 		String deleteMenu = "delete from sys_menu_info where menuId like:id";
-		/**  删除 此菜单、子菜单有关联的角色**/
+		//删除 此菜单、子菜单有关联的角色
 		String deleteRoleAuth = "delete from SYS_ROLE_AUTH where authNo like:id and authType = :authType";
 		
 		bomanager.deleteObjectByNativeSql(deleteRoleAuth, "id",menuId+"%","authType",AuthType.MENU.id);
@@ -753,7 +753,7 @@ public class MenuServiceImpl implements MenuService {
     public synchronized MenuIdQueryRsp getMenuId(MenuIdQueryReq req) {
         MenuIdQueryRsp rsp = new MenuIdQueryRsp();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        /**获取菜单编号**/
+        //获取菜单编号
         BusinessObjectAggregate<BusinessObject> menuIdAggregate = bomanager.
         		selectBusinessObjectsBySql("select max(menuId) as menuId from MenuInfo where parentId = :parentId", "parentId",req.getParentId());
         
@@ -778,7 +778,7 @@ public class MenuServiceImpl implements MenuService {
             rsp.setMenuId(menuId);
         }
         
-        /**获取 未配置角色列表**/
+        //获取 未配置角色列表
         rsp.setNotexistlist(new ArrayList<Role>());
         List<BusinessObject> notexists = bomanager.loadBusinessObjects(RoleInfo.class,"1=1");
         
@@ -792,7 +792,7 @@ public class MenuServiceImpl implements MenuService {
 				 rsp.getNotexistlist().add(notexistDto);
 			}
 		 }
-        /**当前录入人 时间**/
+        //当前录入人 时间
         rsp.setUserId(GlobalShareContextHolder.getUserId());
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime time = LocalDateTime.now();
