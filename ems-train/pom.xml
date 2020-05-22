@@ -10,16 +10,6 @@
   <description>ems-train/员工管理系统的培训管理服务</description>
   
   <dependencies>
-   		<dependency>
-            <groupId>com.amarsoft.app.ems</groupId>
-            <artifactId>ems-project</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amarsoft.app.ems</groupId>
-            <artifactId>ems-employee</artifactId>
-            <version>${project.version}</version>
-        </dependency>
   		<dependency>
             <groupId>com.amarsoft.app.ems</groupId>
             <artifactId>ems-system-cs</artifactId>
