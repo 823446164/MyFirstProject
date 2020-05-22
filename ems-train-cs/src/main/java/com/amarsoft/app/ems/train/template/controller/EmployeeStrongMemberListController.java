@@ -20,9 +20,6 @@ public interface EmployeeStrongMemberListController {
     @PostMapping(value = "/employeestrongmemberlist/query", name="培训项目参与人员列表查询接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<EmployeeStrongMemberListQueryRsp>> employeeStrongMemberListQuery(@RequestBody @Valid RequestMessage<EmployeeStrongMemberListQueryReq> reqMsg);
 
-    @PostMapping(value = "/employeestrongmemberlist/save", name="培训项目参与人员列表保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ResponseMessage<Object>> employeeStrongMemberListSave(@RequestBody @Valid RequestMessage<EmployeeStrongMemberListSaveReq> reqMsg);
-
     @PostMapping(value = "/employeestrongmemberlist/delete", name="培训项目参与人员列表删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> employeeStrongMemberListDelete(@RequestBody @Valid RequestMessage<EmployeeStrongMemberListDeleteReq> reqMsg);
 }
