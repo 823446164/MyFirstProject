@@ -1,3 +1,13 @@
+/*
+ * 文件名：RoleControllerImpl
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：RoleControllerImpl的实现类
+ * 修改人：cmhuang
+ * 修改时间：2020年5月20日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：修改注释
+ */
 package com.amarsoft.app.ems.system.controller.impl;
 
 import java.util.Optional;
@@ -32,6 +42,8 @@ import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.RoleService;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
+import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoSaveReq;
@@ -42,7 +54,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 角色服务处理类
- * @author xjzhao
+ * @author cmhuang
  */
 @Slf4j
 @RestController
@@ -227,7 +239,7 @@ public class RoleControllerImpl implements RoleController {
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6037",e.getMessage());
             return new ResponseEntity<ResponseMessage<RoleListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -253,7 +265,7 @@ public class RoleControllerImpl implements RoleController {
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6038",e.getMessage());
             return new ResponseEntity<ResponseMessage<RoleInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -279,8 +291,101 @@ public class RoleControllerImpl implements RoleController {
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6039",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * 用户待引入的list查询接口
+     */
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> roleUserListDtoQuery(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg) {
+		ResponseMessage<EmployeeInfoListDtoQueryRsp> rspMsg = null;
+		try {
+			EmployeeInfoListDtoQueryRsp rsp = roleService.roleUserListDtoQuery(reqMsg.getMessage());
+			rspMsg = new ResponseMessage<EmployeeInfoListDtoQueryRsp>(rsp);
+			return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+		}catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("用户待引入list查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6040",e.getMessage());
+            return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+	}
+
+	/**
+	 * 用户已引入的list查询接口
+	 */
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>> RoleUserIntroducedListDtoQuery(@RequestBody
+			@Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg) {
+		ResponseMessage<EmployeeInfoListDtoQueryRsp> rspMsg = null;
+		try {
+			EmployeeInfoListDtoQueryRsp rsp = roleService.RoleUserIntroducedListDtoQuery(reqMsg.getMessage());
+			rspMsg = new ResponseMessage<EmployeeInfoListDtoQueryRsp>(rsp);
+			return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg , HttpStatus.OK);
+		}catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("用户已引入list查询："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6040",e.getMessage());
+            return new ResponseEntity<ResponseMessage<EmployeeInfoListDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+	}
+
+	/**
+	 * 用户引入的多记录保存接口
+	 */
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseMessage<Object>> roleUserListDtoSave(@RequestBody
+			@Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg) {
+		ResponseMessage<Object> rspMsg = null;
+		try {
+			roleService.roleUserListDtoSave(reqMsg.getMessage());
+			rspMsg = new ResponseMessage<Object>();
+			return new ResponseEntity<ResponseMessage<Object>>(rspMsg,HttpStatus.OK);
+		}catch(Exception e) {
+			if(log.isErrorEnabled()) {
+				log.error("用户引入多记录保存："+reqMsg.toString(), e);
+			}
+			//事务回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6041", e.getMessage());
+			return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * 用户引入的多记录删除接口
+	 */
+	@Override
+	@Transactional
+	public ResponseEntity<ResponseMessage<Object>> roleUserListDtoDelete(@RequestBody
+			@Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg) {
+		ResponseMessage<Object> rspMsg = null;
+		try {
+			roleService.roleUserListDtoDelete(reqMsg.getMessage());
+			rspMsg = new ResponseMessage<Object>();
+			return new ResponseEntity<ResponseMessage<Object>>(rspMsg,HttpStatus.OK);
+		}catch(Exception e) {
+			if(log.isErrorEnabled()) {
+				log.error("用户引入多记录删除："+reqMsg.toString(), e);
+			}
+			//事务回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6042", e.getMessage());
+			return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
