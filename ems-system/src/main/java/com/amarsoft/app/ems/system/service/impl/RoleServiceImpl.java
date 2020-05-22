@@ -1,22 +1,9 @@
-/*
- * 文件名：RoleServiceImpl.java
- * 版权：Copyright by www.amarsoft.com
- * 描述：角色service层实现类
- * 修改人：cmhuang
- * 修改时间：2020年5月21日
- * 跟踪单号：
- * 修改单号：
- * 修改内容：
- */
 package com.amarsoft.app.ems.system.service.impl;
 
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.validation.Valid;
@@ -28,7 +15,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -78,9 +64,6 @@ import com.amarsoft.app.ems.system.entity.UserInfo;
 import com.amarsoft.app.ems.system.entity.UserRole;
 import com.amarsoft.app.ems.system.service.OrgService;
 import com.amarsoft.app.ems.system.service.RoleService;
-import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDto;
-import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryReq;
-import com.amarsoft.app.ems.system.template.cs.dto.employeeinfolistdto.EmployeeInfoListDtoQueryRsp;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDto;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryReq;
 import com.amarsoft.app.ems.system.template.cs.dto.roleinfodto.RoleInfoDtoQueryRsp;
@@ -95,7 +78,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 角色服务逻辑处理类
  * 
- * @author cmhuang
+ * @author xjzhao
  */
 @Slf4j
 @Service
@@ -157,17 +140,12 @@ public class RoleServiceImpl implements RoleService {
         @CacheEvict(value = KEY_FRE, key = "'" + KEY_FRE + "'+ #req.getRoleId()")})
     public void deleteRole(DeleteRoleReq req) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        //判断角色状态是否为停用
-        RoleInfo ri = bomanager.keyLoadBusinessObject(RoleInfo.class, req.getRoleId());
-        if(SystemStatus.Normal.id.equals(ri.getStatus())) {//状态为正常，不能删除
-            throw new ALSException("EMS6043");
-        }
         BusinessObjectAggregate<UserRole> urs = bomanager.loadBusinessObjects(UserRole.class, 0, 1, "roleId=:roleId", "roleId",
             req.getRoleId());
-        if (!CollectionUtils.isEmpty(urs.getBusinessObjects())) throw new ALSException("EMS6044");
+        if (!CollectionUtils.isEmpty(urs.getBusinessObjects())) throw new ALSException("900706");
         BusinessObjectAggregate<GroupRole> grs = bomanager.loadBusinessObjects(GroupRole.class, 0, 1, "roleId=:roleId", "roleId",
             req.getRoleId());
-        if (!CollectionUtils.isEmpty(grs.getBusinessObjects())) throw new ALSException("EMS6044");
+        if (!CollectionUtils.isEmpty(grs.getBusinessObjects())) throw new ALSException("900706");
 
         if (log.isInfoEnabled()) {
             log.info("删除角色：" + req.getRoleId() + "及其角色权限。");
@@ -781,7 +759,6 @@ public class RoleServiceImpl implements RoleService {
      * @return
      */
     @Override
-    @Transactional
     public void roleInfoDtoSave(@Valid RoleInfoDtoSaveReq roleInfoDtoSaveReq) {
 
         roleInfoDtoSaveAction(roleInfoDtoSaveReq.getAdd(), roleInfoDtoSaveReq);
@@ -806,15 +783,8 @@ public class RoleServiceImpl implements RoleService {
             throw new ALSException("EMS6034");
         }
         else if (roleInfo != null && !add) { // 更新保存
-            if (SystemStatus.Locked.id.equals(roleInfoDto.getStatus())) {// 若角色状态要置为停用
-                // 检查角色下有没有用户引入
-                BusinessObjectAggregate<UserRole> urs = bomanager.loadBusinessObjects(UserRole.class, 0, 1, "roleId=:roleId", "roleId",
-                    roleInfoDto.getRoleId());
-                if (!CollectionUtils.isEmpty(urs.getBusinessObjects())) throw new ALSException("EMS6045");
-            }
-//            roleInfo.setRoleName(roleInfoDto.getRoleName());
-//            roleInfo.setStatus(roleInfoDto.getStatus());
-            BeanUtils.copyProperties(roleInfoDto, roleInfo);
+            roleInfo.setRoleName(roleInfoDto.getRoleName());
+            roleInfo.setStatus(roleInfoDto.getStatus());
         }else {//新增
             roleInfo = new RoleInfo();
             BeanUtils.copyProperties(roleInfoDto, roleInfo);
@@ -826,153 +796,5 @@ public class RoleServiceImpl implements RoleService {
         bomanager.updateBusinessObject(roleInfo);
         bomanager.updateDB();
     }
-
-    /**
-     * 用户待引入list查询
-     * 
-     * @param req 角色编号
-     *            
-     * @return
-     */
-	@Override
-	public EmployeeInfoListDtoQueryRsp roleUserListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req) {
-		EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
-		String roleId = req.getRoleId();
-		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-		//找出该角色下能被引入的用户
-		String sql = "select ui.userId as userId,ui.userName as userName,ti.teamName as teamName from UserInfo ui join UserTeam ut on ui.userId = ut.userId "
-		+"join TeamInfo ti on ut.teamId = ti.teamId where ui.userId not in (SELECT userId FROM UserRole WHERE roleId = :roleId)";
-		BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsBySql(req.getBegin(),req.getPageSize(),sql, "roleId",roleId);
-		List<BusinessObject> businessObjects = boa.getBusinessObjects();
-		if(!CollectionUtils.isEmpty(businessObjects)) {
-			List<EmployeeInfoListDto> employees = new ArrayList();
-			for(BusinessObject bo:businessObjects) {
-				EmployeeInfoListDto ei = new EmployeeInfoListDto(); 
-				ei.setEmployeeNo(bo.getString("USERID"));
-				ei.setEmployeeName(bo.getString("USERNAME"));
-				ei.setTeamName(bo.getString("TEAMNAME"));
-				employees.add(ei);
-			}
-			rsp.setEmployeeInfoListDtos(employees);
-		}
-		rsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
-		return rsp;
-	}
-
-	/**
-     * 用户已引入list查询
-     * 
-     * @param req 角色编号
-     *            
-     * @return
-     */
-	@Override
-	public EmployeeInfoListDtoQueryRsp RoleUserIntroducedListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req) {
-		EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
-		String roleId = req.getRoleId();
-		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-		//找出该角色下已引入的用户
-		String sql = "select ui.userId as userId,ui.userName as userName,ti.teamName as teamName from UserRole ur join  UserInfo ui on ur.userId = ui.userId join UserTeam ut on ui.userId = ut.userId "
-		+"join TeamInfo ti on ut.teamId = ti.teamId where ur.roleId = :roleId";
-		BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsBySql(req.getBegin(),req.getPageSize(),sql, "roleId",roleId);
-		List<BusinessObject> businessObjects = boa.getBusinessObjects();
-		if(!CollectionUtils.isEmpty(businessObjects)) {
-			List<EmployeeInfoListDto> employees = new ArrayList();
-			for(BusinessObject bo:businessObjects) {
-				EmployeeInfoListDto ei = new EmployeeInfoListDto(); 
-				ei.setEmployeeNo(bo.getString("USERID"));
-				ei.setEmployeeName(bo.getString("USERNAME"));
-				ei.setTeamName(bo.getString("TEAMNAME"));
-				employees.add(ei);
-			}
-			rsp.setEmployeeInfoListDtos(employees);
-		}
-		rsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
-		return rsp;
-	}
-
-	/**
-	 * 用户引入多记录保存
-	 * @param req 角色编号，用户编号list
-     *            
-     * @return
-	 */
-	@Override
-	@Transactional
-	public void roleUserListDtoSave(@Valid EmployeeInfoListDtoQueryReq req) {
-		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-		//多记录保存
-		bomanager.updateBusinessObjects(getUserRoleList(req,bomanager));
-		bomanager.updateDB();
-	}
-
-	/**
-	 * 用户引入多记录删除
-	 * @param req 角色编号，用户编号list
-     *            
-     * @return
-	 */
-	@Override
-	@Transactional
-	public void roleUserListDtoDelete(@Valid EmployeeInfoListDtoQueryReq req) {
-		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-		//多记录删除
-		List<UserRole> urs = getUserRoleList(req,bomanager);
-		for(UserRole ur:urs) {
-			bomanager.deleteObjectBySql(UserRole.class, "userId = :userId and orgId = :orgId and roleId = :roleId", 
-					 "userId",ur.getUserId(),"orgId",ur.getOrgId(),"roleId",ur.getRoleId());	
-		}
-		bomanager.updateDB();	
-	}
-	
-	/**
-	 * 获取userRoleList
-	 * @param req
-	 * @return
-	 */
-	public List<UserRole> getUserRoleList(EmployeeInfoListDtoQueryReq req,BusinessObjectManager bomanager) {
-		// 获取角色编号，用户list
-		String roleId = req.getRoleId();
-		List<String> employeeNos = req.getEmployeeNos();
-		// 1.先判断该角色是否存在
-		if (StringUtils.isEmpty(roleId)
-				|| ObjectUtils.isEmpty(bomanager.keyLoadBusinessObject(RoleInfo.class, roleId))) {
-			// 抛出：该角色不存在
-			throw new ALSException("EMS6035");
-		}
-		// 2.判断用户list是否为空，若空抛异常：
-		if (CollectionUtils.isEmpty(employeeNos)) {
-			throw new ALSException("EMS6036");
-		}
-		// 保存时查询orgId
-		Map<String, String> map = new HashMap();
-		String sql = "select userId,orgId from UserBelong where userId in (";
-		for (String employee : employeeNos) {
-			sql += "'"+employee + "',";
-		}
-		sql = sql.substring(0, sql.length() - 1) ;
-		sql += ") group by userId order by updateTime";
-		List<BusinessObject> businessObjects = bomanager.selectBusinessObjectsBySql(sql).getBusinessObjects();
-		List<UserBelong> ubs = new ArrayList();
-		UserBelong ub = null;
-		for (BusinessObject bo : businessObjects) {
-			ub = new UserBelong();
-			ub.setUserId(bo.getString("USERID"));
-			ub.setOrgId(bo.getString("ORGID"));
-			ubs.add(ub);
-		}
-		map = ubs.stream().collect(Collectors.toMap(UserBelong::getUserId, UserBelong::getOrgId));
-		List<UserRole> userRoles = new ArrayList<UserRole>();
-		// 3.用户引入list
-		UserRole ur = null;
-		for (String employeeNo : employeeNos) {
-			ur = new UserRole();
-			ur.setRoleId(roleId);
-			ur.setOrgId(map.get(employeeNo));
-			ur.setUserId(employeeNo);
-			userRoles.add(ur);
-		}
-		return userRoles;
-	}
 
 }
