@@ -813,8 +813,6 @@ public class RoleServiceImpl implements RoleService {
                     roleInfoDto.getRoleId());
                 if (!CollectionUtils.isEmpty(urs.getBusinessObjects())) throw new ALSException("EMS6045",roleInfoDto.getRoleId());
             }
-//            roleInfo.setRoleName(roleInfoDto.getRoleName());
-//            roleInfo.setStatus(roleInfoDto.getStatus());
             BeanUtils.copyProperties(roleInfoDto, roleInfo);
         }else {//新增
             roleInfo = new RoleInfo();
@@ -839,6 +837,7 @@ public class RoleServiceImpl implements RoleService {
 	public EmployeeInfoListDtoQueryRsp roleUserListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req) {
 		EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
 		String roleId = req.getRoleId();
+		//模糊搜索：员工工号，员工姓名
 		String eNo = "%";
 		String eName = "%";
 		if(!CollectionUtils.isEmpty(req.getFilters())) {
@@ -884,6 +883,7 @@ public class RoleServiceImpl implements RoleService {
 	public EmployeeInfoListDtoQueryRsp RoleUserIntroducedListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req) {
 		EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
 		String roleId = req.getRoleId();
+		//模糊搜索：员工工号，员工姓名
 		String eNo = "%";
         String eName = "%";
         if(!CollectionUtils.isEmpty(req.getFilters())) {
