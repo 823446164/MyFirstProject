@@ -17,7 +17,7 @@ import java.util.List;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.amps.arem.util.SpringHelper;
-import com.amarsoft.app.ems.parameter.template.cs.client.TeamClient;
+import com.amarsoft.app.ems.system.cs.client.TeamClient;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamInfo;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;

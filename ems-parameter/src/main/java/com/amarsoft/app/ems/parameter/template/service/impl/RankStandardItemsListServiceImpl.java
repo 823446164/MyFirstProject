@@ -39,6 +39,7 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabel;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelSaveReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsBatchDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsInfoDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsList;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryReq;
@@ -270,5 +271,33 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
         bomanager.deleteObjectBySql(RankStandardItems.class, "serialNo=:serialNo or parentNo=:serialNo", "serialNo", serialNo);
         bomanager.updateDB();
     }
-
+    
+    /**
+     * 
+     * Description: 职级指标页面批量删除
+     *
+     * @param rankBatchDeleteReq
+     * 
+     * @return 
+     * @see
+     */
+    @Transactional
+    public void rankStandardBatchDelete(@Valid RankStandardItemsBatchDeleteReq rankBatchDeleteReq) {
+        // 获取主表id
+        List<String> serialNoLists = rankBatchDeleteReq.getSerialNolists();
+        StringBuffer  deleteInSerialNo=new StringBuffer();
+        int i=0;
+        for(String serialNo:serialNoLists) {
+            if(i==0) {
+                deleteInSerialNo.append("'").append(serialNo).append("'");
+                i++;
+            }else {
+                deleteInSerialNo.append(",").append("'").append(serialNo).append("'");
+            }
+        }
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+            // 删除对应指标及标签
+        bomanager.deleteObjectBySql(RankStandardItems.class, "serialNo in ("+deleteInSerialNo+")");
+        bomanager.updateDB();
+    }
 }
