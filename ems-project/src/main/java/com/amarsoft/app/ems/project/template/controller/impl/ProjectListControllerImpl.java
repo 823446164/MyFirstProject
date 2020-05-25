@@ -84,7 +84,8 @@ public class ProjectListControllerImpl implements ProjectListController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3001",e.getMessage());
+          //保存项目列表失败，抛异常
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3002",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -107,7 +108,8 @@ public class ProjectListControllerImpl implements ProjectListController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3001",e.getMessage());
+          //删除项目列表失败，抛异常
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3003",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

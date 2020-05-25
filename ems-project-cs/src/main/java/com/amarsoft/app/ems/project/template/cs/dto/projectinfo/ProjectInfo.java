@@ -1,3 +1,13 @@
+/*
+ * 文件名：ProjectInfo.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：项目info模板
+ * 修改人：qsong
+ * 修改时间：2020年5月22日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：修改可见，以及添加枚举
+ */
 package com.amarsoft.app.ems.project.template.cs.dto.projectinfo;
 
 import java.io.Serializable;
@@ -7,9 +17,12 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.aecd.project.constant.ProjectType;
+import com.amarsoft.aecd.system.constant.ApplyType;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
 import com.amarsoft.amps.acsc.annotation.DatePattern;
+import com.amarsoft.amps.acsc.annotation.Enum;
 
 /**
  * 项目列表
@@ -18,7 +31,7 @@ import com.amarsoft.amps.acsc.annotation.DatePattern;
 @Getter
 @Setter
 @ToString
-@TemplateHeader(id = "ProjectInfo", name = "项目列表", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 1)
+@TemplateHeader(id = "ProjectInfo", name = "项目列表", type = com.amarsoft.aecd.common.constant.TemplateType.Info, readOnly = false, span = 2)
 public class ProjectInfo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("项目编号")
@@ -89,6 +102,7 @@ public class ProjectInfo implements Serializable {
     @TemplateBody(sortNo = 10, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = true, isReadOnly = false, span = 1, groupIndex = -1)
     private String projetClassification;
 
+    @Enum(ProjectType.class)
     @Description("发生类型")
     @Length(max=10)
     @ActualColumn("EP.projectType")
