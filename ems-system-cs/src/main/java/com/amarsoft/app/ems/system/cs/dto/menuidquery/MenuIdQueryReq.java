@@ -20,7 +20,6 @@ public class MenuIdQueryReq implements Serializable{
     private static final long serialVersionUID = 1L;
 
     @Description("父级菜单编号")
-    @NotEmpty
     @Length(max=40)
     private String parentId;
 }

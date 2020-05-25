@@ -756,8 +756,12 @@ public class MenuServiceImpl implements MenuService {
         MenuIdQueryRsp rsp = new MenuIdQueryRsp();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         //获取菜单编号
+        String parentId = req.getParentId();
+        if (parentId==null) {
+        	parentId="";
+		}
         BusinessObjectAggregate<BusinessObject> menuIdAggregate = bomanager.
-        		selectBusinessObjectsBySql("select max(menuId) as menuId from MenuInfo where parentId = :parentId", "parentId",req.getParentId());
+        		selectBusinessObjectsBySql("select max(menuId) as menuId from MenuInfo where parentId = :parentId", "parentId",parentId);
         
         if (!CollectionUtils.isEmpty(menuIdAggregate.getBusinessObjects()) && 
         		!StringUtils.isEmpty(menuIdAggregate.getBusinessObjects().get(0).getString("menuId"))) {
@@ -776,7 +780,7 @@ public class MenuServiceImpl implements MenuService {
             for (int i = 0; i < menuDefaultLength - 1; i++) {
                 sb.append("0");
             }
-            String menuId = req.getParentId() + sb.append("1").toString();
+            String menuId = parentId + sb.append("1").toString();
             rsp.setMenuId(menuId);
         }
         
