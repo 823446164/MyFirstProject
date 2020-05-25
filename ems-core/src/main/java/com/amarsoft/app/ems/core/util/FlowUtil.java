@@ -1,3 +1,13 @@
+/*
+ * 文件名：FlowUtil 
+ * 版权：Copyright by www.amarsoft.com 
+ * 描述：流程工具类
+ * 修改人：ylgao 
+ * 修改时间：2020/05/25 
+ * 跟踪单号： 
+ * 修改单号： 
+ * 修改内容：修改流程初始化及提交方法
+ */
 package com.amarsoft.app.ems.core.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
