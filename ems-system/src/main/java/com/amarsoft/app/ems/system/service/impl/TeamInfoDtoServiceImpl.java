@@ -96,7 +96,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 			teamInfoDto.setRoleAName(userName);
 			
 		
-			if (roleB != "" && roleB != null) {
+			if (!StringUtils.isEmpty(roleB) ) {
 				String[] roleblist = roleB.split(",");
 				for (int i = 0; i < roleblist.length; i++) {
 					String userNameb = UserHelper.getUserName(roleblist[i]);
@@ -104,7 +104,7 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 				}
                 userBName = userBName.substring(0,userBName.length()-1);
 			}
-			if (roleC != "" && roleC != null) {
+			if (!StringUtils.isEmpty(roleC)) {
 				String[] roleclist = roleC.split(",");
 				for (int i = 0; i < roleclist.length; i++) {
 					String userNamec = UserHelper.getUserName(roleclist[i]);
