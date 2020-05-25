@@ -13,6 +13,7 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     public LabelCatalogInfoQueryRsp labelCatalogInfoQuery(@Valid LabelCatalogInfoQueryReq labelCatalogInfoQueryReq) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         LabelCatalog labelCatalog = bomanager.loadBusinessObject(LabelCatalog.class, "serialNo", labelCatalogInfoQueryReq.getSerialNo());
-        if (labelCatalog != null) {
+        if (!ObjectUtils.isEmpty(labelCatalog) ) {
             LabelCatalogInfoQueryRsp labelCatalogInfo = new LabelCatalogInfoQueryRsp();
             labelCatalogInfo.setSerialNo(labelCatalog.getSerialNo());
             labelCatalogInfo.setLabelType(labelCatalog.getLabelType());
@@ -167,7 +168,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             }
             else {
                 boolean a = true;
-                if (labelCatalogInfo != null) {
+                if (!ObjectUtils.isEmpty(labelCatalogInfo) ) {
                     LabelCatalog lc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogInfo.getSerialNo());
                     // 如果lc不为空，则说明数据库中已有此数据，此次是更新操作
                     if (lc == null) {
