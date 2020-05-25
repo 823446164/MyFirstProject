@@ -1,3 +1,13 @@
+/*
+ * 文件名：ProjectListControllerImpl.java
+ * 版权：Copyright by www.amarsoft.com
+ * 描述：
+ * 修改人：qsong
+ * 修改时间：2020年5月22日
+ * 跟踪单号：
+ * 修改单号：
+ * 修改内容：添加抛出异常
+ */
 package com.amarsoft.app.ems.project.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,15 +60,15 @@ public class ProjectListControllerImpl implements ProjectListController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            //查询项目列表失败，抛异常
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3001",e.getMessage());
             return new ResponseEntity<ResponseMessage<ProjectListQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
     @Transactional
-    //项目列表保存
+    //项目信息保存
     public ResponseEntity<ResponseMessage<Object>> projectListSave(@RequestBody @Valid RequestMessage<ProjectListSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -74,15 +84,15 @@ public class ProjectListControllerImpl implements ProjectListController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+          //项目信息保存失败，抛异常
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3002",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
     @Transactional
-    //项目列表删除
+    //项目信息删除
     public ResponseEntity<ResponseMessage<Object>> projectListDelete(@RequestBody @Valid RequestMessage<ProjectListDeleteReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -98,8 +108,8 @@ public class ProjectListControllerImpl implements ProjectListController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
-            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+           //项目信息删除失败，抛异常
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3003",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
