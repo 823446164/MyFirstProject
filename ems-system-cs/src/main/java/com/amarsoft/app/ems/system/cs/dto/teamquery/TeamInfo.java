@@ -52,7 +52,7 @@ public class TeamInfo implements Serializable{
     private String belongOrgName;
     @Description("团队负责人")
     @Length(max=80)
-    private String teamLeader;
+    private String roleA;
     @Description("任务描述")
     @Length(max=40)
     private String description;

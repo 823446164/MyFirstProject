@@ -162,6 +162,9 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 	        }
 	        //如果没有,则新建一个团队
 	        OrgInfo org = bomanager.loadBusinessObject(OrgInfo.class, "orgId",req.getBelongOrgId());
+	        if (StringUtils.isEmpty(org)) {//如果部门不存在，抛出异常
+                throw new ALSException("EMS6012");
+            }
 	        team = new TeamInfo();
 	        BeanUtils.copyProperties(req, team);
 	        team.generateKey();

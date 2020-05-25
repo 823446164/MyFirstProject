@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -26,7 +25,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.amarsoft.aecd.common.constant.YesNo;
 import com.amarsoft.aecd.system.constant.DataAuth;
 import com.amarsoft.aecd.system.constant.OrgLevel;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
@@ -44,8 +42,6 @@ import com.amarsoft.app.ems.system.cs.dto.addteam.AddTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.addteamuser.AddTeamUserReq;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.conditionalorgsquery.ConditionalOrgsQueryRsp;
-import com.amarsoft.app.ems.system.cs.dto.deleteteam.DeleteTeamReq;
-import com.amarsoft.app.ems.system.cs.dto.deleteteam.DeleteTeamRsp;
 import com.amarsoft.app.ems.system.cs.dto.deleteteamuser.DeleteTeamUserReq;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.CooperateTeam;
 import com.amarsoft.app.ems.system.cs.dto.levelteamquery.LevelTeamQueryReq;
@@ -57,7 +53,6 @@ import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamorgquery.TeamOrgQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teamquery.TeamQueryRsp;
-import com.amarsoft.app.ems.system.cs.dto.transferteam.TransferTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.updateuserteam.UpdateUserTeamReq;
 import com.amarsoft.app.ems.system.cs.dto.userquery.User;
 import com.amarsoft.app.ems.system.cs.dto.userteamquery.UserTeamQueryReq;
@@ -118,15 +113,15 @@ public class TeamServiceImpl implements TeamService {
             teamInfo.setTeamId(req.getTeamId());
         }
         teamInfo.setTeamName(req.getTeamName());
-        teamInfo.setTeamLeader(req.getTeamLeader());
+        teamInfo.setTeamLeader(req.getRoleA());
         teamInfo.setBelongOrgId(req.getBelongOrgId());
         teamInfo.setBelongRootOrg(req.getBelongRootOrg());
         teamInfo.setBelongOrgLevel(req.getBelongOrgLevel());
         teamInfo.setDescription(req.getDescription());
         teamInfo.setStatus(req.getStatus());
-        teamInfo.setRoleA(req.getTeamLeader());
+        teamInfo.setRoleA(req.getRoleA());
         List<UserBelong> userBelongs = bomanager.loadBusinessObjects(UserBelong.class, "userId = :userId and orgId = :orgId",
-                "userId",req.getTeamLeader(),"orgId",req.getBelongOrgId());
+                "userId",req.getRoleA(),"orgId",req.getBelongOrgId());
         for (UserBelong userBelong : userBelongs) {
             userBelong.setDataAuth(DataAuth.TeamData.id);
         }
@@ -183,20 +178,6 @@ public class TeamServiceImpl implements TeamService {
        bomanager.updateDB();
     }
 
-    @Override
-    public void transferTeam(HttpHeaders header,TransferTeamReq req) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        TeamInfo teamInfo = bomanager.keyLoadBusinessObject(TeamInfo.class, req.getTeamId());
-        String userId = GlobalShareContextHolder.getUserId();
-        if(req.getSystemChangeFlag().equals(YesNo.No.id) || StringUtils.isEmpty(req.getSystemChangeFlag())) {
-            if(!teamInfo.getTeamLeader().equals(userId))
-                throw new ALSException("901012");
-        }
-        teamInfo.setTeamLeader(req.getTeamLeader());
-        bomanager.updateBusinessObject(teamInfo);
-        bomanager.updateDB();
-    }
-    
     /**
      * Description: 查询团队信息<br>
      * <br>
@@ -220,8 +201,8 @@ public class TeamServiceImpl implements TeamService {
                 teamInfos.add(team);
             }else if (!StringUtils.isEmpty(req.getBelongOrgId())) {//按所属机构查询
                 teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "belongOrgId = :belongOrgId","belongOrgId",req.getBelongOrgId());
-            }else if (!StringUtils.isEmpty(req.getTeamLeader())) {//按团队长查询
-                teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "teamLeader = :teamLeader","teamLeader",req.getTeamLeader());
+            }else if (!StringUtils.isEmpty(req.getRoleA())) {//按团队长查询
+                teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "teamLeader = :teamLeader","teamLeader",req.getRoleA());
             }else if (!CollectionUtils.isEmpty(req.getBelongOrgLevel()) && StringUtils.isEmpty(req.getBelongRootOrg())){
                 teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "belongOrgLevel in ( :belongOrgLevel )","belongOrgLevel",req.getBelongOrgLevel());
             }else if (!StringUtils.isEmpty(req.getBelongRootOrg()) && !CollectionUtils.isEmpty(req.getBelongOrgLevel())){
@@ -254,7 +235,7 @@ public class TeamServiceImpl implements TeamService {
                 team.setUsers(new ArrayList<User>());
                 team.setTeamId(teamInfo.getTeamId());
                 team.setTeamName(teamInfo.getTeamName());
-                team.setTeamLeader(teamInfo.getTeamLeader());
+                team.setRoleA(teamInfo.getRoleA());
                 team.setBelongOrgId(teamInfo.getBelongOrgId());
                 
                 com.amarsoft.app.ems.system.entity.OrgInfo belongOrg = bomanager.keyLoadBusinessObject(com.amarsoft.app.ems.system.entity.OrgInfo.class, teamInfo.getBelongOrgId());

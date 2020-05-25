@@ -30,7 +30,7 @@ public class TeamQueryReq implements Serializable{
     private String teamName;
     @Description("团队负责人")
     @Length(max=80)
-    private String teamLeader;
+    private String roleA;
     @Description("所属法人")
     @Length(max=40)
     private String belongRootOrg;
@@ -56,8 +56,8 @@ public class TeamQueryReq implements Serializable{
     private String orgId;
     @Description("员工编号")
     @Length(max=40)
-    private String UserId;
+    private String userId;
     @Description("团队人数")
     @Length(max=40)
-    private Integer Count;
+    private Integer count;
 }
