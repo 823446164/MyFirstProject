@@ -12,6 +12,11 @@
   <dependencies>
   		<dependency>
             <groupId>com.amarsoft.app.ems</groupId>
+            <artifactId>ems-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+  		<dependency>
+            <groupId>com.amarsoft.app.ems</groupId>
             <artifactId>ems-system-cs</artifactId>
             <version>${project.version}</version>
         </dependency>
