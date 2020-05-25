@@ -12,7 +12,12 @@
 package com.amarsoft.app.ems.parameter.template.controller.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.app.ems.parameter.template.controller.PowerController;
+import com.amarsoft.app.ems.parameter.template.cs.dto.powertolabel.PowerToLableQueryRsp;
 import com.amarsoft.app.ems.parameter.template.service.PowerControlService;
 
 /**
@@ -22,14 +27,16 @@ import com.amarsoft.app.ems.parameter.template.service.PowerControlService;
  * @see PowerControllerImpl
  * @since
  */
-
+@RestController
 public class PowerControllerImpl implements PowerController {
     @Autowired
     PowerControlService powerControlService;
     
     @Override
-    public Boolean powerToLabel() {
-            boolean rsp = powerControlService.PowerToLabel();
-            return rsp;
+    public ResponseEntity<ResponseMessage<PowerToLableQueryRsp>>  powerToLabel() {
+        ResponseMessage<PowerToLableQueryRsp> rspMsg = null;
+        PowerToLableQueryRsp rsp = powerControlService.powerToLabel();
+            rspMsg = new ResponseMessage<PowerToLableQueryRsp>(rsp);
+            return new ResponseEntity<ResponseMessage<PowerToLableQueryRsp>>(rspMsg , HttpStatus.OK);
     }  
 }

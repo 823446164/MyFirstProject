@@ -12,7 +12,11 @@
 package com.amarsoft.app.ems.parameter.template.controller;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import com.amarsoft.amps.acsc.rpc.ResponseMessage;
+import com.amarsoft.app.ems.parameter.template.cs.dto.powertolabel.PowerToLableQueryRsp;
 
 /**
  * 判断当前用户是否有权限对标签进行维护
@@ -24,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
  */
 
 public interface PowerController {
-    @PostMapping(value = "/labelcatalog/power", name="当前用户对标签维护权限判断功能接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Boolean powerToLabel();
-
+    @PostMapping(value = "/labelcatalog/powercontrol", name="当前用户对标签维护权限判断功能接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<PowerToLableQueryRsp>> powerToLabel();
 }

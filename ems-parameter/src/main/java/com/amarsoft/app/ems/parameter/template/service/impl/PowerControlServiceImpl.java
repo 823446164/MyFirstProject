@@ -22,8 +22,8 @@ import com.amarsoft.aecd.system.constant.UserRoles;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
+import com.amarsoft.app.ems.parameter.template.cs.dto.powertolabel.PowerToLableQueryRsp;
 import com.amarsoft.app.ems.parameter.template.service.PowerControlService;
-import com.amarsoft.app.ems.system.controller.RoleController;
 import com.amarsoft.app.ems.system.cs.client.RoleClient;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserAndRole;
 import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryReq;
@@ -42,22 +42,24 @@ import com.amarsoft.app.ems.system.cs.dto.userrolequery.UserRoleQueryRsp;
 @Service
 public class PowerControlServiceImpl implements PowerControlService {
     @Autowired 
-    RoleController roleController;
-   
-    public boolean PowerToLabel() {
-        boolean power = false; 
+    RoleClient roleController;  
+    public PowerToLableQueryRsp powerToLabel() {
+        PowerToLableQueryRsp rsp = new PowerToLableQueryRsp();
+        boolean power = false;         
         //跨服务调用方法：按用户查找角色
         RequestMessage<UserRoleQueryReq> reqMsg =new RequestMessage<>();
         UserRoleQueryReq req = new UserRoleQueryReq();
         req.setUserId(GlobalShareContextHolder.getUserId());
-        reqMsg.setMessage(req);
+        reqMsg.setMessage(req);      
         ResponseEntity<ResponseMessage<UserRoleQueryRsp>> roles = roleController.userRoleQuery(reqMsg);
         List<UserAndRole> userRoles = roles.getBody().getMessage().getUserRoles();
         for (UserAndRole userAndRole : userRoles) {
             if(UserRoles.Admin.id.equals(userAndRole.getRoleId())) {
                 power = true;
+                
             }            
-        }
-        return power;       
+        }      
+        rsp.setPower(power);
+        return rsp;       
     }
 }

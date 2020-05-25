@@ -11,6 +11,7 @@
 
 package com.amarsoft.app.ems.parameter.template.service;
 import com.amarsoft.app.ems.parameter.template.controller.impl.PowerControllerImpl;
+import com.amarsoft.app.ems.parameter.template.cs.dto.powertolabel.PowerToLableQueryRsp;
 
 
 /**
@@ -28,5 +29,5 @@ public interface PowerControlService {
      * @param request
      * @return
      */
-    public boolean PowerToLabel();
+    public PowerToLableQueryRsp powerToLabel();
 }

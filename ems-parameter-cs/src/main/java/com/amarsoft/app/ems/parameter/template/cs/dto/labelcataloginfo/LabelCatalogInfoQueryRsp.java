@@ -31,7 +31,6 @@ import lombok.ToString;
 public class LabelCatalogInfoQueryRsp extends LabelCatalogInfo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Description("用户权限")
-    @NotEmpty
     @Valid
     private boolean power;
 }

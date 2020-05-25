@@ -407,7 +407,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
     }
 
     /**
-     * 标签目录新增判重 标签目录新增时判断名称是否重复
+     * 标签新增判重 标签新增时判断名称和码值是否重复
      * 
      * @param labelInfoRepeatReq
      */

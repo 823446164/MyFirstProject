@@ -58,10 +58,6 @@ public class Tree implements Serializable{
     @Length(max=1)
     private String labelType;
     
-    @Description("用户权限")
-    @Length(max=10)
-    private String power;
-    
     @Description("子机构信息组")
     @Valid
     @NotEmpty

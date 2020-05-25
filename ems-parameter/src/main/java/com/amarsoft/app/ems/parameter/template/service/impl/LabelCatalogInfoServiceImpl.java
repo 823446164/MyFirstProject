@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.amarsoft.aecd.employee.constant.ParentNo;
@@ -34,7 +36,6 @@ import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfoQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfoQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfoSaveReq;
-import com.amarsoft.app.ems.parameter.template.cs.dto.powertolabel.PowerToLabel;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelByLabelCatalogQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelByLabelCatalogQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfo;
@@ -48,6 +49,8 @@ import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCata
 @Slf4j
 @Service
 public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
+    @Autowired
+    PowerControlServiceImpl labelCatalogTreeServiceImpl;
     /**
      * 标签目录详情单记录查询
      * 
@@ -57,7 +60,6 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
     @Override
     @Transactional
     public LabelCatalogInfoQueryRsp labelCatalogInfoQuery(@Valid LabelCatalogInfoQueryReq labelCatalogInfoQueryReq) {
-        LabelCatalogTreeServiceImpl labelCatalogTreeServiceImpl = new LabelCatalogTreeServiceImpl();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         LabelCatalog labelCatalog = bomanager.loadBusinessObject(LabelCatalog.class, "serialNo", labelCatalogInfoQueryReq.getSerialNo());
         if (labelCatalog != null) {
@@ -75,7 +77,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
             labelCatalogInfo.setUpdateTime(labelCatalog.getUpdateTime());
             labelCatalogInfo.setUpdateOrgId(labelCatalog.getUpdateOrgId());
             labelCatalogInfo.setRootNo(labelCatalog.getRootNo());
-            labelCatalogInfo.setPower(labelCatalogTreeServiceImpl.powerToLabel());
+            labelCatalogInfo.setPower(labelCatalogTreeServiceImpl.powerToLabel().isPower());
             return labelCatalogInfo;
         }
         return null;

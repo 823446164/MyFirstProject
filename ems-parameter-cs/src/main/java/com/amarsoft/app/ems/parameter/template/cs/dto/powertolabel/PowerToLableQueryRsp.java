@@ -11,7 +11,6 @@
 
 package com.amarsoft.app.ems.parameter.template.cs.dto.powertolabel;
 
-import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
 import com.amarsoft.amps.arem.annotation.Description;
 import lombok.Getter;
@@ -31,7 +30,6 @@ import lombok.ToString;
 @ToString
 public class PowerToLableQueryRsp {
     @Description("是否有维护权限")
-    @NotEmpty
     @QueryBegin
     private boolean power;//true代表有权限，false代表无权限
 }
