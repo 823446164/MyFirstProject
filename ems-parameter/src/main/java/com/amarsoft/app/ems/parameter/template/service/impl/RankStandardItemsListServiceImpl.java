@@ -297,7 +297,7 @@ public class RankStandardItemsListServiceImpl implements RankStandardItemsListSe
         }
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
             // 删除对应指标及标签
-        bomanager.deleteObjectBySql(RankStandardItems.class, "serialNo in ("+deleteInSerialNo+")");
+        bomanager.deleteObjectBySql(RankStandardItems.class, "serialNo in (" + deleteInSerialNo + ") or parentNo in (" + deleteInSerialNo + ")");
         bomanager.updateDB();
     }
 }

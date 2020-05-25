@@ -330,31 +330,6 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
         }
     }
 
-    // 删除校验,待做
-    // TODO xphe 删除校验－－－输入：所属团队 当前时间（本月内）团队的职级体系是否有人在申请（员工申请表，状态审批中，待处理）
-    public boolean checkDeleteRandStand(String belongTeam, String type) {
-        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        // TeamInfo teaminfo = bomanager.keyLoadBusinessObject(TeamInfo.class, belongTeam);
-        // String teamManager = teaminfo.getRoleA();
-        BusinessObjectAggregate<BusinessObject> flowCount = bomanager.selectBusinessObjectsBySql(
-            "select count(1) as cnt from EmployeeTargetRank er,FlowObject fo where" + " (er.teamManager=:teamManager and date_format(er.inputTime,'%Y%m')=date_format(NOW(),'%Y%m') and er.rankSerialNo=fo.objectNo and fo.phaseName in ('审批中','待处理'))");
-        /*
-         * List<EmployeeTargetRank> employeeTargetRanks =
-         * bomanager.loadBusinessObjects(EmployeeTargetRank.class,
-         * "teamManager=:teamManager and date_format(inputTime,'%Y%m')=date_format(NOW(),'%Y%m')",
-         * "teamManager", teamManager);
-         */
-        BusinessObjectAggregate<BusinessObject> addCount = bomanager.selectBusinessObjectsBySql("select count(1) as cnt from ");
-        int count = flowCount.getBusinessObjects().get(0).getInt("cnt");
-        int addcount = addCount.getBusinessObjects().get(0).getInt("cnt");
-        if (count == 0 || addcount == 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
     /**
      * 
      * Description: 职等/子职级详情单记录删除
@@ -395,8 +370,7 @@ public class RankStandardCatalogInfoServiceImpl implements RankStandardCatalogIn
             // 删除对应职级指标
             bomanager.deleteObjectBySql(RankStandardItems.class, "rankNo=:serialNo", "serialNo", serialNo);
         }else {
-            //TODO xphe 抛出无法删除的原因
-            throw new ALSException("EMS2003");
+            throw new ALSException("EMS2035", rankStandardCatalog.getChildRankNo());
         }
         bomanager.updateDB();
     }
