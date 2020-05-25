@@ -76,6 +76,7 @@ public interface RoleController {
     public ResponseEntity<ResponseMessage<Object>> roleUserListDtoSave(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg);
     @PostMapping(value = "/roleuserlist/delete", name="用户引入list删除接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> roleUserListDtoDelete(@RequestBody @Valid RequestMessage<EmployeeInfoListDtoQueryReq> reqMsg);
-    
+    @PostMapping(value = "/roleinfodto/update", name="角色状态更改接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> roleInfoStatusUpdate(@RequestBody @Valid RequestMessage<RoleInfoDtoQueryReq> reqMsg);
 
 }
