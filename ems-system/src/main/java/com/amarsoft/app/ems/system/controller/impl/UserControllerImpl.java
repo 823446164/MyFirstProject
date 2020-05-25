@@ -171,7 +171,6 @@ public class UserControllerImpl implements UserController {
     @Override
     public ResponseEntity<ResponseMessage<UserPasswdQueryRsp>> userPasswdQuery(@RequestBody @Valid RequestMessage<UserPasswdQueryReq> reqMsg){
         try {
-        	System.out.println("888888888888888888888888888888888");
             UserPasswdQueryRsp rsp = null;
             String userId = userService.getUserId(reqMsg.getMessage().getLogonId());
             if(!StringUtils.isEmpty(userId)) {

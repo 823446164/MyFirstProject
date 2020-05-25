@@ -55,6 +55,7 @@ import com.amarsoft.app.ems.system.cs.dto.levelrolequery.LevelRoleQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.levelrolequery.LevelRoleQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.orginfoquery.OrgInfoQueryRsp;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.Filter;
 import com.amarsoft.app.ems.system.cs.dto.roleallquery.RoleAllQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.roleallquery.RoleAllQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.roleauth.RoleAuth;
@@ -810,10 +811,8 @@ public class RoleServiceImpl implements RoleService {
                 // 检查角色下有没有用户引入
                 BusinessObjectAggregate<UserRole> urs = bomanager.loadBusinessObjects(UserRole.class, 0, 1, "roleId=:roleId", "roleId",
                     roleInfoDto.getRoleId());
-                if (!CollectionUtils.isEmpty(urs.getBusinessObjects())) throw new ALSException("EMS6045");
+                if (!CollectionUtils.isEmpty(urs.getBusinessObjects())) throw new ALSException("EMS6045",roleInfoDto.getRoleId());
             }
-//            roleInfo.setRoleName(roleInfoDto.getRoleName());
-//            roleInfo.setStatus(roleInfoDto.getStatus());
             BeanUtils.copyProperties(roleInfoDto, roleInfo);
         }else {//新增
             roleInfo = new RoleInfo();
@@ -838,10 +837,24 @@ public class RoleServiceImpl implements RoleService {
 	public EmployeeInfoListDtoQueryRsp roleUserListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req) {
 		EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
 		String roleId = req.getRoleId();
+		//模糊搜索：员工工号，员工姓名
+		String eNo = "%";
+		String eName = "%";
+		if(!CollectionUtils.isEmpty(req.getFilters())) {
+		    for (Filter filter : req.getFilters()) {
+		        if("employeeNo".equals(filter.getName())) {
+	                  eNo = filter.getValue()[0]+"%";
+	               }
+		        if("employeeName".equals(filter.getName())) {
+		            eName = filter.getValue()[0]+"%";
+		        }
+            }
+		}
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
 		//找出该角色下能被引入的用户
 		String sql = "select ui.userId as userId,ui.userName as userName,ti.teamName as teamName from UserInfo ui join UserTeam ut on ui.userId = ut.userId "
-		+"join TeamInfo ti on ut.teamId = ti.teamId where ui.userId not in (SELECT userId FROM UserRole WHERE roleId = :roleId)";
+		+"join TeamInfo ti on ut.teamId = ti.teamId where ui.userId not in (SELECT userId FROM UserRole WHERE roleId = :roleId) and "
+		+"ui.userId like '"+eNo+"' and ui.userName like '"+eName+"'";
 		BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsBySql(req.getBegin(),req.getPageSize(),sql, "roleId",roleId);
 		List<BusinessObject> businessObjects = boa.getBusinessObjects();
 		if(!CollectionUtils.isEmpty(businessObjects)) {
@@ -870,10 +883,24 @@ public class RoleServiceImpl implements RoleService {
 	public EmployeeInfoListDtoQueryRsp RoleUserIntroducedListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req) {
 		EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
 		String roleId = req.getRoleId();
+		//模糊搜索：员工工号，员工姓名
+		String eNo = "%";
+        String eName = "%";
+        if(!CollectionUtils.isEmpty(req.getFilters())) {
+            for (Filter filter : req.getFilters()) {
+                if("employeeNo".equals(filter.getName())) {
+                      eNo = filter.getValue()[0]+"%";
+                   }
+                if("employeeName".equals(filter.getName())) {
+                    eName = filter.getValue()[0]+"%";
+                }
+            }
+        }
 		BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
 		//找出该角色下已引入的用户
 		String sql = "select ui.userId as userId,ui.userName as userName,ti.teamName as teamName from UserRole ur join  UserInfo ui on ur.userId = ui.userId join UserTeam ut on ui.userId = ut.userId "
-		+"join TeamInfo ti on ut.teamId = ti.teamId where ur.roleId = :roleId";
+		+"join TeamInfo ti on ut.teamId = ti.teamId where ur.roleId = :roleId and "
+		+"ui.userId like '"+eNo+"' and ui.userName like '"+eName+"'";;
 		BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsBySql(req.getBegin(),req.getPageSize(),sql, "roleId",roleId);
 		List<BusinessObject> businessObjects = boa.getBusinessObjects();
 		if(!CollectionUtils.isEmpty(businessObjects)) {
@@ -974,5 +1001,34 @@ public class RoleServiceImpl implements RoleService {
 		}
 		return userRoles;
 	}
+
+	/**
+     * 角色状态更改
+     * @param req 角色编号，角色状态
+     * @return
+     */
+    @Override
+    @Transactional
+    public void roleInfoStatusUpdate(@Valid RoleInfoDtoQueryReq req) {
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        String roleId = req.getRoleId();
+        RoleInfo roleInfo = null;
+        //1.先判断该角色是否存在
+        if (StringUtils.isEmpty(roleId)
+                || ObjectUtils.isEmpty(roleInfo = bomanager.keyLoadBusinessObject(RoleInfo.class, roleId))) {
+            // 抛出：该角色不存在
+            throw new ALSException("EMS6047",req.getRoleId());
+        }
+        //2.判断是否停用
+        if (SystemStatus.Locked.id.equals(req.getStatus())) {// 若角色状态要置为停用
+            // 2.1 检查该角色下有没有用户引入
+            BusinessObjectAggregate<UserRole> urs = bomanager.loadBusinessObjects(UserRole.class, 0, 1, "roleId=:roleId", "roleId",
+                req.getRoleId());
+            if (!CollectionUtils.isEmpty(urs.getBusinessObjects())) throw new ALSException("EMS6045",req.getRoleId());
+        }
+        roleInfo.setStatus(req.getStatus());
+        bomanager.updateBusinessObject(roleInfo);
+        bomanager.updateDB();
+    }
 
 }

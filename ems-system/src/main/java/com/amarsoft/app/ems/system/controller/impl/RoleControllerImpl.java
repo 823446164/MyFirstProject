@@ -404,4 +404,24 @@ public class RoleControllerImpl implements RoleController {
 			return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> roleInfoStatusUpdate(@RequestBody @Valid RequestMessage<RoleInfoDtoQueryReq> reqMsg) {
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            roleService.roleInfoStatusUpdate(reqMsg.getMessage());
+            rspMsg = new ResponseMessage<Object>();
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg,HttpStatus.OK); 
+        }catch(Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("角色状态更改："+reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS6046", e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
