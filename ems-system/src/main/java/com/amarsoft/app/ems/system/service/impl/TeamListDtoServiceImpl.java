@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -178,18 +177,33 @@ public class TeamListDtoServiceImpl implements TeamListDtoService {
         if (StringUtils.isEmpty(req.getOrgId())) {//如果没有传入部门
             throw new ALSException("请选择部门");
         }
-        //根据搜索条件获取团队
-        List<TeamInfo> teamInfos = bomanager.loadBusinessObjects(TeamInfo.class, "belongOrgId=:orgId and teamName like :name and roleA like :roleA",
-            "orgId",orgId,"name",name,"roleA",roleA);
+        //根据搜索条件获取团队(显示出团队负责人姓名)  modify by xszhou  2020/5/25
+        
+        List<BusinessObject> bos = bomanager.selectBusinessObjectsBySql("select TI.teamId as TeamId,TI.teamName as TeamName,"
+            + "TI.belongRootOrg as BelongRootOrg,TI.belongOrgId as BelongOrgId,OI.orgName as OrgName,"
+            + "TI.description as Description,TI.roleA as RoleA,TI.roleB as RoleB,TI.roleC as RoleC,TI.status as Status,"
+            + "TI.target as Target,UI.userName as UserName from TeamInfo TI,UserInfo UI,OrgInfo OI "
+            + "where TI.roleA = UI.userId and TI.belongOrgId=OI.orgId and TI.belongOrgId=:orgId and TI.teamName like :name and UI.userName like :roleA", "orgId",
+            orgId,"name",name,"roleA",roleA).getBusinessObjects();
         //返回对象的参数录入
-        for (TeamInfo teamInfo : teamInfos) {
+        for (BusinessObject bo : bos) {
             team = new TeamListDto();
-            BeanUtils.copyProperties(teamInfo, team);
-            List<UserTeam> users = bomanager.loadBusinessObjects(UserTeam.class, "teamId=:teamId","teamId",teamInfo.getTeamId());
+            team.setTeamId(bo.getString("TeamId"));
+            team.setTeamName(bo.getString("TeamName"));
+            team.setBelongOrgId(bo.getString("BelongOrgId"));
+            team.setOrgId(bo.getString("BelongOrgId"));
+            team.setOrgName(bo.getString("OrgName"));
+            team.setDescription(bo.getString("Description"));
+            team.setRoleA(bo.getString("RoleA"));
+            team.setRoleAName(bo.getString("UserName"));
+            team.setRoleB(bo.getString("RoleB"));
+            team.setRoleC(bo.getString("RoleC"));
+            team.setTarget(bo.getString("Target"));
+            team.setStatus(bo.getString("Status"));
+            List<UserTeam> users = bomanager.loadBusinessObjects(UserTeam.class, "teamId=:teamId","teamId",bo.getString("TeamId"));
             team.setCount(users.size());
             teams.add(team);
         }
-        
         rsp.setTeamListDtos(teams);
         rsp.setTotalCount(teams.size());        
         return rsp;

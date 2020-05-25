@@ -37,6 +37,7 @@ import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoQueryRsp;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoDtoSaveReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryReq;
 import com.amarsoft.app.ems.system.cs.dto.teaminfodto.TeamInfoUserQueryRsp;
+import com.amarsoft.app.ems.system.entity.OrgInfo;
 import com.amarsoft.app.ems.system.entity.OrgTeam;
 import com.amarsoft.app.ems.system.entity.TeamInfo;
 import com.amarsoft.app.ems.system.service.TeamInfoDtoService;
@@ -160,11 +161,17 @@ public class TeamInfoDtoServiceImpl implements TeamInfoDtoService {
 	            throw new ALSException("EMS6030");
 	        }
 	        //如果没有,则新建一个团队
+	        OrgInfo org = bomanager.loadBusinessObject(OrgInfo.class, "orgId",req.getBelongOrgId());
+	        if (StringUtils.isEmpty(org)) {//如果部门不存在，抛出异常
+                throw new ALSException("EMS6012");
+            }
 	        team = new TeamInfo();
 	        BeanUtils.copyProperties(req, team);
 	        team.generateKey();
 	        team.setStatus(OrgStatus.New.id);
-	      
+	        team.setBelongRootOrg(org.getRootOrgId());
+	        team.setBelongOrgLevel(org.getOrgLevel());
+	        team.setInputOrgId(GlobalShareContextHolder.getOrgId());
 	        //添加部门团队关系表
 	        OrgTeam orgTeam = new OrgTeam();
 	        orgTeam.setOrgId(req.getBelongOrgId());
