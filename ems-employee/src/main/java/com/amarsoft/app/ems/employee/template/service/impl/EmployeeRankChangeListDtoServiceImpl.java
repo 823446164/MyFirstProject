@@ -116,7 +116,7 @@ public class EmployeeRankChangeListDtoServiceImpl implements EmployeeRankChangeL
     @Transactional
     public void employeeRankChangeListDtoSaveAction(List<EmployeeRankChangeListDto> employeeRankChangeListDtos) {
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
-        if (employeeRankChangeListDtos != null) {
+        if (!CollectionUtils.isEmpty(employeeRankChangeListDtos)) {
             for (EmployeeRankChangeListDto employeeRankChangeListDtoTmp : employeeRankChangeListDtos) {
                 EmployeeRank employeeRank = bomanager.keyLoadBusinessObject(EmployeeRank.class, employeeRankChangeListDtoTmp.getSerialNo());
                 employeeRank.setCurrentAdjustPay(employeeRankChangeListDtoTmp.getFutureAdjustPay());
@@ -141,7 +141,7 @@ public class EmployeeRankChangeListDtoServiceImpl implements EmployeeRankChangeL
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         EmployeeRank employeeRank = bomanager.keyLoadBusinessObject(EmployeeRank.class, employeeRankChangeListDtoDeleteReq.getSerialNo());
         bomanager.deleteBusinessObject(employeeRank);
-        // TODO 关联表数据如需删除的话，请自行补充代码
+        // TODO xucheng 关联表数据如需删除的话，请自行补充代码
         bomanager.updateDB();
 
     }

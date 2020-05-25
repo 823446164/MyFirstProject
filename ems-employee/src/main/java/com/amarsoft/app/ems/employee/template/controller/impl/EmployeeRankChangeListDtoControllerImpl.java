@@ -20,14 +20,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
-import com.amarsoft.amps.avts.annotation.TemplateExport;
 import com.amarsoft.app.ems.employee.template.controller.EmployeeRankChangeListDtoController;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangelistdto.EmployeeRankChangeListDtoDeleteReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangelistdto.EmployeeRankChangeListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangelistdto.EmployeeRankChangeListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangelistdto.EmployeeRankChangeListDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.service.EmployeeRankChangeListDtoService;
-import com.amarsoft.app.ems.employee.template.service.impl.EmployeeRankChangeListDtoServiceImpl;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -66,15 +65,15 @@ public class EmployeeRankChangeListDtoControllerImpl implements EmployeeRankChan
         }
     }
 
-    @Override
-    @Transactional
     /**
-     * Description: 员工职级调整情况List保
+     * Description: 员工职级调整情况List保存
      *
      * @param reqMsg
      * @return ResponseEntity
      * @see
      */
+    @Override
+    @Transactional
     public ResponseEntity<ResponseMessage<Object>> employeeRankChangeListDtoSave(@RequestBody @Valid RequestMessage<EmployeeRankChangeListDtoSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
