@@ -202,7 +202,7 @@ public class TeamServiceImpl implements TeamService {
             }else if (!StringUtils.isEmpty(req.getBelongOrgId())) {//按所属机构查询
                 teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "belongOrgId = :belongOrgId","belongOrgId",req.getBelongOrgId());
             }else if (!StringUtils.isEmpty(req.getRoleA())) {//按团队长查询
-                teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "teamLeader = :teamLeader","teamLeader",req.getRoleA());
+                teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "roleA = :roleA","roleA",req.getRoleA());
             }else if (!CollectionUtils.isEmpty(req.getBelongOrgLevel()) && StringUtils.isEmpty(req.getBelongRootOrg())){
                 teamAggregate = bomanager.loadBusinessObjects(TeamInfo.class, req.getBegin(), req.getPageSize(), "belongOrgLevel in ( :belongOrgLevel )","belongOrgLevel",req.getBelongOrgLevel());
             }else if (!StringUtils.isEmpty(req.getBelongRootOrg()) && !CollectionUtils.isEmpty(req.getBelongOrgLevel())){
