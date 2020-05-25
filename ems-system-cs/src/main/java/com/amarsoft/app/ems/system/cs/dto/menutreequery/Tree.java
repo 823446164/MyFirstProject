@@ -43,6 +43,9 @@ public class Tree implements Serializable{
     @Description("排序号")
     @Length(max=40)
     private String sortNo;
+    @Description("菜单状态")
+    @Length(max=40)
+    private String status;
     @Description("子菜单树图信息组")
     @Valid
     private List<Tree> children;
