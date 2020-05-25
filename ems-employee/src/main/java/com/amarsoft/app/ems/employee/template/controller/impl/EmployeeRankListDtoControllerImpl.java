@@ -31,6 +31,7 @@ import com.amarsoft.app.ems.employee.template.service.impl.EmployeeRankListDtoSe
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankTargetListDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoDeleteReq;
 
 /**
@@ -82,6 +83,36 @@ public class EmployeeRankListDtoControllerImpl implements EmployeeRankListDtoCon
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
                 log.error("员工职级List保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // 异常码设置
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS1007",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    /**
+     * Description: 员工新增目标职级List保存
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseMessage<Object>> employeeTargetRankListDtoSave(@RequestBody @Valid RequestMessage<EmployeeRankTargetListDtoSaveReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            EmployeeRankTargetListDtoSaveReq request = reqMsg.getMessage();
+            
+            Map<String,String> response = employeeRankListDtoServiceImpl.employeeTargetRankListDtoSave(request);
+            rspMsg = new ResponseMessage<Object>(response);
+            
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("员工新增目标职级List保存："+ reqMsg.toString(), e);
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

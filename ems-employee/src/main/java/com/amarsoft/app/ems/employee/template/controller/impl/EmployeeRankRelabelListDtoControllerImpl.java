@@ -26,6 +26,8 @@ import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.app.ems.employee.template.controller.EmployeeRankRelabelListDtoController;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoQueryRsp;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeetargetranklistdto.EmployeeTargetRankListDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.service.impl.EmployeeRankRelabelListDtoServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
@@ -67,5 +69,27 @@ public class EmployeeRankRelabelListDtoControllerImpl implements EmployeeRankRel
         }
     }
 
+    @Override
+    @Transactional
+    //目标职级申请List保存
+    public ResponseEntity<ResponseMessage<Object>> employeeRankListDtoSave(@RequestBody @Valid RequestMessage<EmployeeRankRelabelListDtoSaveReq> reqMsg){
+        ResponseMessage<Object> rspMsg = null;
+        try {
+            EmployeeRankRelabelListDtoSaveReq request = reqMsg.getMessage();
+            
+            employeeRankRelabelListDtoServiceImpl.employeeRankRelabelListDtoSave(request);
+            rspMsg = new ResponseMessage<Object>();
 
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
+        } catch (Exception e) {
+            if(log.isErrorEnabled()) {
+                log.error("目标职级申请List保存："+ reqMsg.toString(), e);
+            }
+            //事务回滚
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            // TODO Auto-generated  //默认异常码未设置，请补充。
+            rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
+            return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

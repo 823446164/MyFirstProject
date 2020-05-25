@@ -11,6 +11,7 @@
 package com.amarsoft.app.ems.employee.template.service.impl;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +22,11 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.amarsoft.aecd.employee.constant.RankVersion;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
 import com.amarsoft.amps.acsc.query.QueryProperties.Query;
 import com.amarsoft.amps.acsc.util.DTOHelper;
@@ -37,6 +41,7 @@ import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.Employe
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankTargetListDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.service.EmployeeRankListDtoService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +66,8 @@ public class EmployeeRankListDtoServiceImpl implements EmployeeRankListDtoServic
             String sql = "select ER.serialNo as serialNo,ER.employeeNo as employeeNo,ER.classify as classify,ER.goalDate as goalDate,ER.rank as rank,"
                         + "ER.direction as direction,ER.rankVersion as rankVersion,ER.inputUserId as inputUserId,ER.inputTime as inputTime,ER.inputOrgId as inputOrgId,"
                         + "ER.updateUserId as updateUserId,ER.updateTime as updateTime,ER.updateOrgId as updateOrgId,ER.rankIsFormal as rankIsFormal,ER.changeDate as changeDate"
-                        + " from Employee_Rank ER" + " where 1=1 and ER.employeeNo = :employeeNo and ER.goalDate in (select max(ER.goalDate) from Employee_Rank ER group by rankVersion)";
+                        + " from Employee_Rank ER" + " join (select max(ER.goalDate),serialNo from Employee_Rank ER group by rankVersion) ERF on ER.serialNo = ERF.SerialNo"
+                        + " where 1=1 and ER.employeeNo = :employeeNo ";
          
 
             return queryProperties.assembleSql(sql, "employeeNo", employeeRankListDtoQueryReq.getEmployeeNo());
@@ -182,5 +188,80 @@ public class EmployeeRankListDtoServiceImpl implements EmployeeRankListDtoServic
         return map;
     }
 
+    /**
+     * 
+     * Description:员工新增目标职级List保存<br>
+     *
+     * @param EmployeeRankListDtoSaveReq
+     * @return map
+     * @see
+     */
+    @Override
+    public Map<String, String> employeeTargetRankListDtoSave(@Valid EmployeeRankTargetListDtoSaveReq employeeRankTargetListDtoSaveReq) {
+        return employeeTargetRankListDtoSaveAction(employeeRankTargetListDtoSaveReq);
+    }
+
+    /**
+     * 
+     * Description:新增目标职级List单记录保存<br>
+     * @param EmployeeRankListDto
+     * @return map
+     * @see
+     */
+    @Transactional
+    public Map<String, String> employeeTargetRankListDtoSaveAction(EmployeeRankTargetListDtoSaveReq employeeRankTargetListDtoSaveReq) {
+        // 获取业务管理器
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        String orgId = GlobalShareContextHolder.getOrgId();
+        String userId = GlobalShareContextHolder.getUserId();
+        // 校验保存
+        if (!StringUtils.isEmpty(employeeRankTargetListDtoSaveReq)) {//判空
+          //查询员工当前职级信息
+            List<BusinessObject> employeeTargetRank = bomanager.selectBusinessObjectsBySql(
+                "select ER.serialNo from EmployeeRank ER where ER.employeeNo= :employeeNo and ER.rankVersion= :rankVersion",
+                "employeeNo", employeeRankTargetListDtoSaveReq.getEmployeeNo(),
+                "rankVersion", RankVersion.Target.id).getBusinessObjects();
+            if(!CollectionUtils.isEmpty(employeeTargetRank)) {//集合判空
+                throw new ALSException("EMS1026");
+            }
+            //查询员工当前职级信息
+            List<BusinessObject> employeeCurrentRank = bomanager.selectBusinessObjectsBySql(
+                "select ER.serialNo as serialNo,ER.employeeNo as employeeNo,ER.classify as classify,ER.direction as direction,ER.evaluateRankLevel as evaluateRankLevel"                                                                                 
+                                                                                     + " from EmployeeRank ER"
+                                                                                     + " where ER.employeeNo= :employeeNo and ER.rankVersion= :rankVersion",
+                "employeeNo", employeeRankTargetListDtoSaveReq.getEmployeeNo(),
+                "rankVersion", RankVersion.Current.id).getBusinessObjects();
+            // 新增对象
+            EmployeeRank employeeRank = new EmployeeRank();
+            for (BusinessObject employeeCurRank : employeeCurrentRank) {
+                // 新增主键
+                employeeRank.generateKey();
+                // 将当前职级信息封装进实体类
+                employeeRank.setEmployeeNo(employeeCurRank.getString("employeeNo"));
+                employeeRank.setClassify(employeeCurRank.getString("classify"));
+                employeeRank.setDirection(employeeCurRank.getString("direction"));
+                employeeRank.setEvaluateRankLevel(employeeCurRank.getString("evaluateRankLevel"));
+                employeeRank.setEmployeeNo(employeeCurRank.getString("employeeNo"));
+                employeeRank.setEmployeeNo(employeeCurRank.getString("employeeNo"));
+                employeeRank.setInputOrgId(orgId);
+                employeeRank.setInputUserId(userId);
+                employeeRank.setInputTime(LocalDateTime.now());
+                //将版本改为目标
+                employeeRank.setRankVersion(RankVersion.Target.id);
+            }
+            // 更新业务对象
+            bomanager.updateBusinessObject(employeeRank);
+        }
+        else {
+            throw new ALSException("EMS1007");
+        }
+        // 提交事务
+        bomanager.updateDB();
+        // 定义一个map封装返回信息 - 判断是否更新成功
+        Map<String, String> map = new HashMap<String, String>();
+        // 定义map,更新成功返回-Y
+        map.put("status", "Y");
+        return map;
+    }
 
 }

@@ -11,6 +11,7 @@
 
 package com.amarsoft.app.ems.employee.template.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,13 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.amps.arpe.businessobject.BusinessObject;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
+import com.amarsoft.app.ems.employee.entity.EmployeeRankRelabel;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDto;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoQueryRsp;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.service.EmployeeRankRelabelListDtoService;
 import com.amarsoft.app.ems.parameter.template.cs.client.LabelCatalogInfoClient;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo.LabelCatalogInfoQueryReq;
@@ -108,5 +112,41 @@ public class EmployeeRankRelabelListDtoServiceImpl implements EmployeeRankRelabe
         return response;
     }
     
-
+    /**
+     * 职级标签List保存
+     * @param request
+     * @return
+     */
+    @Override
+    public void employeeRankRelabelListDtoSave(@Valid EmployeeRankRelabelListDtoSaveReq employeeRankRelabelListDtoSaveReq) {
+        employeeRankRelabelListDtoSaveAction(employeeRankRelabelListDtoSaveReq.getEmployeeRankRelabelListDto(),employeeRankRelabelListDtoSaveReq.getSerialNo());
+    }
+    
+    /**
+     * 职级标签List保存
+     * @param
+     * @return
+     */
+    @Transactional
+    public void employeeRankRelabelListDtoSaveAction(List<EmployeeRankRelabelListDto> employeeRankRelabelListDtos,String serialNo){
+        BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
+        String orgId = GlobalShareContextHolder.getOrgId();
+        String userId = GlobalShareContextHolder.getUserId();
+        if(!CollectionUtils.isEmpty(employeeRankRelabelListDtos)){//集合判空
+            for(EmployeeRankRelabelListDto employeeRankRelabelListDtoTmp :employeeRankRelabelListDtos){
+                EmployeeRankRelabel  employeeRankRelabel=new EmployeeRankRelabel();
+                employeeRankRelabel.generateKey();//新增主键
+                employeeRankRelabel.setRankNo(serialNo);//职级编号为员工职级流水号
+                employeeRankRelabel.setLabelNo(employeeRankRelabelListDtoTmp.getLabelNo());//获取标签编号
+                employeeRankRelabel.setLevel(employeeRankRelabelListDtoTmp.getLevel());//获取掌握程度
+                employeeRankRelabel.setBelongCatalog(employeeRankRelabelListDtoTmp.getBelongCatalog());
+                employeeRankRelabel.setInputOrgId(orgId);
+                employeeRankRelabel.setInputUserId(userId);
+                employeeRankRelabel.setInputTime(LocalDateTime.now());
+                bomanager.updateBusinessObject(employeeRankRelabel);
+            }
+        }
+        bomanager.updateDB();
+    }
+    
 }
