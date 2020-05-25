@@ -1,4 +1,15 @@
+/*文件名：EmployeeInfoListDtoControllerImpl 
+ * 版权：Copyright by www.amarsoft.com
+ * 描述： 
+ * 修改人：dxiao 
+ * 修改时间：2020/05/25
+ * 跟踪单号： 
+ * 修改单号： 
+ * 修改内容：添加更改员工状态两个方法
+ */
 package com.amarsoft.app.ems.employee.template.controller.impl;
+
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -178,12 +189,12 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
         ResponseMessage<Object> rspMsg = null;
         try {
             EmployeeInfoStatusUpdateReq request = reqMsg.getMessage();
-            employeeInfoListDtoServiceImpl.employeeInfoDtoStatusSave(request);
-            rspMsg = new ResponseMessage<Object>();
+            Map<String,String> response = employeeInfoListDtoServiceImpl.employeeInfoDtoStatusSave(request);
+            rspMsg = new ResponseMessage<Object>(response);
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
-                log.error("员工状态更新："+ reqMsg.toString(), e);
+                log.error("将员工状态置为离职："+ reqMsg.toString(), e);
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -203,12 +214,14 @@ public class EmployeeInfoListDtoControllerImpl implements EmployeeInfoListDtoCon
         ResponseMessage<Object> rspMsg = null;
         try {
             EmployeeInfoStatusUpdateReq request = reqMsg.getMessage();
-            employeeInfoListDtoServiceImpl.employeeInfoDtoStatusSave(request);
-            rspMsg = new ResponseMessage<Object>();
+            //调用service
+            Map<String,String> response = employeeInfoListDtoServiceImpl.employeeInfoDtoStatusUpdate(request);
+            //更新成功返回message
+            rspMsg = new ResponseMessage<Object>(response);
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg , HttpStatus.OK);
         } catch (Exception e) {
             if(log.isErrorEnabled()) {
-                log.error("员工状态更新："+ reqMsg.toString(), e);
+                log.error("离职员工状态更新："+ reqMsg.toString(), e);
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

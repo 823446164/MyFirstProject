@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.amarsoft.aecd.employee.constant.EmployeeStatus;
+import com.amarsoft.aecd.employee.constant.EmployeeWorkStatus;
 import com.amarsoft.amps.acsc.rpc.RequestMessage;
 import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
@@ -71,7 +73,7 @@ public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService {
 			employeeInfoDto.setGoalRank(employeeInfo.getGoalRank());
 			employeeInfoDto.setRntryTime(employeeInfo.getRntryTime());
 			employeeInfoDto.setChangeTime(employeeInfo.getChangeTime());
-			employeeInfoDto.setEmployeeStatus(employeeInfo.getEmployeeStatus());
+			employeeInfoDto.setEmployeeStatus(EmployeeStatus.getNameById(employeeInfo.getEmployeeStatus()));
 			employeeInfoDto.setResignationReason(employeeInfo.getResignationReason());
 			employeeInfoDto.setEmployeeeDucation(employeeInfo.getEmployeeeDucation());
 			employeeInfoDto.setGraduationTime(employeeInfo.getGraduationTime());
@@ -84,7 +86,7 @@ public class EmployeeInfoDtoServiceImpl implements EmployeeInfoDtoService {
 			employeeInfoDto.setUpdateUserId(employeeInfo.getUpdateUserId());
 			employeeInfoDto.setUpdateTime(employeeInfo.getUpdateTime());
 			employeeInfoDto.setUpdateOrgId(employeeInfo.getUpdateOrgId());
-			employeeInfoDto.setEmployeeWorkStatus(employeeInfo.getEmployeeWorkStatus());
+			employeeInfoDto.setEmployeeWorkStatus(EmployeeWorkStatus.getNameById(employeeInfo.getEmployeeWorkStatus()));
 			employeeInfoDto.setTeamId(teamId);
 			employeeInfoDto.setBeforeTeam(teamName);
 			return employeeInfoDto;

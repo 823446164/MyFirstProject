@@ -39,10 +39,10 @@ public interface EmployeeInfoListDtoController {
     @PostMapping(value = "/employeelistbyemployeeno/query", name="按条件查询员工信息List接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<EmployeeListByEmplNoRsp>> employeeListByEmployeeNoQuery(@RequestBody @Valid RequestMessage<EmployeeListByEmplNoReq> reqMsg);
 
-    @PostMapping(value = "/employeeinfodto/saveStatus", name="员工状态置为离职", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/employeeinfodto/savestatus", name="员工状态置为离职", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoStatusSave(@RequestBody @Valid RequestMessage<EmployeeInfoStatusUpdateReq> reqMsg);
 
-    @PostMapping(value = "/employeeinfodto/updateStatus", name="离职员工状态置为试用/实习", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/employeeinfodto/updatestatus", name="离职员工状态置为试用/实习", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> employeeInfoDtoStatusUpdate(@RequestBody @Valid RequestMessage<EmployeeInfoStatusUpdateReq> reqMsg);
 
 }

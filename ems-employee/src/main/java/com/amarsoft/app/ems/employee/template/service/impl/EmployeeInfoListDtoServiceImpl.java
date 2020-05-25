@@ -1,5 +1,7 @@
 package com.amarsoft.app.ems.employee.template.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.amarsoft.aecd.common.constant.FormatType;
+import com.amarsoft.aecd.employee.constant.EmployeeStatus;
 import com.amarsoft.aecd.system.constant.UserRoles;
 import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
 import com.amarsoft.amps.acsc.query.QueryProperties;
@@ -184,7 +188,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     @Override
     public EmployeeListByUserQueryRsp employeeListByUserQuery(@Valid @RequestBody EmployeeListByUserQueryReq req) {
         //1.后端自动获取用户ＩＤ和部门ＩＤ
-        String userId = GlobalShareContextHolder.getUserId();
+        String userId =GlobalShareContextHolder.getUserId();     
         String orgId = GlobalShareContextHolder.getOrgId();
         List<Filter> filters = req.getFilters();
         
@@ -209,7 +213,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
              rsp = showList(userAndRole.getRoleId(), orgId,filters);
          }else if(UserRoles.TeamLeader.id.equals(userAndRole.getRoleId())){//8.如果用户为团队负责人，展示所在团队所有员工
              rsp = showList(userAndRole.getRoleId(), userId,filters);
-         }else {//９．如果不是这些角色，则提示权限不足
+         }else {//９．如果不是这些角色，则提示权限不足          
              throw new ALSException("EMS1008");
         }
         return rsp; 
@@ -314,6 +318,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
         return rsp;
     }
     
+    
     /**
      * Description: 离职员工状态更新为实习或者是正式<br>
      * @param EI.employeeNo
@@ -333,11 +338,31 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             //根据员工编号查询员工信息
             EmployeeInfo employeeInfo = bomanager.keyLoadBusinessObject(EmployeeInfo.class,
                     employeeInfoDto.getEmployeeNo());
-            //TODO dxiao 没加校验
-            //更新员工状态
-            employeeInfo.setEmployeeStatus(employeeInfoDto.getEmployeeStatus());
+            //校验该员工状态
+            if(!EmployeeStatus.getIdByName("离职").equals(employeeInfo.getEmployeeStatus())) {
+                throw new ALSException("EMS1010");
+            }
+            //TODO dxiao 待调试
+            //1.取出当前时间 - 字符串转换
+            //2.取出毕业时间
+            //3.日期比较-判断更改为实习还是试用
+            //4.判断更改员工状态
+            // 日期格式化模板
+            DateTimeFormatter sdf = DateTimeFormatter.ofPattern(FormatType.DateTimeFormat.format);
+            String timeNow = sdf.format(LocalDateTime.now());           
+            String graduationTime = employeeInfo.getGraduationTime();
+            int result = timeNow.compareTo(graduationTime);
+            if(result == 0 || result > 0) {
+                //日期相等,日期小于当前日期 -- 已经毕业
+                employeeInfo.setEmployeeStatus(EmployeeStatus.getIdByName("试用"));
+            }else {
+                //未毕业
+                employeeInfo.setEmployeeStatus(EmployeeStatus.getIdByName("实习"));
+            }           
             bomanager.updateBusinessObject(employeeInfo);
         }
+        // 提交事务
+        bomanager.updateDB();
         //定义一个map封装返回信息 - 判断是否更新成功
         Map<String,String> map = new HashMap<String,String>();
         map.put("status", "Y");
@@ -345,7 +370,7 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
     }
     
     /**
-     * Description: 员工状态更改为离职<br>
+     * Description: 员工状态更改为离职<br>失效按钮
      * @param EI.employeeNo
      * @param EI.employeeStatus
      * @return Y 
@@ -364,15 +389,22 @@ public class EmployeeInfoListDtoServiceImpl implements EmployeeInfoListDtoServic
             EmployeeInfo employeeInfo = bomanager.keyLoadBusinessObject(EmployeeInfo.class,
                     employeeInfoDto.getEmployeeNo());
             //TODO dxiao 待调试
+            //校验该员工是否离职
+            if(EmployeeStatus.getIdByName("离职").equals(employeeInfo.getEmployeeStatus())) {
+                throw new ALSException("EMS1009");
+            }
             //更新员工状态-4
             employeeInfo.setEmployeeStatus(employeeInfoDto.getEmployeeStatus());
             bomanager.updateBusinessObject(employeeInfo);
         }
+        // 提交事务
+        bomanager.updateDB();
         //定义一个map封装返回信息 - 判断是否更新成功
         Map<String,String> map = new HashMap<String,String>();
         map.put("status", "Y");
         return map;
     }
+    
 
     @Override
     public void employeeInfoListDtoSave(@Valid EmployeeInfoListDtoSaveReq employeeInfoListDtoSaveReq) {
