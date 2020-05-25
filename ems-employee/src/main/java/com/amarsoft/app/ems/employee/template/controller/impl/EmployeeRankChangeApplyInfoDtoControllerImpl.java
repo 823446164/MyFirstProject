@@ -34,9 +34,16 @@ public class EmployeeRankChangeApplyInfoDtoControllerImpl implements EmployeeRan
     @Autowired
     EmployeeRankChangeApplyInfoDtoService employeeRankChangeApplyInfoDtoServiceImpl;
     
+    /**
+     * 
+     * Description:员工职级调整申请详情Info查询
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     @Override
     @Transactional
-    //员工职级调整申请详情Info查询
     public ResponseEntity<ResponseMessage<EmployeeRankChangeApplyInfoDtoQueryRsp>> employeeRankChangeApplyInfoDtoQuery(@RequestBody @Valid RequestMessage<EmployeeRankChangeApplyInfoDtoQueryReq> reqMsg){
         ResponseMessage<EmployeeRankChangeApplyInfoDtoQueryRsp> rspMsg = null;
         try {
@@ -52,15 +59,22 @@ public class EmployeeRankChangeApplyInfoDtoControllerImpl implements EmployeeRan
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+            // TODO xucheng Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<EmployeeRankChangeApplyInfoDtoQueryRsp>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    /**
+     * 
+     * Description:员工职级调整申请详情Info保存
+     *
+     * @param reqMsg
+     * @return ResponseEntity
+     * @see
+     */
     @Override
     @Transactional
-    //员工职级调整申请详情Info保存
     public ResponseEntity<ResponseMessage<Object>> employeeRankChangeApplyInfoDtoSave(@RequestBody @Valid RequestMessage<EmployeeRankChangeApplyInfoDtoSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -76,7 +90,7 @@ public class EmployeeRankChangeApplyInfoDtoControllerImpl implements EmployeeRan
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            // TODO Auto-generated  //默认异常码未设置，请补充。
+            // TODO xucheng Auto-generated  //默认异常码未设置，请补充。
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }

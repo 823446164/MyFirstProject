@@ -7,7 +7,7 @@ import lombok.ToString;
 import com.amarsoft.amps.avta.annotation.TemplateHeader;
 import com.amarsoft.amps.arem.annotation.Description;
 import com.amarsoft.amps.acsc.annotation.Length;
-import com.amarsoft.aecd.parameter.constant.RankName;
+import com.amarsoft.aecd.parameter.constant.ChildRankNo;
 import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.acsc.annotation.Enum;
 import com.amarsoft.amps.avta.annotation.TemplateBody;
@@ -46,14 +46,14 @@ public class EmployeeRankChangeApplyInfoDto implements Serializable {
     @TemplateBody(sortNo = 3, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Text, htmlStyle = "", isVisible = false, isReadOnly = true, span = 1, groupIndex = -1)
     private String serialNo;
 
-    @Enum(RankName.class)
+    @Enum(ChildRankNo.class)
     @Description("当前职级")
     @Length(max=80)
     @ActualColumn("ERA.rankName")
     @TemplateBody(sortNo = 4, suffix = "", alignType = com.amarsoft.aecd.common.constant.TemplateAlignType.Left, editType = com.amarsoft.aecd.common.constant.TemplateEditType.Select, htmlStyle = "", isVisible = true, isReadOnly = true, span = 1, groupIndex = -1)
     private String rankName;
 
-    @Enum(RankName.class)
+    @Enum(ChildRankNo.class)
     @Description("考核职级")
     @Length(max=80)
     @ActualColumn("ERA.updateRankName")
