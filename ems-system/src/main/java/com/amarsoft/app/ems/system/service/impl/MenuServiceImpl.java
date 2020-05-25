@@ -480,6 +480,7 @@ public class MenuServiceImpl implements MenuService {
                 rootNode.setKey(menu.getMenuId());
                 rootNode.setExpanded(CollectionUtils.isEmpty(rsp.getTrees()));//展开第一个根节点
                 rootNode.setLeaf(Boolean.FALSE);
+                rootNode.setStatus(menu.getStatus());
                 if(menu.getStatus().equals(Status.Valid.id)) {// 有效、停用展示，无效则不展示
                     rootNode.setDisable(Boolean.FALSE);
                 }else if(menu.getStatus().equals(Status.BlockUp.id)) {
@@ -503,6 +504,7 @@ public class MenuServiceImpl implements MenuService {
                 node.setTitle(menu.getMenuName());
                 node.setSortNo(menu.getSortNo());
                 node.setKey(menu.getMenuId());
+                node.setStatus(menu.getStatus());
                 node.setExpanded(CollectionUtils.isEmpty(rootNode.getChildren()));//展开第一个根节点
                 if(menu.getStatus().equals(Status.Valid.id)) {// 前端Disable为null则不展示该数据，前端为true、false展示
                     node.setDisable(Boolean.FALSE);
