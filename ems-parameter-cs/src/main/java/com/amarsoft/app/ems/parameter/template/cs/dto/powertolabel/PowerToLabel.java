@@ -2,7 +2,7 @@
  * 文件名：powertolabel.java
  * 版权：Copyright by www.amarsoft.com
  * 描述：
- * 修改人：amarsoft
+ * 修改人：yrong
  * 修改时间：2020年5月22日
  * 跟踪单号：
  * 修改单号：
@@ -32,8 +32,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class PowerToLabel {
-    private static final long serialVersionUID = 1L;
-    
     @Description("用户编号")
     @Length(max=40)
     @ActualColumn("LC.userId")

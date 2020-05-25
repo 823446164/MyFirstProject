@@ -1,5 +1,5 @@
 /*
- * 文件名：PowerToLabelController.java
+ * 文件名：PowerController.java
  * 版权：Copyright by www.amarsoft.com
  * 描述：判断当前用户是否有权限对标签进行维护
  * 修改人：yrong
