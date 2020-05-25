@@ -10,6 +10,12 @@
 package com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.amarsoft.amps.acsc.annotation.ActualColumn;
+import com.amarsoft.amps.acsc.annotation.Length;
+import com.amarsoft.amps.acsc.annotation.NotEmpty;
+import com.amarsoft.amps.arem.annotation.Description;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,5 +29,13 @@ import lombok.ToString;
 @ToString
 public class EmployeeRankRelabelListDtoSaveReq extends EmployeeRankRelabelListDto implements Serializable {
     private static final long serialVersionUID = 1L;
+    @Description("职级标签List")
+    @NotEmpty
+    private List<EmployeeRankRelabelListDto> employeeRankRelabelListDto;
     
+    @Description("员工职级流水号")
+    @Length(max=40)
+    @NotEmpty
+    @ActualColumn("ER.serialNo")
+    private String serialNo;
 }

@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankTargetListDtoSaveReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoDeleteReq;
 
 /**
@@ -35,5 +36,13 @@ public interface EmployeeRankListDtoService {
      * @return
      */
     public Map<String, String> employeeRankListDtoSave(@Valid EmployeeRankListDtoSaveReq employeeRankListDtoSaveReq);
+    
+    /**
+     * 员工目标职级List保存
+     * @param request
+     * @return
+     */
+    public Map<String, String> employeeTargetRankListDtoSave(@Valid EmployeeRankTargetListDtoSaveReq employeeRankTargetListDtoSaveReq);
+
 
 }

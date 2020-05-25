@@ -11,10 +11,13 @@
 
 package com.amarsoft.app.ems.employee.template.service;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoQueryRsp;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankrelabellistdto.EmployeeRankRelabelListDtoSaveReq;
 
 /**
  * @author dxiao
@@ -31,6 +34,13 @@ public interface EmployeeRankRelabelListDtoService {
      * @return
      */
     public EmployeeRankRelabelListDtoQueryRsp employeeRankRelabelListDtoQuery(@Valid EmployeeRankRelabelListDtoQueryReq employeeRankRelabelListDtoQueryReq);
+
+    /**
+     * 职级标签List保存
+     * @param request
+     * @return
+     */
+    public void employeeRankRelabelListDtoSave(@Valid EmployeeRankRelabelListDtoSaveReq employeeRankRelabelListDtoSaveReq);
 
     
 }

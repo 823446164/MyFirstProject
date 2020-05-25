@@ -21,6 +21,7 @@ import com.amarsoft.amps.acsc.rpc.ResponseMessage;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryReq;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoQueryRsp;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankListDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeeranklistdto.EmployeeRankTargetListDtoSaveReq;
 
 /**
  * 员工职级ListController接口
@@ -32,5 +33,8 @@ public interface EmployeeRankListDtoController {
 
     @PostMapping(value = "/employeeranklistdto/save", name="员工职级List保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ResponseMessage<Object>> employeeRankListDtoSave(@RequestBody @Valid RequestMessage<EmployeeRankListDtoSaveReq> reqMsg);
+    
+    @PostMapping(value = "/employeeranklistdto/targetsave", name="员工新增目标职级List保存接口", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ResponseMessage<Object>> employeeTargetRankListDtoSave(@RequestBody @Valid RequestMessage<EmployeeRankTargetListDtoSaveReq> reqMsg);
 
 }
