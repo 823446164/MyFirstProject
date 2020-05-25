@@ -92,7 +92,7 @@ public class ProjectListControllerImpl implements ProjectListController {
 
     @Override
     @Transactional
-    //项目信息删除
+    //项目信息删除 
     public ResponseEntity<ResponseMessage<Object>> projectListDelete(@RequestBody @Valid RequestMessage<ProjectListDeleteReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
