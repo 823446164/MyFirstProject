@@ -13,9 +13,12 @@ package com.amarsoft.app.ems.employee.template.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.validation.Valid;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.amarsoft.amps.acsc.query.QueryProperties;
@@ -102,7 +105,7 @@ public class EmployeeRankChangeApplyListDtoServiceImpl implements EmployeeRankCh
         BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsByNativeSql(employeeRankChangeApplyListDtoQueryReq.getBegin(), employeeRankChangeApplyListDtoQueryReq.getPageSize(), fullsql, query.getParam());
         List<BusinessObject> businessObjectList = boa.getBusinessObjects();
         
-        if(!StringUtils.isEmpty(businessObjectList) && !businessObjectList.isEmpty()) {
+        if(!CollectionUtils.isEmpty(businessObjectList) && !businessObjectList.isEmpty()) {
             List<EmployeeRankChangeApplyListDto> employeeRankChangeApplyListDtos = new ArrayList<EmployeeRankChangeApplyListDto>();
             for(BusinessObject bo : businessObjectList) {
                 //查询到的数据转换为响应实体

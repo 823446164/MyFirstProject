@@ -11,28 +11,28 @@
 package com.amarsoft.app.ems.employee.template.service.impl;
 
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
-import javax.validation.Valid;
-import org.springframework.stereotype.Service;
-import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
-import com.amarsoft.app.ems.employee.template.service.EmployeeRankChangeApplyInfoDtoService;
-import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
-import com.amarsoft.amps.arem.exception.ALSException;
-import com.amarsoft.amps.arpe.businessobject.BusinessObject;
-import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoQueryRsp;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoQueryReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoSaveReq;
-import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDto;
+import javax.validation.Valid;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import com.amarsoft.amps.acsc.holder.GlobalShareContextHolder;
+import com.amarsoft.amps.arem.exception.ALSException;
+import com.amarsoft.amps.arpe.businessobject.BusinessObject;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager;
+import com.amarsoft.amps.arpe.businessobject.BusinessObjectManager.BusinessObjectAggregate;
 import com.amarsoft.app.ems.employee.entity.EmployeeRankApply;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDto;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoQueryReq;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoQueryRsp;
+import com.amarsoft.app.ems.employee.template.cs.dto.employeerankchangeapplyinfodto.EmployeeRankChangeApplyInfoDtoSaveReq;
+import com.amarsoft.app.ems.employee.template.service.EmployeeRankChangeApplyInfoDtoService;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -56,7 +56,7 @@ public class EmployeeRankChangeApplyInfoDtoServiceImpl implements EmployeeRankCh
             "serialNo", employeeRankChangeApplyInfoDtoQueryReq.getSerialNo(), "employeeNo",
             employeeRankChangeApplyInfoDtoQueryReq.getEmployeeNo());
         List<BusinessObject> employeeRankChangeApplyInfoDtoQueryRspBoList = employeeRankChangeApplyInfoDtoQueryRspBoa.getBusinessObjects();
-        if (StringUtils.isEmpty(employeeRankChangeApplyInfoDtoQueryRspBoList) && employeeRankChangeApplyInfoDtoQueryRspBoList.size() > 0) {
+        if (CollectionUtils.isEmpty(employeeRankChangeApplyInfoDtoQueryRspBoList) && employeeRankChangeApplyInfoDtoQueryRspBoList.size() > 0) {
             BusinessObject employeeRankChangeApplyInfoDtoQueryRspBo = employeeRankChangeApplyInfoDtoQueryRspBoList.get(0);
             EmployeeRankChangeApplyInfoDtoQueryRsp employeeRankChangeApplyInfoDto = new EmployeeRankChangeApplyInfoDtoQueryRsp();
             employeeRankChangeApplyInfoDto.setEmployeeNo(employeeRankChangeApplyInfoDtoQueryRspBo.getString("EmployeeNo"));
