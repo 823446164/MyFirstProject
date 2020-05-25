@@ -167,7 +167,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
                 throw new ALSException("EMS2016");
             }
             else {
-                boolean a = true;
+                boolean repeat = true;
                 if (!ObjectUtils.isEmpty(labelCatalogInfo) ) {
                     LabelCatalog lc = bomanager.keyLoadBusinessObject(LabelCatalog.class, labelCatalogInfo.getSerialNo());
                     // 如果lc不为空，则说明数据库中已有此数据，此次是更新操作
@@ -175,7 +175,7 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
                         // 判重
                         boolean isRepeat = isAddRepeat(bomanager, labelCatalogInfo);
                         if (false == isRepeat) {
-                            a = isRepeat;
+                            repeat = isRepeat;
                             throw new ALSException("EMS2013", labelCatalogInfo.getLabelName());
                         }
                         else {
@@ -192,12 +192,12 @@ public class LabelCatalogInfoServiceImpl implements LabelCatalogInfoService {
                     else {
                         boolean isRepeat = isUpdateRepeat(bomanager, labelCatalogInfo);
                         if (false == isRepeat) {
-                            a = isRepeat;
+                            repeat = isRepeat;
                             throw new ALSException("EMS2013", labelCatalogInfo.getLabelName());
                         }
                     }
                     // 如果未抛过异常，则说明没有问题
-                    if (true == a) {
+                    if (true == repeat) {
                         lc.setLabelName(labelCatalogInfo.getLabelName());
                         lc.setCatalogRemark(labelCatalogInfo.getCatalogRemark());
                         lc.setUpdateOrgId(GlobalShareContextHolder.getOrgId());
