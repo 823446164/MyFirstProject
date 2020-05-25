@@ -15,7 +15,6 @@ import com.amarsoft.amps.acsc.annotation.ActualColumn;
 import com.amarsoft.amps.acsc.annotation.Length;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.arem.annotation.Description;
-import com.amarsoft.amps.avta.annotation.TemplateBody;
 import com.amarsoft.app.ems.employee.template.cs.dto.employeeinfodto.EmployeeInfoDto;
 
 import lombok.Getter;

@@ -43,4 +43,19 @@ public enum EmployeeStatus {
         }
         return "";
     }
+    
+    /**
+     * Description: 根据name取到id<br>
+     * @param name
+     * @return   
+     * @see
+     */
+    public static String getIdByName(String name) {
+        for (EmployeeStatus employeeStatus : EmployeeStatus.values()) {
+            if (employeeStatus.name.equalsIgnoreCase(name)) {
+                return employeeStatus.id;
+            }
+        }
+        return "";
+    }
 }
