@@ -407,7 +407,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
     }
 
     /**
-     * 标签目录新增判重 标签目录新增时判断名称是否重复
+     * 标签新增判重 标签新增时判断名称和码值是否重复
      * 
      * @param labelInfoRepeatReq
      */
@@ -422,7 +422,7 @@ public class LabelInfoServiceImpl implements LabelInfoService {
         else {
             // 新增判重
             if (ButtonType._1.id.equals(labelInfoRepeatReq.getButtonType())) {
-                // 新增只需要判断数据库中是否有与新增变迁重名的
+                // 新增只需要判断数据库中是否有与新增标签重名的
                 List<LabelCatalog> labelCatalogs = bomanager.loadBusinessObjects(LabelCatalog.class,
                     "labelName=:labelName or codeNo=:codeNo", "labelName", labelInfoRepeatReq.getLabelName(), "codeNo",
                     labelInfoRepeatReq.getCodeNo());

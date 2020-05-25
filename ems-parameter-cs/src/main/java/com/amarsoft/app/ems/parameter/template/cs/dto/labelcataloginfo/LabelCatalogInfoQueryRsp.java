@@ -11,6 +11,12 @@
 package com.amarsoft.app.ems.parameter.template.cs.dto.labelcataloginfo;
 
 import java.io.Serializable;
+
+import javax.validation.Valid;
+
+import com.amarsoft.amps.acsc.annotation.NotEmpty;
+import com.amarsoft.amps.arem.annotation.Description;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,5 +30,7 @@ import lombok.ToString;
 @ToString
 public class LabelCatalogInfoQueryRsp extends LabelCatalogInfo implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+    @Description("用户权限")
+    @Valid
+    private boolean power;
 }

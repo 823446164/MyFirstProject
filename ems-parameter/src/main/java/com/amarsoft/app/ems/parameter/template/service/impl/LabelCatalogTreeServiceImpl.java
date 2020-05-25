@@ -13,6 +13,8 @@ package com.amarsoft.app.ems.parameter.template.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -24,6 +26,8 @@ import com.amarsoft.app.ems.parameter.entity.LabelCatalog;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcatalogtreequery.LabelCatalogTreeQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.labelcatalogtreequery.Tree;
 import com.amarsoft.app.ems.parameter.template.service.LabelCatalogTreeService;
+import com.amarsoft.app.ems.system.cs.client.RoleClient;
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -38,7 +42,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class LabelCatalogTreeServiceImpl implements LabelCatalogTreeService {
-
+    @Autowired 
+    RoleClient roleController;  
+    
+    @Autowired
+    PowerControlServiceImpl powerControlServiceImpl;
+    
     /**
      * 查询出所有目录列表
      * 通过递归的方法，查询出所有的标签目录
@@ -143,7 +152,8 @@ public class LabelCatalogTreeServiceImpl implements LabelCatalogTreeService {
                 rsp.getTrees().add(rootNode);
             }
             // end
-        }
+        }  
+        rsp.setPower(powerControlServiceImpl.powerToLabel().isPower());
         return rsp;
     }
 }
