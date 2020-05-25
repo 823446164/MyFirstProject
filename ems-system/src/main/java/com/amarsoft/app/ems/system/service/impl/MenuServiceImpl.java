@@ -480,6 +480,7 @@ public class MenuServiceImpl implements MenuService {
                 rootNode.setKey(menu.getMenuId());
                 rootNode.setExpanded(CollectionUtils.isEmpty(rsp.getTrees()));//展开第一个根节点
                 rootNode.setLeaf(Boolean.FALSE);
+                rootNode.setStatus(menu.getStatus());
                 if(menu.getStatus().equals(Status.Valid.id)) {// 有效、停用展示，无效则不展示
                     rootNode.setDisable(Boolean.FALSE);
                 }else if(menu.getStatus().equals(Status.BlockUp.id)) {
@@ -503,6 +504,7 @@ public class MenuServiceImpl implements MenuService {
                 node.setTitle(menu.getMenuName());
                 node.setSortNo(menu.getSortNo());
                 node.setKey(menu.getMenuId());
+                node.setStatus(menu.getStatus());
                 node.setExpanded(CollectionUtils.isEmpty(rootNode.getChildren()));//展开第一个根节点
                 if(menu.getStatus().equals(Status.Valid.id)) {// 前端Disable为null则不展示该数据，前端为true、false展示
                     node.setDisable(Boolean.FALSE);
@@ -754,8 +756,12 @@ public class MenuServiceImpl implements MenuService {
         MenuIdQueryRsp rsp = new MenuIdQueryRsp();
         BusinessObjectManager bomanager = BusinessObjectManager.createBusinessObjectManager();
         //获取菜单编号
+        String parentId = req.getParentId();
+        if (parentId==null) {
+        	parentId="";
+		}
         BusinessObjectAggregate<BusinessObject> menuIdAggregate = bomanager.
-        		selectBusinessObjectsBySql("select max(menuId) as menuId from MenuInfo where parentId = :parentId", "parentId",req.getParentId());
+        		selectBusinessObjectsBySql("select max(menuId) as menuId from MenuInfo where parentId = :parentId", "parentId",parentId);
         
         if (!CollectionUtils.isEmpty(menuIdAggregate.getBusinessObjects()) && 
         		!StringUtils.isEmpty(menuIdAggregate.getBusinessObjects().get(0).getString("menuId"))) {
@@ -774,7 +780,7 @@ public class MenuServiceImpl implements MenuService {
             for (int i = 0; i < menuDefaultLength - 1; i++) {
                 sb.append("0");
             }
-            String menuId = req.getParentId() + sb.append("1").toString();
+            String menuId = parentId + sb.append("1").toString();
             rsp.setMenuId(menuId);
         }
         
