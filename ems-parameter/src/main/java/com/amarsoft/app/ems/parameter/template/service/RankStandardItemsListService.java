@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelQueryRsp;
 import com.amarsoft.app.ems.parameter.template.cs.dto.ranklabel.TreeLabelSaveReq;
+import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsBatchDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsInfoDeleteReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryReq;
 import com.amarsoft.app.ems.parameter.template.cs.dto.rankstandarditemslist.RankStandardItemsListQueryRsp;
@@ -78,4 +79,15 @@ public interface RankStandardItemsListService {
      * @see
      */
     public void rankStandardDelete(@Valid RankStandardItemsInfoDeleteReq rankDeleteReq);
+    
+    /**
+     * 
+     * Description: 职级指标页面批量删除
+     *
+     * @param rankBatchDeleteReq
+     * 
+     * @return 
+     * @see
+     */
+    public void rankStandardBatchDelete(@Valid RankStandardItemsBatchDeleteReq rankBatchDeleteReq);
 }
