@@ -689,9 +689,22 @@ public class RoleServiceImpl implements RoleService {
         @Override
         public Query apply(RoleListDtoQueryReq roleListDtoQueryReq) {
             QueryProperties queryProperties = DTOHelper.getQueryProperties(roleListDtoQueryReq, RoleListDto.class);
-
+            //模糊搜索：角色编号，角色名称
+            String eRoleId = "%";
+            String eRoleName = "%";
+            List<Filter> filters = roleListDtoQueryReq.getFilters();
+            if(!CollectionUtils.isEmpty(filters)) {
+                for (Filter filter : filters) {
+                    if("roleId".equals(filter.getName())) {
+                        eRoleId = filter.getValue()[0]+"%";
+                    }
+                    if("roleName".equals(filter.getName())) {
+                        eRoleName = filter.getValue()[0]+"%";
+                    }
+                }
+            }
             String sql = "select RI.roleId as roleId,RI.roleName as roleName,RI.belongOrgLevel as belongOrgLevel,RI.belongRootOrg as belongRootOrg,RI.status as status"
-                         + " from SYS_ROLE_INFO RI" + " where 1=1";
+                         + " from SYS_ROLE_INFO RI" + " where 1=1 and roleId like '"+eRoleId+"' and roleName like '"+eRoleName +"'";
             return queryProperties.assembleSql(sql);
         }
     }
@@ -835,8 +848,6 @@ public class RoleServiceImpl implements RoleService {
      */
 	@Override
 	public EmployeeInfoListDtoQueryRsp roleUserListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req) {
-		EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
-		String roleId = req.getRoleId();
 		//模糊搜索：员工工号，员工姓名
 		String eNo = "%";
 		String eName = "%";
@@ -855,21 +866,7 @@ public class RoleServiceImpl implements RoleService {
 		String sql = "select ui.userId as userId,ui.userName as userName,ti.teamName as teamName from UserInfo ui join UserTeam ut on ui.userId = ut.userId "
 		+"join TeamInfo ti on ut.teamId = ti.teamId where ui.userId not in (SELECT userId FROM UserRole WHERE roleId = :roleId) and "
 		+"ui.userId like '"+eNo+"' and ui.userName like '"+eName+"'";
-		BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsBySql(req.getBegin(),req.getPageSize(),sql, "roleId",roleId);
-		List<BusinessObject> businessObjects = boa.getBusinessObjects();
-		if(!CollectionUtils.isEmpty(businessObjects)) {
-			List<EmployeeInfoListDto> employees = new ArrayList();
-			for(BusinessObject bo:businessObjects) {
-				EmployeeInfoListDto ei = new EmployeeInfoListDto(); 
-				ei.setEmployeeNo(bo.getString("USERID"));
-				ei.setEmployeeName(bo.getString("USERNAME"));
-				ei.setTeamName(bo.getString("TEAMNAME"));
-				employees.add(ei);
-			}
-			rsp.setEmployeeInfoListDtos(employees);
-		}
-		rsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
-		return rsp;
+		return getEnDtoQueryRsp(req,bomanager,sql);
 	}
 
 	/**
@@ -881,8 +878,6 @@ public class RoleServiceImpl implements RoleService {
      */
 	@Override
 	public EmployeeInfoListDtoQueryRsp RoleUserIntroducedListDtoQuery(@Valid EmployeeInfoListDtoQueryReq req) {
-		EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
-		String roleId = req.getRoleId();
 		//模糊搜索：员工工号，员工姓名
 		String eNo = "%";
         String eName = "%";
@@ -901,21 +896,37 @@ public class RoleServiceImpl implements RoleService {
 		String sql = "select ui.userId as userId,ui.userName as userName,ti.teamName as teamName from UserRole ur join  UserInfo ui on ur.userId = ui.userId join UserTeam ut on ui.userId = ut.userId "
 		+"join TeamInfo ti on ut.teamId = ti.teamId where ur.roleId = :roleId and "
 		+"ui.userId like '"+eNo+"' and ui.userName like '"+eName+"'";;
-		BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsBySql(req.getBegin(),req.getPageSize(),sql, "roleId",roleId);
-		List<BusinessObject> businessObjects = boa.getBusinessObjects();
-		if(!CollectionUtils.isEmpty(businessObjects)) {
-			List<EmployeeInfoListDto> employees = new ArrayList();
-			for(BusinessObject bo:businessObjects) {
-				EmployeeInfoListDto ei = new EmployeeInfoListDto(); 
-				ei.setEmployeeNo(bo.getString("USERID"));
-				ei.setEmployeeName(bo.getString("USERNAME"));
-				ei.setTeamName(bo.getString("TEAMNAME"));
-				employees.add(ei);
-			}
-			rsp.setEmployeeInfoListDtos(employees);
-		}
-		rsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
-		return rsp;
+		return getEnDtoQueryRsp(req,bomanager,sql);
+	}
+	
+	/**
+	 * 
+	 * Description: 获取用户列表<br>
+	 *
+	 * @param req
+	 * @param bomanager
+	 * @param sql
+	 * @return
+	 * @see
+	 */
+	private EmployeeInfoListDtoQueryRsp getEnDtoQueryRsp(EmployeeInfoListDtoQueryReq req,
+	                                                     BusinessObjectManager bomanager,String sql) {
+	    EmployeeInfoListDtoQueryRsp rsp = new EmployeeInfoListDtoQueryRsp();
+	    BusinessObjectAggregate<BusinessObject> boa = bomanager.selectBusinessObjectsBySql(req.getBegin(),req.getPageSize(),sql, "roleId",req.getRoleId());
+        List<BusinessObject> businessObjects = boa.getBusinessObjects();
+        if(!CollectionUtils.isEmpty(businessObjects)) {
+            List<EmployeeInfoListDto> employees = new ArrayList<EmployeeInfoListDto>();
+            for(BusinessObject bo:businessObjects) {
+                EmployeeInfoListDto ei = new EmployeeInfoListDto(); 
+                ei.setEmployeeNo(bo.getString("USERID"));
+                ei.setEmployeeName(bo.getString("USERNAME"));
+                ei.setTeamName(bo.getString("TEAMNAME"));
+                employees.add(ei);
+            }
+            rsp.setEmployeeInfoListDtos(employees);
+        }
+        rsp.setTotalCount(boa.getAggregate("count(1) as cnt").getInt("cnt"));
+        return rsp;
 	}
 
 	/**

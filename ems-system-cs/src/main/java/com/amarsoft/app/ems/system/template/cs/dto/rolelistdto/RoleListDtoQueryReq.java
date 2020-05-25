@@ -1,11 +1,14 @@
 package com.amarsoft.app.ems.system.template.cs.dto.rolelistdto;
 
 import java.io.Serializable;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import com.amarsoft.amps.acsc.query.annotation.QueryRule;
 import com.amarsoft.amps.arem.annotation.Description;
+import com.amarsoft.app.ems.system.cs.dto.orguserquery.Filter;
 import com.amarsoft.amps.acsc.annotation.NotEmpty;
 import com.amarsoft.amps.acsc.query.annotation.QueryBegin;
 import com.amarsoft.amps.acsc.annotation.Range;
@@ -36,4 +39,7 @@ public class RoleListDtoQueryReq implements Serializable {
     @Description("排序数组")
     @QueryOrderBy
     private String[] orderBy;
+    
+    @Description("filterLIst")
+    private List<Filter> filters;
 }
