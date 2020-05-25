@@ -68,7 +68,7 @@ public class ProjectListControllerImpl implements ProjectListController {
 
     @Override
     @Transactional
-    //项目列表保存
+    //项目信息保存
     public ResponseEntity<ResponseMessage<Object>> projectListSave(@RequestBody @Valid RequestMessage<ProjectListSaveReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -84,7 +84,7 @@ public class ProjectListControllerImpl implements ProjectListController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-          //保存项目列表失败，抛异常
+          //项目信息保存失败，抛异常
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3002",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -92,7 +92,7 @@ public class ProjectListControllerImpl implements ProjectListController {
 
     @Override
     @Transactional
-    //项目列表删除
+    //项目信息删除
     public ResponseEntity<ResponseMessage<Object>> projectListDelete(@RequestBody @Valid RequestMessage<ProjectListDeleteReq> reqMsg){
         ResponseMessage<Object> rspMsg = null;
         try {
@@ -108,7 +108,7 @@ public class ProjectListControllerImpl implements ProjectListController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-           //删除项目列表失败，抛异常
+           //项目信息删除失败，抛异常
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3003",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }

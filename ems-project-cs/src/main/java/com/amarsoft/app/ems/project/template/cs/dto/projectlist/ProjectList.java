@@ -6,7 +6,7 @@
  * 修改时间：2020年5月22日
  * 跟踪单号：
  * 修改单号：
- * 修改内容：修改是否可见
+ * 修改内容：修改是否可见，加枚举注解
  */
 package com.amarsoft.app.ems.project.template.cs.dto.projectlist;
 
