@@ -59,7 +59,7 @@ public class FlowUtil {
             CreateProcessInstRsp createProcessInst = bpmServiceImpl.createProcessInst(createProcParams);
             return createProcessInst;
         } catch (Exception e) {
-            throw new ALSException("CM0133", e);
+            throw new ALSException("EMSBPM1001", e);
         }
     }
     
@@ -85,7 +85,7 @@ public class FlowUtil {
         try {
             bpmServiceImpl.commit(commitReq);
         } catch (Exception e) {
-            throw new ALSException("CM0133", e);
+            throw new ALSException("EMSBPM1002", e);
         }
     }
 }
