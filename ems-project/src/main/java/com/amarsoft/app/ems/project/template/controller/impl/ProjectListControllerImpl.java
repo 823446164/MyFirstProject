@@ -108,7 +108,7 @@ public class ProjectListControllerImpl implements ProjectListController {
             }
             //事务回滚
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-          //删除项目列表失败，抛异常
+           //删除项目列表失败，抛异常
             rspMsg = ResponseMessage.getResponseMessageFromException(e, "EMS3003",e.getMessage());
             return new ResponseEntity<ResponseMessage<Object>>(rspMsg, HttpStatus.INTERNAL_SERVER_ERROR);
         }
