@@ -113,7 +113,7 @@ public class TeamServiceImpl implements TeamService {
             teamInfo.setTeamId(req.getTeamId());
         }
         teamInfo.setTeamName(req.getTeamName());
-        teamInfo.setTeamLeader(req.getTeamLeader());
+        teamInfo.setTeamLeader(req.getRoleA());
         teamInfo.setBelongOrgId(req.getBelongOrgId());
         teamInfo.setBelongRootOrg(req.getBelongRootOrg());
         teamInfo.setBelongOrgLevel(req.getBelongOrgLevel());
