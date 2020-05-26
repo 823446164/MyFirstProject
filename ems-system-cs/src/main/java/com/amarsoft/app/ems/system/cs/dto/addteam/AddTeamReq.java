@@ -47,6 +47,10 @@ public class AddTeamReq implements Serializable{
     @Description("团队负责人")
     @Length(max=40)
     private String teamLeader;
+    
+    @Description("团队负责人")
+    @Length(max=80)
+    private String roleA;
     @Description("状态")
     @NotEmpty
     @Length(max=1)
