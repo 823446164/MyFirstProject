@@ -35,7 +35,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url: 
-      defaultZone : http://192.168.60.13:9130/eureka
+      defaultZone : http://192.168.66.187:9130/eureka
     registry-fetch-interval-seconds: 30
     eureka-server-connect-timeout-seconds: 5
     eureka-server-read-timeout-seconds: 5
