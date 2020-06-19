@@ -15,8 +15,7 @@ public class AutoCreateEntity {
         AutoCreateConstants.setBasePath(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("/target/classes/", "").substring(0, AutoCreateCoder.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("/target/classes/", "").lastIndexOf("/") + 1));
 
         ExcelEntity[] entitys = new ExcelEntity[] {
-//            new ExcelEntity("com.amarsoft.app.ems.","员工管理模块实体类.xlsx", 1),
-            new ExcelEntity("com.amarsoft.app.ems.","demo员工管理模块实体类.xlsx", 1),
+            new ExcelEntity("com.amarsoft.app.ems.","员工管理模块实体类.xlsx", 1), 
         };
 
         CreateEntity.create(entitys);

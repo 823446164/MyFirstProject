@@ -61,13 +61,6 @@
         <module>apecd</module>
         <module>z-plugins-bssp</module>
         <module>ems-core</module>
-        <module>demo</module>
-        <module>demo-cs</module>
-        <module>employee-demo</module>
-        <module>employee-demo-cs</module>
-        <module>ems-demo</module>
-        <module>ems-demo-cs</module>
-        <module>ems-demo1</module>
     </modules>
     
     <distributionManagement>
