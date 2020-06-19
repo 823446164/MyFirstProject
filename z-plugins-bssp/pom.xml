@@ -16,12 +16,21 @@
     </parent>
 
     <dependencies>
+    	<dependency>
+            <groupId>com.amarsoft.app.ems</groupId>
+            <artifactId>ems-demo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amarsoft.app.ems</groupId>
+            <artifactId>ems-system</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.amarsoft.app.ems</groupId>
             <artifactId>ems-project</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
         <dependency>
             <groupId>com.amarsoft.app.ems</groupId>
             <artifactId>ems-train</artifactId>

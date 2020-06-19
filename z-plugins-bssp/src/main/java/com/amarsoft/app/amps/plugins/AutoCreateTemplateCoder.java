@@ -21,7 +21,8 @@ public class AutoCreateTemplateCoder {
         AutoCreateConstants.setBasePath(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("/target/classes/", "").substring(0, AutoCreateCoder.class.getProtectionDomain().getCodeSource().getLocation().getPath().replaceAll("/target/classes/", "").lastIndexOf("/") + 1));
 
         ExcelTemplate[] templates = new ExcelTemplate[] {
-            new ExcelTemplate("com.amarsoft.app.ems.","employee",false,"测试模块dto模板.xlsx", 1), 
+//            new ExcelTemplate("com.amarsoft.app.ems.","employee",false,"测试模块dto模板.xlsx", 1), 
+        		new ExcelTemplate("com.amarsoft.app.ems.","demo",false,"demo员工管理模块dto模板.xlsx", 1), 
         };
 
         CreateTemplateCoder.create(templates);
