@@ -1,0 +1,15 @@
+server:
+  port: 3333
+  servlet:
+    context-path: /Mydemo
+spring:
+  application:
+    name: mydemo
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db_Liuer?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: com.example.demo
